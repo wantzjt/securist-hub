@@ -1,7 +1,7 @@
 ---
 id: WO-003
 title: Strategic wedge research (Decision Graph GTM)
-status: in_review
+status: complete
 owner: grok
 branch: docs/wo-003-strategic-wedge-research
 depends_on:
@@ -50,7 +50,8 @@ Securist’s compounding asset is the Decision Graph (adopt → validate → gov
 
 - 2026-08-05: Claimed; research on `docs/wo-003-strategic-wedge-research` (PR #5).
 - 2026-08-05: Deep dive — competitive map, JTBD forces, kit, WO-004/WO-005, roadmap realignment.
+- 2026-08-05: Merged PR #5 (`e3986aa`). Complete. Interviews = WO-004. Provision = WO-005.
 
 ## Blockers
 
-- None for research PR. Interviews = WO-004 (human). Provision = WO-005 (human).
+- None for this WO.
