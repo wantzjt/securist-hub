@@ -19,6 +19,10 @@ import { Route as ModelsRouteImport } from './routes/models'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as UseCasesRouteImport } from './routes/use-cases'
+import { Route as ArtifactsIndexRouteImport } from './routes/artifacts.index'
+import { Route as ArtifactsArtifactIdRouteImport } from './routes/artifacts.$artifactId'
+import { Route as ArtifactsArtifactIdActivityRouteImport } from './routes/artifacts.$artifactId.activity'
+import { Route as ArtifactsArtifactIdEvidenceRouteImport } from './routes/artifacts.$artifactId.evidence'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -70,6 +74,28 @@ const UseCasesRoute = UseCasesRouteImport.update({
   path: '/use-cases',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArtifactsIndexRoute = ArtifactsIndexRouteImport.update({
+  id: '/artifacts/',
+  path: '/artifacts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtifactsArtifactIdRoute = ArtifactsArtifactIdRouteImport.update({
+  id: '/artifacts/$artifactId',
+  path: '/artifacts/$artifactId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArtifactsArtifactIdActivityRoute =
+  ArtifactsArtifactIdActivityRouteImport.update({
+    id: '/activity',
+    path: '/activity',
+    getParentRoute: () => ArtifactsArtifactIdRoute,
+  } as any)
+const ArtifactsArtifactIdEvidenceRoute =
+  ArtifactsArtifactIdEvidenceRouteImport.update({
+    id: '/evidence',
+    path: '/evidence',
+    getParentRoute: () => ArtifactsArtifactIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -82,6 +108,10 @@ export interface FileRoutesByFullPath {
   '/security': typeof SecurityRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
+  '/artifacts/$artifactId': typeof ArtifactsArtifactIdRouteWithChildren
+  '/artifacts/': typeof ArtifactsIndexRoute
+  '/artifacts/$artifactId/activity': typeof ArtifactsArtifactIdActivityRoute
+  '/artifacts/$artifactId/evidence': typeof ArtifactsArtifactIdEvidenceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +124,10 @@ export interface FileRoutesByTo {
   '/security': typeof SecurityRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
+  '/artifacts/$artifactId': typeof ArtifactsArtifactIdRouteWithChildren
+  '/artifacts': typeof ArtifactsIndexRoute
+  '/artifacts/$artifactId/activity': typeof ArtifactsArtifactIdActivityRoute
+  '/artifacts/$artifactId/evidence': typeof ArtifactsArtifactIdEvidenceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +141,10 @@ export interface FileRoutesById {
   '/security': typeof SecurityRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
+  '/artifacts/$artifactId': typeof ArtifactsArtifactIdRouteWithChildren
+  '/artifacts/': typeof ArtifactsIndexRoute
+  '/artifacts/$artifactId/activity': typeof ArtifactsArtifactIdActivityRoute
+  '/artifacts/$artifactId/evidence': typeof ArtifactsArtifactIdEvidenceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +159,10 @@ export interface FileRouteTypes {
     | '/security'
     | '/tools'
     | '/use-cases'
+    | '/artifacts/$artifactId'
+    | '/artifacts/'
+    | '/artifacts/$artifactId/activity'
+    | '/artifacts/$artifactId/evidence'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +175,10 @@ export interface FileRouteTypes {
     | '/security'
     | '/tools'
     | '/use-cases'
+    | '/artifacts/$artifactId'
+    | '/artifacts'
+    | '/artifacts/$artifactId/activity'
+    | '/artifacts/$artifactId/evidence'
   id:
     | '__root__'
     | '/'
@@ -145,6 +191,10 @@ export interface FileRouteTypes {
     | '/security'
     | '/tools'
     | '/use-cases'
+    | '/artifacts/$artifactId'
+    | '/artifacts/'
+    | '/artifacts/$artifactId/activity'
+    | '/artifacts/$artifactId/evidence'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +208,8 @@ export interface RootRouteChildren {
   SecurityRoute: typeof SecurityRoute
   ToolsRoute: typeof ToolsRoute
   UseCasesRoute: typeof UseCasesRoute
+  ArtifactsArtifactIdRoute: typeof ArtifactsArtifactIdRouteWithChildren
+  ArtifactsIndexRoute: typeof ArtifactsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -232,8 +284,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UseCasesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/artifacts/': {
+      id: '/artifacts/'
+      path: '/artifacts'
+      fullPath: '/artifacts/'
+      preLoaderRoute: typeof ArtifactsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artifacts/$artifactId': {
+      id: '/artifacts/$artifactId'
+      path: '/artifacts/$artifactId'
+      fullPath: '/artifacts/$artifactId'
+      preLoaderRoute: typeof ArtifactsArtifactIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/artifacts/$artifactId/activity': {
+      id: '/artifacts/$artifactId/activity'
+      path: '/activity'
+      fullPath: '/artifacts/$artifactId/activity'
+      preLoaderRoute: typeof ArtifactsArtifactIdActivityRouteImport
+      parentRoute: typeof ArtifactsArtifactIdRoute
+    }
+    '/artifacts/$artifactId/evidence': {
+      id: '/artifacts/$artifactId/evidence'
+      path: '/evidence'
+      fullPath: '/artifacts/$artifactId/evidence'
+      preLoaderRoute: typeof ArtifactsArtifactIdEvidenceRouteImport
+      parentRoute: typeof ArtifactsArtifactIdRoute
+    }
   }
 }
+
+interface ArtifactsArtifactIdRouteChildren {
+  ArtifactsArtifactIdActivityRoute: typeof ArtifactsArtifactIdActivityRoute
+  ArtifactsArtifactIdEvidenceRoute: typeof ArtifactsArtifactIdEvidenceRoute
+}
+
+const ArtifactsArtifactIdRouteChildren: ArtifactsArtifactIdRouteChildren = {
+  ArtifactsArtifactIdActivityRoute: ArtifactsArtifactIdActivityRoute,
+  ArtifactsArtifactIdEvidenceRoute: ArtifactsArtifactIdEvidenceRoute,
+}
+
+const ArtifactsArtifactIdRouteWithChildren =
+  ArtifactsArtifactIdRoute._addFileChildren(ArtifactsArtifactIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -246,16 +339,9 @@ const rootRouteChildren: RootRouteChildren = {
   SecurityRoute: SecurityRoute,
   ToolsRoute: ToolsRoute,
   UseCasesRoute: UseCasesRoute,
+  ArtifactsArtifactIdRoute: ArtifactsArtifactIdRouteWithChildren,
+  ArtifactsIndexRoute: ArtifactsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

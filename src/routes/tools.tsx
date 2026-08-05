@@ -27,7 +27,11 @@ function ToolsPage() {
             >
               {BRAND.githubOrg}
             </a>
-            . Same slugs as repos, activity seeds, and use-case joins.
+            . Discovery surface — decisions live on{' '}
+            <Link to="/artifacts" className="ops-accent no-underline">
+              Artifact Profiles
+            </Link>
+            .
           </p>
         </div>
         <CopyPage

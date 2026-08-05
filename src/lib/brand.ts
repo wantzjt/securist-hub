@@ -27,8 +27,9 @@ export const BRAND = {
   posture:
     'Legal public-source only. Authorized use. MaxMind honesty. HF license respect.',
   doctrine: 'Discover · Build · Field',
-  classification: 'UNCLASSIFIED // PUBLIC SOURCE',
-  stack: 'INFOSEC · OSINT · CTI · GEOIP · MODELS',
+  /** Public header sublabel — not classification theater */
+  classification: 'INFOSEC',
+  stack: 'INFOSEC · OSINT · CTI · GEOIP · MODELS · DECISION GRAPH',
 } as const
 
 /** @deprecated prefer REPOS from packages.ts */
@@ -63,4 +64,5 @@ export const ROUTE_TOKENS = [
   'links',
   'ecosystem',
   'hwihf',
+  'artifacts',
 ] as const

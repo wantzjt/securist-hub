@@ -7,9 +7,10 @@ const NAV: { group: string; items: NavItem[] }[] = [
   {
     group: 'Discover',
     items: [
+      { to: '/', label: 'Home', exact: true },
       { to: '/daemon', label: 'Scout' },
       { to: '/models', label: 'Models' },
-      { to: '/use-cases', label: 'Ecosystem' },
+      { to: '/artifacts', label: 'Profiles' },
     ],
   },
   {
@@ -17,14 +18,15 @@ const NAV: { group: string; items: NavItem[] }[] = [
     items: [
       { to: '/tools', label: 'Packages' },
       { to: '/use-cases', label: 'Cases' },
-      { to: '/security', label: 'Docs' },
+      { to: '/security', label: 'Security' },
     ],
   },
   {
     group: 'Field',
     items: [
+      { to: '/activity', label: 'Sources' },
       { to: '/links', label: 'Links' },
-      { to: '/activity', label: 'Activity' },
+      { to: '/daemon', label: 'Operator' },
     ],
   },
 ]
@@ -33,9 +35,9 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="ops-shell min-h-screen bg-[var(--ftw-void)] text-[#e8e8ec]">
       <div className="border-b border-[var(--ftw-border)] bg-black/50">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[var(--securistel)] uppercase sm:px-4">
-          <span className="ops-accent">UNCLASSIFIED // PUBLIC SOURCE</span>
-          <span className="truncate">INFOSEC · OSINT · CTI · GEOIP · MODELS</span>
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[var(--ftw-muted)] uppercase sm:px-4">
+          <span className="ops-accent">INFOSEC</span>
+          <span className="truncate">OSINT · CTI · GEOIP · MODELS · DECISION GRAPH</span>
         </div>
       </div>
       <header className="sticky top-0 z-40 border-b border-[var(--ftw-border)] bg-[rgba(5,5,6,0.92)] backdrop-blur">
@@ -52,7 +54,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
               <div className="truncate text-xs font-semibold tracking-[0.14em] text-white uppercase">
                 SECURIST
               </div>
-              <div className="ops-label truncate">UNCLASSIFIED</div>
+              <div className="ops-label truncate">INFOSEC</div>
             </div>
           </Link>
           <nav className="flex max-w-full flex-wrap items-start gap-x-4 gap-y-2">

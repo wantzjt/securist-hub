@@ -76,6 +76,26 @@ function DaemonPage() {
         )}
       </section>
 
+      <section className="ops-panel space-y-2 p-4 text-[12px] text-[var(--ftw-muted)]">
+        <div className="ops-label">Operator ingest</div>
+        <p>
+          Local operators may POST share-safe metadata via server function{' '}
+          <span className="font-mono text-white">postDaemonIngest</span>. Optional
+          env <span className="font-mono">SECURIST_DAEMON_SECRET</span> (dev
+          only). Nonce + timestamp skew rejection. Never send secrets, private
+          paths, or raw source. TARX is optional local runtime—not the public
+          brand and never vendored here.
+        </p>
+        <p>
+          Sibling package path (outside this hub when monorepo):{' '}
+          <span className="font-mono">scout-daemon</span> · Decision Graph:{' '}
+          <Link to="/artifacts" className="ops-accent no-underline">
+            Artifact Profiles
+          </Link>
+          .
+        </p>
+      </section>
+
       <AgentPrompt title="Scout agent prompt" prompt={SCOUT_PROMPT} />
     </div>
   )

@@ -9,6 +9,12 @@ import { findLink, SHORT_LINKS } from './links'
 import { REPOS } from './packages'
 import { warmConsoleBoot } from './boot'
 import { USE_CASES } from './use-cases'
+import {
+  getDecisionGraphStore,
+  evaluatePolicy,
+  ingestDaemonEvent,
+  type DaemonIngestPayload,
+} from './decision-graph'
 
 function serverToken(): string | undefined {
   return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined
@@ -17,15 +23,65 @@ function serverToken(): string | undefined {
 export const getActivity = createServerFn({ method: 'GET' }).handler(
   async () => {
     const pulse = await getFlywheelPulse({ token: serverToken() })
+    const store = getDecisionGraphStore()
+    const decisionActivity = store.listActivity({ publicOnly: true }).map(
+      (a) => ({
+        id: a.id,
+        source: a.isSeed ? 'seed' : a.source,
+        stage: a.verification,
+        title: a.whatHappened,
+        detail: `${a.whyItMatters} · Action: ${a.securistAction}${a.isSeed ? ' · [SEED]' : ''}`,
+        repo: a.artifactId,
+        createdAt: a.occurredAt,
+        verification: a.verification,
+        isSeed: a.isSeed,
+        whyItMatters: a.whyItMatters,
+        securistAction: a.securistAction,
+      }),
+    )
+    const flywheelEvents = pulse.events.map((e) => ({
+      ...e,
+      verification: e.source === 'seed' ? 'seed' : 'observed',
+      isSeed: e.source === 'seed',
+      whyItMatters:
+        e.source === 'seed'
+          ? 'Seed/curated catalog signal — not LIVE org telemetry.'
+          : 'Merged public scout/org pulse.',
+      securistAction: 'Open related package, model, or Artifact Profile.',
+    }))
+    const events = [...decisionActivity, ...flywheelEvents].sort((a, b) =>
+      b.createdAt.localeCompare(a.createdAt),
+    )
+    const sourceCards = [
+      ...pulse.sources,
+      {
+        id: 'decision_graph',
+        label: 'Decision Graph',
+        status: 'seed' as const,
+        count: store.listArtifacts().length,
+        detail: 'Artifact profiles · policy · evidence (seed until Postgres)',
+      },
+      {
+        id: 'operator',
+        label: 'Operator',
+        status: 'seed' as const,
+        count: store
+          .listActivity()
+          .filter((a) => a.source === 'operator' && !a.isSeed).length,
+        detail: 'Authenticated ingest only · organization visibility',
+      },
+    ]
     return {
       mode: pulse.mode,
       live: pulse.mode !== 'SEED',
-      sourceCards: pulse.sources,
-      sources: pulse.sources.map((s) => s.id),
-      events: pulse.events,
+      sourceCards,
+      sources: sourceCards.map((s) => s.id),
+      events,
       classification: pulse.classification,
       stack: pulse.stack,
       fetchedAt: pulse.fetchedAt,
+      decisionNote:
+        'Decision Graph events marked [SEED] are demo data. Operator ingest never appears on the public stream.',
     }
   },
 )
@@ -150,4 +206,75 @@ export const hitShortLink = createServerFn({ method: 'POST' })
     )
     recordLedger('access_event', `/${link.token}`, 'field proof tick')
     return { ok: true as const, target: link.target, token: link.token }
+  })
+
+/* —— Decision Graph —— */
+
+export const listArtifactProfiles = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const store = getDecisionGraphStore()
+    return {
+      artifacts: store.listArtifacts(),
+      note: 'Seed profiles are explicitly isSeed; never treat as LIVE org telemetry.',
+    }
+  },
+)
+
+export const getArtifactProfile = createServerFn({ method: 'GET' })
+  .validator((data: { artifactId: string }) => data)
+  .handler(async ({ data }) => {
+    const store = getDecisionGraphStore()
+    const profile = store.getProfile(data.artifactId)
+    if (!profile) return { ok: false as const, error: 'not_found' }
+    const evidence = store.listEvidence(data.artifactId)
+    const evaluations = store.listEvaluations(data.artifactId)
+    const snap = store.getSnapshot()
+    const changes = snap.changes.filter((c) => c.artifactId === data.artifactId)
+    const validations = snap.validations.filter(
+      (v) => v.artifactId === data.artifactId,
+    )
+    const contributions = snap.contributions.filter(
+      (c) => c.artifactId === data.artifactId,
+    )
+    return {
+      ok: true as const,
+      profile,
+      evidence,
+      evaluations,
+      changes,
+      validations,
+      contributions,
+    }
+  })
+
+export const runPolicyDemo = createServerFn({ method: 'GET' })
+  .validator(
+    (data: {
+      artifactId: string
+      environment?: 'research' | 'development' | 'staging' | 'production'
+      dataClassification?: 'public' | 'internal' | 'restricted'
+      deploymentBoundary?: 'local_only' | 'controlled_cloud' | 'external_service'
+    }) => data,
+  )
+  .handler(async ({ data }) => {
+    const store = getDecisionGraphStore()
+    const artifact = store.getArtifact(data.artifactId)
+    if (!artifact) return { ok: false as const, error: 'not_found' }
+    const evidence = store.listEvidence(data.artifactId)
+    const evaluation = evaluatePolicy({
+      artifact,
+      evidence,
+      tenantId: artifact.tenantId,
+      environment: data.environment || 'development',
+      dataClassification: data.dataClassification || 'public',
+      deploymentBoundary: data.deploymentBoundary || 'local_only',
+      intendedUse: artifact.purpose.slice(0, 160),
+    })
+    return { ok: true as const, evaluation }
+  })
+
+export const postDaemonIngest = createServerFn({ method: 'POST' })
+  .validator((data: DaemonIngestPayload) => data)
+  .handler(async ({ data }) => {
+    return ingestDaemonEvent(data)
   })
