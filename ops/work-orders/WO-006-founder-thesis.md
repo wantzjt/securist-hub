@@ -1,7 +1,7 @@
 ---
 id: WO-006
 title: Founder thesis — category-defining decision infrastructure
-status: in_progress
+status: in_review
 owner: grok
 branch: docs/wo-006-founder-thesis
 depends_on:
