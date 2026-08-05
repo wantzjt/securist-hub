@@ -71,7 +71,11 @@ Enforced in `src/lib/decision-graph/state-machine.ts`.
 
 | Env | Store |
 |-----|--------|
-| Dev (now) | Memory + seed fixtures |
-| Prod | Postgres via migrations + outbox table |
+| Dev / demo (default) | Memory + seed fixtures (`SECURIST_GRAPH_STORE=memory\|seed`) |
+| Prod (after RM-003) | Postgres (`SECURIST_GRAPH_STORE=postgres` + `DATABASE_URL`) via `migrations/001_decision_graph.sql` |
 
-Outbox ensures DB writes and Activity projections cannot drift (`src/lib/decision-graph/outbox.ts`).
+Factory: `src/lib/decision-graph/store.ts`.  
+Postgres seam: `postgres-store.ts` (tenant-scoped R/W; transactional outbox).  
+Outbox ensures durable writes and Activity projections cannot drift.
+
+See `docs/INFRA-AUDIT-POSTGRES.md`.

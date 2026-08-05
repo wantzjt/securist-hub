@@ -25,7 +25,8 @@ export type DaemonIngestPayload = {
 }
 
 export type IngestResult =
-  { ok: true; eventId: string } | { ok: false; error: string; code: string }
+  | { ok: true; eventId: string }
+  | { ok: false; error: string; code: string }
 
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false
@@ -34,8 +35,10 @@ function timingSafeEqual(a: string, b: string): boolean {
   return out === 0
 }
 
-export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
-  const store = getDecisionGraphStore()
+export async function ingestDaemonEvent(
+  payload: DaemonIngestPayload,
+): Promise<IngestResult> {
+  const store = await getDecisionGraphStore()
   const maxSkewMs = 10 * 60 * 1000
   const ts = Date.parse(payload.timestamp)
   if (Number.isNaN(ts)) {
@@ -68,7 +71,7 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
     }
   }
 
-  if (!store.consumeNonce(payload.operatorId, payload.nonce)) {
+  if (!(await store.consumeNonce(payload.operatorId, payload.nonce))) {
     return {
       ok: false,
       code: 'nonce_replay',
@@ -85,7 +88,6 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
     }
   }
 
-  // Redaction guard: reject obvious private paths / secrets
   const blob = JSON.stringify(e)
   if (
     /-----BEGIN |api[_-]?key|password=|ghp_[A-Za-z0-9]|\/Users\/|C:\\\\/i.test(
@@ -99,10 +101,18 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
     }
   }
 
+  if (!String(payload.tenantId || '').trim()) {
+    return {
+      ok: false,
+      code: 'tenant_required',
+      error: 'tenantId required before persist',
+    }
+  }
+
   const eventId = `ing-${contentHash(payload.operatorId + payload.nonce + payload.timestamp)}`
   const activity: ActivityEventV2 = {
     id: eventId,
-    tenantId: payload.tenantId || 'public-demo',
+    tenantId: payload.tenantId,
     source: e.source || 'operator',
     verification: e.verification || 'observed',
     artifactId: e.artifactId,
@@ -114,8 +124,7 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
     isSeed: false,
   }
 
-  // organization-visible only by default — never force public
-  store.appendActivity(activity)
+  await store.appendActivity(activity)
 
   return { ok: true, eventId }
 }

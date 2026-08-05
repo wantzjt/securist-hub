@@ -1,7 +1,7 @@
 ---
 id: WO-001
 title: Agent coordination control plane
-status: in_progress
+status: complete
 owner: grok
 branch: feat/agent-control-plane
 depends_on: []
@@ -40,20 +40,8 @@ verification:
 
 ## Context
 
-Grok, Codex, and humans need a shared, inspectable source of truth for work without management theater. Chat and ad-hoc PR descriptions drift. Public Decision Graph V1 is on `main`; durable store work (PR #2) is **not** merge-ready and must not be mixed into this change.
-
-## Plan
-
-1. Add `docs/ROADMAP.md` (now/next/later) linking launch history.
-2. Add `docs/DECISIONS.md` (append-only template + established decisions).
-3. Add `ops/work-orders/` format + WO-001 + WO-002 (postgres repair, not implement).
-4. Add `docs/AGENT-OPERATIONS.md` role boundaries.
-5. Tighten PR template; add dependency-free `verify:coordination`; wire CI.
+Grok, Codex, and humans need a shared, inspectable source of truth for work.
 
 ## Progress
 
-- 2026-08-05: Work order opened; implementation on `feat/agent-control-plane`.
-
-## Blockers
-
-- None for docs/CI. Human merge remains the completion gate.
+- 2026-08-05: Merged as PR #3 (`de1baee`). Complete.
