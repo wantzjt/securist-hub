@@ -77,18 +77,27 @@ function DaemonPage() {
       </section>
 
       <section className="ops-panel space-y-2 p-4 text-[12px] text-[var(--ftw-muted)]">
-        <div className="ops-label">Operator ingest</div>
+        <div className="ops-label">Operator ingest (local / TARX)</div>
         <p>
-          Local operators may POST share-safe metadata via server function{' '}
-          <span className="font-mono text-white">postDaemonIngest</span>. Optional
-          env <span className="font-mono">SECURIST_DAEMON_SECRET</span> (dev
+          Local operators may POST share-safe metadata via{' '}
+          <span className="font-mono text-white">postDaemonIngest</span> /{' '}
+          <span className="font-mono text-white">submitLocalValidationSummary</span>.
+          Optional <span className="font-mono">SECURIST_DAEMON_SECRET</span> (dev
           only). Nonce + timestamp skew rejection. Never send secrets, private
           paths, or raw source. TARX is optional local runtime—not the public
           brand and never vendored here.
         </p>
+        <div className="ops-label mt-3">Eve (cloud research — propose only)</div>
         <p>
-          Sibling package path (outside this hub when monorepo):{' '}
-          <span className="font-mono">scout-daemon</span> · Decision Graph:{' '}
+          Eve specialists (scout, change analyst, policy explainer, validation
+          planner, contribution planner) submit{' '}
+          <span className="font-mono">CandidateEvidence</span> and proposals
+          through the hub gateway. They never mutate approvals. Humans approve
+          external writes. Specs: <span className="font-mono">docs/EVE-RUNTIME.md</span>
+          · contracts: <span className="font-mono">packages/contracts</span>.
+        </p>
+        <p>
+          Decision Graph:{' '}
           <Link to="/artifacts" className="ops-accent no-underline">
             Artifact Profiles
           </Link>

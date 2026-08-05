@@ -1,0 +1,14 @@
+{
+  "name": "@securist/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Versioned Securist contracts shared by hub, Eve agent runtime, and local operators. Eve proposes; Securist decides; humans approve writes.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./evidence": "./src/evidence.ts",
+    "./proposals": "./src/proposals.ts",
+    "./agents": "./src/agents.ts"
+  },
+  "files": ["src"]
+}

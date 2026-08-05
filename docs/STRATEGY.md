@@ -23,6 +23,10 @@ Not a social timeline, news site, or bulk-forking machine.
 | Code | GitHub |
 | Weights / public models | Hugging Face |
 | Decision why/trust | **Securist Decision Graph** |
+| Cloud research workflows | **Eve** (propose only — see `docs/EVE-RUNTIME.md`) |
+| Local private validation | **TARX / operator** (optional, never vendored) |
+
+**Eve proposes → Securist contracts decide → humans approve external writes.**
 
 ## Activity
 

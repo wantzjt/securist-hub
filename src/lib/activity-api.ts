@@ -15,6 +15,20 @@ import {
   ingestDaemonEvent,
   type DaemonIngestPayload,
 } from './decision-graph'
+import {
+  submitCandidateEvidence,
+  submitValidationPlan,
+  submitContributionProposal,
+  submitValidationSummary,
+  listWorkflowState,
+  runVerticalSliceDemo,
+} from './eve-gateway/gateway'
+import type {
+  CandidateEvidenceV1,
+  ValidationPlanV1,
+  ContributionProposalV1,
+  SignedValidationSummaryV1,
+} from './eve-gateway/types'
 
 function serverToken(): string | undefined {
   return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined
@@ -278,3 +292,32 @@ export const postDaemonIngest = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     return ingestDaemonEvent(data)
   })
+
+/* —— Eve gateway (propose only) —— */
+
+export const submitEveCandidateEvidence = createServerFn({ method: 'POST' })
+  .validator((data: CandidateEvidenceV1) => data)
+  .handler(async ({ data }) => submitCandidateEvidence(data))
+
+export const submitEveValidationPlan = createServerFn({ method: 'POST' })
+  .validator((data: ValidationPlanV1) => data)
+  .handler(async ({ data }) => submitValidationPlan(data))
+
+export const submitEveContributionProposal = createServerFn({ method: 'POST' })
+  .validator((data: ContributionProposalV1) => data)
+  .handler(async ({ data }) => submitContributionProposal(data))
+
+export const submitLocalValidationSummary = createServerFn({ method: 'POST' })
+  .validator((data: SignedValidationSummaryV1) => data)
+  .handler(async ({ data }) => submitValidationSummary(data))
+
+export const getEveWorkflowState = createServerFn({ method: 'GET' }).handler(
+  async () => listWorkflowState(),
+)
+
+/** Deterministic demo of the safe vertical slice (no live Eve process). */
+export const runEveVerticalSliceDemo = createServerFn({ method: 'POST' })
+  .validator((data: { artifactId?: string } | undefined) => data ?? {})
+  .handler(async ({ data }) =>
+    runVerticalSliceDemo(data?.artifactId || 'art-scout-daemon'),
+  )
