@@ -98,6 +98,34 @@ Active execution: [`ops/work-orders/`](../ops/work-orders/).
 
 ---
 
+## NEXT (research / GTM)
+
+### RM-010 — Strategic wedge research (design partners)
+
+| | |
+|--|--|
+| **Owner** | grok (research draft) · human (design-partner interviews) |
+| **Status** | `next` |
+| **Depends on** | RM-001 (coordination); product durability track RM-002/RM-003 is parallel, not blocked by this |
+| **Work order** | [`WO-003`](../ops/work-orders/WO-003-strategic-wedge-research.md) |
+
+**Acceptance**
+
+- [ ] Cited research doc: JTBD, alternatives, wedge, ICP, pricing hypothesis, interview questions
+- [ ] One-page recommendation (customer, artifact class, paid workflow, outcome, non-build list)
+- [ ] No invented market statistics
+- [ ] Human review before treating ICP as decided
+
+**Non-goals**
+
+- Product code, deploy, credentials, Vercel
+- Replacing SYSTEM-MODEL or V1 launch history
+- Closing design-partner deals in this work order
+
+**Artifact:** [`STRATEGIC-WEDGE-RESEARCH.md`](./STRATEGIC-WEDGE-RESEARCH.md)
+
+---
+
 ## LATER
 
 ### RM-004 — Allowlisted change detection
