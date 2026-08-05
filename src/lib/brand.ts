@@ -10,20 +10,23 @@ export const BRAND = {
   domain: 'secur.ist',
   hostname:
     (import.meta.env.VITE_PUBLIC_HOSTNAME as string | undefined) || 'secur.ist',
-  /** CSS uses --ftw-accent; do not print hex in public UI copy. */
-  accentToken: 'var(--ftw-accent)',
+  /** CSS uses --securist-accent; do not print hex in public UI copy. */
+  accentToken: 'var(--securist-accent)',
   email: 'ops@secur.ist',
   securityEmail: 'security@secur.ist',
   legalEmail: 'legal@secur.ist',
   githubOrg:
-    (import.meta.env.VITE_PUBLIC_GITHUB_ORG as string | undefined) || 'securist',
+    (import.meta.env.VITE_PUBLIC_GITHUB_ORG as string | undefined) ||
+    'securist',
   githubUrl:
     (import.meta.env.VITE_PUBLIC_GITHUB_URL as string | undefined) ||
     'https://github.com/securist',
-  hfOrg: (import.meta.env.VITE_PUBLIC_HF_ORG as string | undefined) || 'securist',
+  hfOrg:
+    (import.meta.env.VITE_PUBLIC_HF_ORG as string | undefined) || 'securist',
   hfUrl: 'https://huggingface.co/securist',
   logoPath: '/securist-logo.png',
-  tagline: 'Dual-forge sovereign tooling. Code on GitHub. Weights on Hugging Face.',
+  tagline:
+    'Dual-forge sovereign tooling. Code on GitHub. Weights on Hugging Face.',
   posture:
     'Legal public-source only. Authorized use. MaxMind honesty. HF license respect.',
   doctrine: 'Discover · Build · Field',
@@ -41,11 +44,27 @@ export const GH_PACKAGES = REPOS.map((r) => ({
 }))
 
 export const ACTIVITY_STAGES = [
-  { id: 'discover', label: 'Discover', detail: 'GH Scout + HF Scout (public only)' },
-  { id: 'contribute', label: 'Contribute', detail: 'Patches, datasets, eval notes' },
+  {
+    id: 'discover',
+    label: 'Discover',
+    detail: 'GH Scout + HF Scout (public only)',
+  },
+  {
+    id: 'contribute',
+    label: 'Contribute',
+    detail: 'Patches, datasets, eval notes',
+  },
   { id: 'package', label: 'Package', detail: 'SDKs, bridges, catalog rows' },
-  { id: 'field', label: 'Field', detail: 'Clone repo or pull model to local metal' },
-  { id: 'compound', label: 'Compound', detail: 'Activity merge + offline evidence' },
+  {
+    id: 'field',
+    label: 'Field',
+    detail: 'Clone repo or pull model to local metal',
+  },
+  {
+    id: 'compound',
+    label: 'Compound',
+    detail: 'Activity merge + offline evidence',
+  },
 ] as const
 
 /** @deprecated use ACTIVITY_STAGES */

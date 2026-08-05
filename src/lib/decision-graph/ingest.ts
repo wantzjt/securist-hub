@@ -25,8 +25,7 @@ export type DaemonIngestPayload = {
 }
 
 export type IngestResult =
-  | { ok: true; eventId: string }
-  | { ok: false; error: string; code: string }
+  { ok: true; eventId: string } | { ok: false; error: string; code: string }
 
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false
@@ -62,7 +61,11 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
   }
 
   if (!payload.operatorId || !payload.nonce) {
-    return { ok: false, code: 'missing_fields', error: 'operatorId and nonce required' }
+    return {
+      ok: false,
+      code: 'missing_fields',
+      error: 'operatorId and nonce required',
+    }
   }
 
   if (!store.consumeNonce(payload.operatorId, payload.nonce)) {
@@ -74,7 +77,7 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
   }
 
   const e = payload.event
-  if (!e?.whatHappened || !e.whyItMatters || !e.securistAction) {
+  if (!e.whatHappened || !e.whyItMatters || !e.securistAction) {
     return {
       ok: false,
       code: 'schema',

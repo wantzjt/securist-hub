@@ -15,17 +15,21 @@ import type {
 } from './types'
 
 export type DecisionGraphStore = {
-  getSnapshot(): DecisionGraphSnapshot
-  getArtifact(id: string): Artifact | undefined
-  getProfile(id: string): ArtifactProfileBrief | undefined
-  listArtifacts(): Artifact[]
-  listEvidence(artifactId: string): EvidenceRecord[]
-  listEvaluations(artifactId: string): PolicyEvaluation[]
-  listActivity(filter?: { publicOnly?: boolean }): ActivityEventV2[]
-  appendActivity(event: ActivityEventV2): void
-  appendEvidence(record: EvidenceRecord): void
+  getSnapshot: () => DecisionGraphSnapshot
+  getArtifact: (id: string) => Artifact | undefined
+  getProfile: (id: string) => ArtifactProfileBrief | undefined
+  listArtifacts: () => Artifact[]
+  listEvidence: (artifactId: string) => EvidenceRecord[]
+  listEvaluations: (artifactId: string) => PolicyEvaluation[]
+  listActivity: (filter?: { publicOnly?: boolean }) => ActivityEventV2[]
+  appendActivity: (event: ActivityEventV2) => void
+  appendEvidence: (record: EvidenceRecord) => void
   /** Replay protection for operator ingest */
-  consumeNonce(operatorId: string, nonce: string, maxAgeMs?: number): boolean
+  consumeNonce: (
+    operatorId: string,
+    nonce: string,
+    maxAgeMs?: number,
+  ) => boolean
 }
 
 const COVERAGE_DOMAINS: EvidenceDomain[] = [
@@ -110,9 +114,7 @@ function createMemoryStore(): DecisionGraphStore {
       if (filter?.publicOnly) {
         rows = rows.filter((a) => a.visibility === 'public')
       }
-      return [...rows].sort((a, b) =>
-        b.occurredAt.localeCompare(a.occurredAt),
-      )
+      return [...rows].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt))
     },
     appendActivity: (event) => {
       snap = { ...snap, activity: [event, ...snap.activity] }

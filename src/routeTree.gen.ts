@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as ActivityRouteImport } from './routes/activity'
 import { Route as DaemonRouteImport } from './routes/daemon'
 import { Route as HwihfRouteImport } from './routes/hwihf'
@@ -17,6 +18,7 @@ import { Route as LegalRouteImport } from './routes/legal'
 import { Route as LinksRouteImport } from './routes/links'
 import { Route as ModelsRouteImport } from './routes/models'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as UseCasesRouteImport } from './routes/use-cases'
 import { Route as ArtifactsIndexRouteImport } from './routes/artifacts.index'
@@ -27,6 +29,11 @@ import { Route as ArtifactsArtifactIdEvidenceRouteImport } from './routes/artifa
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivityRoute = ActivityRouteImport.update({
@@ -64,6 +71,11 @@ const SecurityRoute = SecurityRouteImport.update({
   path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
@@ -99,6 +111,7 @@ const ArtifactsArtifactIdEvidenceRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/activity': typeof ActivityRoute
   '/daemon': typeof DaemonRoute
   '/hwihf': typeof HwihfRoute
@@ -106,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/links': typeof LinksRoute
   '/models': typeof ModelsRoute
   '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
   '/artifacts/$artifactId': typeof ArtifactsArtifactIdRouteWithChildren
@@ -115,6 +129,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/activity': typeof ActivityRoute
   '/daemon': typeof DaemonRoute
   '/hwihf': typeof HwihfRoute
@@ -122,6 +137,7 @@ export interface FileRoutesByTo {
   '/links': typeof LinksRoute
   '/models': typeof ModelsRoute
   '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
   '/artifacts/$artifactId': typeof ArtifactsArtifactIdRouteWithChildren
@@ -132,6 +148,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/activity': typeof ActivityRoute
   '/daemon': typeof DaemonRoute
   '/hwihf': typeof HwihfRoute
@@ -139,6 +156,7 @@ export interface FileRoutesById {
   '/links': typeof LinksRoute
   '/models': typeof ModelsRoute
   '/security': typeof SecurityRoute
+  '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
   '/artifacts/$artifactId': typeof ArtifactsArtifactIdRouteWithChildren
@@ -150,6 +168,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/activity'
     | '/daemon'
     | '/hwihf'
@@ -157,6 +176,7 @@ export interface FileRouteTypes {
     | '/links'
     | '/models'
     | '/security'
+    | '/terms'
     | '/tools'
     | '/use-cases'
     | '/artifacts/$artifactId'
@@ -166,6 +186,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/activity'
     | '/daemon'
     | '/hwihf'
@@ -173,6 +194,7 @@ export interface FileRouteTypes {
     | '/links'
     | '/models'
     | '/security'
+    | '/terms'
     | '/tools'
     | '/use-cases'
     | '/artifacts/$artifactId'
@@ -182,6 +204,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/activity'
     | '/daemon'
     | '/hwihf'
@@ -189,6 +212,7 @@ export interface FileRouteTypes {
     | '/links'
     | '/models'
     | '/security'
+    | '/terms'
     | '/tools'
     | '/use-cases'
     | '/artifacts/$artifactId'
@@ -199,6 +223,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   ActivityRoute: typeof ActivityRoute
   DaemonRoute: typeof DaemonRoute
   HwihfRoute: typeof HwihfRoute
@@ -206,6 +231,7 @@ export interface RootRouteChildren {
   LinksRoute: typeof LinksRoute
   ModelsRoute: typeof ModelsRoute
   SecurityRoute: typeof SecurityRoute
+  TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   UseCasesRoute: typeof UseCasesRoute
   ArtifactsArtifactIdRoute: typeof ArtifactsArtifactIdRouteWithChildren
@@ -219,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activity': {
@@ -268,6 +301,13 @@ declare module '@tanstack/react-router' {
       path: '/security'
       fullPath: '/security'
       preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tools': {
@@ -330,6 +370,7 @@ const ArtifactsArtifactIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   ActivityRoute: ActivityRoute,
   DaemonRoute: DaemonRoute,
   HwihfRoute: HwihfRoute,
@@ -337,6 +378,7 @@ const rootRouteChildren: RootRouteChildren = {
   LinksRoute: LinksRoute,
   ModelsRoute: ModelsRoute,
   SecurityRoute: SecurityRoute,
+  TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   UseCasesRoute: UseCasesRoute,
   ArtifactsArtifactIdRoute: ArtifactsArtifactIdRouteWithChildren,
@@ -345,3 +387,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

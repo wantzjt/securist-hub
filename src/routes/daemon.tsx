@@ -36,16 +36,23 @@ function DaemonPage() {
       </header>
 
       <section className="ops-panel overflow-x-auto p-0">
-        <div className="border-b border-[var(--ftw-border)] px-3 py-2 ops-label">
+        <div className="border-b border-[var(--securist-border)] px-3 py-2 ops-label">
           Packages · {data.packages.length}
         </div>
         <table className="w-full min-w-[480px] text-left text-[11px]">
           <tbody>
             {data.packages.map((p) => (
-              <tr key={p.id} className="border-t border-[var(--ftw-border)]">
+              <tr
+                key={p.id}
+                className="border-t border-[var(--securist-border)]"
+              >
                 <td className="px-3 py-2 font-mono text-white">{p.label}</td>
-                <td className="px-3 py-2 text-[var(--ftw-muted)]">{p.opsRole}</td>
-                <td className="px-3 py-2 text-[var(--ftw-muted)]">{p.description}</td>
+                <td className="px-3 py-2 text-[var(--securist-muted)]">
+                  {p.opsRole}
+                </td>
+                <td className="px-3 py-2 text-[var(--securist-muted)]">
+                  {p.description}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -53,11 +60,11 @@ function DaemonPage() {
       </section>
 
       <section className="ops-panel p-0 overflow-hidden">
-        <div className="border-b border-[var(--ftw-border)] px-3 py-2 ops-label">
+        <div className="border-b border-[var(--securist-border)] px-3 py-2 ops-label">
           Org pulse slice · auto
         </div>
-        {(data.pulseSlice || []).length === 0 ? (
-          <p className="px-3 py-3 text-[12px] text-[var(--ftw-muted)]">
+        {data.pulseSlice.length === 0 ? (
+          <p className="px-3 py-3 text-[12px] text-[var(--securist-muted)]">
             No live org events in slice — seed/activity still available on{' '}
             <Link to="/activity" className="ops-accent">
               Activity
@@ -65,7 +72,7 @@ function DaemonPage() {
             .
           </p>
         ) : (
-          <ul className="divide-y divide-[var(--ftw-border)]">
+          <ul className="divide-y divide-[var(--securist-border)]">
             {data.pulseSlice.map((e) => (
               <li key={e.id} className="px-3 py-2 text-[11px]">
                 <span className="ops-accent">{e.source}</span>{' '}
@@ -76,25 +83,30 @@ function DaemonPage() {
         )}
       </section>
 
-      <section className="ops-panel space-y-2 p-4 text-[12px] text-[var(--ftw-muted)]">
+      <section className="ops-panel space-y-2 p-4 text-[12px] text-[var(--securist-muted)]">
         <div className="ops-label">Operator ingest (local / TARX)</div>
         <p>
           Local operators may POST share-safe metadata via{' '}
           <span className="font-mono text-white">postDaemonIngest</span> /{' '}
-          <span className="font-mono text-white">submitLocalValidationSummary</span>.
-          Optional <span className="font-mono">SECURIST_DAEMON_SECRET</span> (dev
-          only). Nonce + timestamp skew rejection. Never send secrets, private
-          paths, or raw source. TARX is optional local runtime—not the public
-          brand and never vendored here.
+          <span className="font-mono text-white">
+            submitLocalValidationSummary
+          </span>
+          . Optional <span className="font-mono">SECURIST_DAEMON_SECRET</span>{' '}
+          (dev only). Nonce + timestamp skew rejection. Never send secrets,
+          private paths, or raw source. TARX is optional local runtime—not the
+          public brand and never vendored here.
         </p>
-        <div className="ops-label mt-3">Eve (cloud research — propose only)</div>
+        <div className="ops-label mt-3">
+          Eve (cloud research — propose only)
+        </div>
         <p>
           Eve specialists (scout, change analyst, policy explainer, validation
           planner, contribution planner) submit{' '}
           <span className="font-mono">CandidateEvidence</span> and proposals
           through the hub gateway. They never mutate approvals. Humans approve
-          external writes. Specs: <span className="font-mono">docs/EVE-RUNTIME.md</span>
-          · contracts: <span className="font-mono">packages/contracts</span>.
+          external writes. Specs:{' '}
+          <span className="font-mono">docs/EVE-RUNTIME.md</span>· contracts:{' '}
+          <span className="font-mono">packages/contracts</span>.
         </p>
         <p>
           Decision Graph:{' '}

@@ -3,7 +3,8 @@
  * Returns honest source cards: live | empty | error | seed
  */
 import { BRAND } from './brand'
-import { SEED_EVENTS, type FlywheelEvent } from './flywheel'
+import { SEED_EVENTS } from './flywheel'
+import type { FlywheelEvent } from './flywheel'
 import { listLedger } from './site-ledger'
 
 export type SourceStatus = 'live' | 'empty' | 'error' | 'seed'
@@ -126,24 +127,28 @@ async function loadGithubPlane(token?: string): Promise<{
     token,
   )
   if (r.ok && Array.isArray(r.data) && r.data.length > 0) {
-    const events: FlywheelEvent[] = (r.data as Array<Record<string, unknown>>).map(
-      (repo, i) => ({
-        id: `gh-repo-${repo.id || i}`,
-        source: 'org' as const,
-        stage: 'package',
-        title: `Repo active: ${repo.name}`,
-        detail: 'Recent push order from org repos API',
-        url: String(repo.html_url || `https://github.com/${org}/${repo.name}`),
-        actor: BRAND.githubOrg,
-        repo: `${org}/${repo.name}`,
-        createdAt: String(repo.pushed_at || new Date().toISOString()),
-      }),
-    )
+    const events: FlywheelEvent[] = (
+      r.data as Array<Record<string, unknown>>
+    ).map((repo, i) => ({
+      id: `gh-repo-${repo.id || i}`,
+      source: 'org' as const,
+      stage: 'package',
+      title: `Repo active: ${repo.name}`,
+      detail: 'Recent push order from org repos API',
+      url: String(repo.html_url || `https://github.com/${org}/${repo.name}`),
+      actor: BRAND.githubOrg,
+      repo: `${org}/${repo.name}`,
+      createdAt: String(repo.pushed_at || new Date().toISOString()),
+    }))
     return { status: 'live', events, detail: `orgs/${org}/repos?sort=pushed` }
   }
 
   if (r.status === 0 || (r.status >= 400 && r.status !== 404)) {
-    return { status: 'error', events: [], detail: `GitHub API status ${r.status}` }
+    return {
+      status: 'error',
+      events: [],
+      detail: `GitHub API status ${r.status}`,
+    }
   }
   return { status: 'empty', events: [], detail: 'No public org events yet' }
 }
@@ -165,7 +170,7 @@ async function loadHfPlane(): Promise<{
     }
   }
   const rows = r.data as Array<Record<string, unknown>>
-  if (!rows?.length) {
+  if (!rows.length) {
     return { status: 'empty', events: [], detail: 'HF search empty' }
   }
   const events: FlywheelEvent[] = rows.slice(0, 8).map((row, i) => {
@@ -229,14 +234,27 @@ export async function getFlywheelPulse(options?: {
       id: 'github',
       label: 'GitHub securist',
       status: gh.status === 'empty' && SEED_EVENTS.length ? 'seed' : gh.status,
-      count: gh.events.length || (gh.status === 'empty' ? SEED_EVENTS.filter((e) => e.source === 'gh_scout' || e.source === 'org' || e.source === 'package').length : 0),
+      count:
+        gh.events.length ||
+        (gh.status === 'empty'
+          ? SEED_EVENTS.filter(
+              (e) =>
+                e.source === 'gh_scout' ||
+                e.source === 'org' ||
+                e.source === 'package',
+            ).length
+          : 0),
       detail: gh.detail,
     },
     {
       id: 'huggingface',
       label: 'Hugging Face',
       status: hf.status === 'empty' ? 'seed' : hf.status,
-      count: hf.events.length || SEED_EVENTS.filter((e) => e.source === 'hf_scout' || e.source === 'model_pull').length,
+      count:
+        hf.events.length ||
+        SEED_EVENTS.filter(
+          (e) => e.source === 'hf_scout' || e.source === 'model_pull',
+        ).length,
       detail: hf.detail,
     },
     {
@@ -260,7 +278,11 @@ export async function getFlywheelPulse(options?: {
     ).length
   }
 
-  const liveBits = [gh.status === 'live', hf.status === 'live', site.status === 'live']
+  const liveBits = [
+    gh.status === 'live',
+    hf.status === 'live',
+    site.status === 'live',
+  ]
   const liveCount = liveBits.filter(Boolean).length
   const mode: FlywheelPulse['mode'] =
     liveCount === 0 ? 'SEED' : liveCount === 3 ? 'LIVE' : 'HYBRID'

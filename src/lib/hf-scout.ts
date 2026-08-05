@@ -3,7 +3,8 @@
  * User-Agent: securist-scout · timeouts · rate-aware · seed fallback.
  */
 
-import { CURATED_HF, HF_QUERY_PACKS, type HfCatalogRow } from './hf-catalog'
+import { CURATED_HF, HF_QUERY_PACKS } from './hf-catalog'
+import type { HfCatalogRow } from './hf-catalog'
 
 const HF_API = 'https://huggingface.co/api'
 const UA = 'Securist-Scout (+https://secur.ist; legal public-source only)'
@@ -73,8 +74,7 @@ export async function searchHfModels(
 }
 
 export async function runHfScout(packId?: string): Promise<HfScoutResult> {
-  const pack =
-    HF_QUERY_PACKS.find((p) => p.id === packId) || HF_QUERY_PACKS[0]
+  const pack = HF_QUERY_PACKS.find((p) => p.id === packId) || HF_QUERY_PACKS[0]
   const hits = await searchHfModels(pack.query, 8)
   const curated = CURATED_HF.filter(
     (r) => r.queryPack === pack.id || !packId,

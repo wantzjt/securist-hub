@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { BRAND } from '#/lib/brand'
+import { DispatchTape } from '#/components/DispatchTape'
 
 type NavItem = { to: string; label: string; exact?: boolean }
 
@@ -7,7 +8,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
   {
     group: 'Discover',
     items: [
-      { to: '/', label: 'Home', exact: true },
+      { to: '/', label: 'Activity', exact: true },
       { to: '/daemon', label: 'Scout' },
       { to: '/models', label: 'Models' },
       { to: '/artifacts', label: 'Profiles' },
@@ -33,16 +34,21 @@ const NAV: { group: string; items: NavItem[] }[] = [
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
-    <div className="ops-shell min-h-screen bg-[var(--ftw-void)] text-[#e8e8ec]">
-      <div className="border-b border-[var(--ftw-border)] bg-black/50">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[var(--ftw-muted)] uppercase sm:px-4">
+    <div className="ops-shell min-h-screen bg-[var(--securist-void)] text-[#e8e8ec]">
+      <div className="border-b border-[var(--securist-border)] bg-black/50">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[var(--securist-muted)] uppercase sm:px-4">
           <span className="ops-accent">INFOSEC</span>
-          <span className="truncate">OSINT · CTI · GEOIP · MODELS · DECISION GRAPH</span>
+          <span className="truncate">
+            OSINT · CTI · GEOIP · MODELS · DECISION GRAPH
+          </span>
         </div>
       </div>
-      <header className="sticky top-0 z-40 border-b border-[var(--ftw-border)] bg-[rgba(5,5,6,0.92)] backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-[var(--securist-border)] bg-[rgba(5,5,6,0.92)] backdrop-blur">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-3 py-2.5 sm:px-4">
-          <Link to="/" className="flex min-w-0 items-center gap-2.5 no-underline">
+          <Link
+            to="/"
+            className="flex min-w-0 items-center gap-2.5 no-underline"
+          >
             <img
               src={BRAND.logoPath}
               alt=""
@@ -66,7 +72,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
                     <Link
                       key={`${g.group}-${item.to}-${item.label}`}
                       to={item.to}
-                      className="rounded-sm px-2 py-1 text-[11px] tracking-[0.1em] text-[var(--ftw-muted)] uppercase no-underline hover:bg-white/5 hover:text-white [&.active]:bg-[var(--ftw-accent-dim)] [&.active]:text-[var(--ftw-accent)]"
+                      className="rounded-sm px-2 py-1 text-[11px] tracking-[0.1em] text-[var(--securist-muted)] uppercase no-underline hover:bg-white/5 hover:text-white [&.active]:bg-[var(--securist-accent-dim)] [&.active]:text-[var(--securist-accent)]"
                       activeOptions={{ exact: item.exact ?? false }}
                     >
                       {item.label}
@@ -79,15 +85,41 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-3 py-6 sm:px-4 sm:py-8">{children}</main>
+      <DispatchTape />
 
-      <footer className="border-t border-[var(--ftw-border)] py-5">
+      <main className="mx-auto max-w-5xl px-3 py-6 sm:px-4 sm:py-8">
+        {children}
+      </main>
+
+      <footer className="border-t border-[var(--securist-border)] py-5">
         <div className="mx-auto flex max-w-5xl flex-col gap-1 px-3 text-[10px] text-[var(--securistel)] sm:flex-row sm:items-center sm:justify-between sm:px-4">
-          <p className="tracking-wide uppercase">
-            {BRAND.productHouse} · {BRAND.productHub} ·{' '}
-            <Link to="/legal" className="ops-accent no-underline">
-              legal
+          <p className="flex flex-wrap gap-x-2 gap-y-1 tracking-wide uppercase">
+            <span>{BRAND.productHouse}</span>
+            <Link to="/about" className="ops-accent no-underline">
+              About
             </Link>
+            <Link to="/security" className="ops-accent no-underline">
+              Security
+            </Link>
+            <Link to="/terms" className="ops-accent no-underline">
+              Terms
+            </Link>
+            <a
+              href={BRAND.githubUrl}
+              className="ops-accent no-underline"
+              rel="noreferrer"
+              target="_blank"
+            >
+              GitHub
+            </a>
+            <a
+              href={BRAND.hfUrl}
+              className="ops-accent no-underline"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Hugging Face
+            </a>
           </p>
           <p className="max-w-md leading-relaxed">{BRAND.posture}</p>
         </div>

@@ -14,8 +14,8 @@ import {
   evaluatePolicy,
   ingestDaemonEvent,
   runE2ELifecycleFixture,
-  type DaemonIngestPayload,
 } from './decision-graph'
+import type { DaemonIngestPayload } from './decision-graph'
 import {
   submitCandidateEvidence,
   submitValidationPlan,
@@ -39,8 +39,9 @@ export const getActivity = createServerFn({ method: 'GET' }).handler(
   async () => {
     const pulse = await getFlywheelPulse({ token: serverToken() })
     const store = getDecisionGraphStore()
-    const decisionActivity = store.listActivity({ publicOnly: true }).map(
-      (a) => ({
+    const decisionActivity = store
+      .listActivity({ publicOnly: true })
+      .map((a) => ({
         id: a.id,
         source: a.isSeed ? 'seed' : a.source,
         stage: a.verification,
@@ -52,8 +53,7 @@ export const getActivity = createServerFn({ method: 'GET' }).handler(
         isSeed: a.isSeed,
         whyItMatters: a.whyItMatters,
         securistAction: a.securistAction,
-      }),
-    )
+      }))
     const flywheelEvents = pulse.events.map((e) => ({
       ...e,
       verification: e.source === 'seed' ? 'seed' : 'observed',
@@ -117,7 +117,7 @@ export const getPulse = createServerFn({ method: 'GET' }).handler(async () => {
 export const getHfScout = createServerFn({ method: 'GET' })
   .validator((data: { packId?: string } | undefined) => data ?? {})
   .handler(async ({ data }) => {
-    return runHfScout(data?.packId)
+    return runHfScout(data.packId)
   })
 
 export const getModelsPage = createServerFn({ method: 'GET' }).handler(
@@ -152,7 +152,12 @@ export const getDaemonPage = createServerFn({ method: 'GET' }).handler(
         doctrine: BRAND.doctrine,
       },
       pulseSlice: pulse.events
-        .filter((e) => e.source === 'org' || e.source === 'gh_scout' || e.source === 'package')
+        .filter(
+          (e) =>
+            e.source === 'org' ||
+            e.source === 'gh_scout' ||
+            e.source === 'package',
+        )
         .slice(0, 12),
       pulseMode: pulse.mode,
     }
@@ -268,7 +273,8 @@ export const runPolicyDemo = createServerFn({ method: 'GET' })
       artifactId: string
       environment?: 'research' | 'development' | 'staging' | 'production'
       dataClassification?: 'public' | 'internal' | 'restricted'
-      deploymentBoundary?: 'local_only' | 'controlled_cloud' | 'external_service'
+      deploymentBoundary?:
+        'local_only' | 'controlled_cloud' | 'external_service'
     }) => data,
   )
   .handler(async ({ data }) => {
@@ -320,7 +326,7 @@ export const getEveWorkflowState = createServerFn({ method: 'GET' }).handler(
 export const runEveVerticalSliceDemo = createServerFn({ method: 'POST' })
   .validator((data: { artifactId?: string } | undefined) => data ?? {})
   .handler(async ({ data }) =>
-    runVerticalSliceDemo(data?.artifactId || 'art-scout-daemon'),
+    runVerticalSliceDemo(data.artifactId || 'art-scout-daemon'),
   )
 
 /** Prove operating contract: artifact→…→review_required→Activity */

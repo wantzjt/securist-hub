@@ -9,6 +9,7 @@ import type {
   EvidenceRecord,
   PolicyEvaluation,
   PolicyVerdict,
+  DecisionStatus,
 } from './types'
 
 export type PolicyInput = {
@@ -80,13 +81,17 @@ export function evaluatePolicy(input: PolicyInput): PolicyEvaluation {
     )
   ) {
     failing.push('disallowed_or_unclear_license')
-    mitigation.push('Confirm license allows intended use or select an alternative.')
+    mitigation.push(
+      'Confirm license allows intended use or select an alternative.',
+    )
   }
 
   // Provenance / source version
   if (!hasAnyEvidence(evidence, 'provenance')) {
     failing.push('missing_source_or_version_digest')
-    mitigation.push('Capture version, tag, commit, or content digest from upstream.')
+    mitigation.push(
+      'Capture version, tag, commit, or content digest from upstream.',
+    )
   }
 
   // Model governance for models
@@ -125,7 +130,9 @@ export function evaluatePolicy(input: PolicyInput): PolicyEvaluation {
     !hasAnyEvidence(evidence, 'security')
   ) {
     failing.push('production_without_security_evidence')
-    mitigation.push('Run or record a security review before production approval.')
+    mitigation.push(
+      'Run or record a security review before production approval.',
+    )
   }
 
   // Stale review
@@ -144,7 +151,9 @@ export function evaluatePolicy(input: PolicyInput): PolicyEvaluation {
     deploymentBoundary !== 'local_only'
   ) {
     failing.push('restricted_data_requires_local_only')
-    mitigation.push('Set deployment boundary to local-only for restricted data.')
+    mitigation.push(
+      'Set deployment boundary to local-only for restricted data.',
+    )
   }
 
   triggers.push(
@@ -214,9 +223,7 @@ function buildExplanation(
   return `Baseline policy requires human review for ${artifact.name}: ${failing.join(', ') || 'insufficient verified evidence'}. Do not treat seed or observed-only facts as approval.`
 }
 
-export function verdictToStatus(
-  verdict: PolicyVerdict,
-): import('./types').DecisionStatus {
+export function verdictToStatus(verdict: PolicyVerdict): DecisionStatus {
   switch (verdict) {
     case 'approve':
       return 'approved'

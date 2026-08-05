@@ -31,15 +31,15 @@ export function PulseStrip({
         {events.map((e) => (
           <li
             key={e.id}
-            className="flex items-start gap-2.5 border border-[var(--ftw-border)] bg-black/30 px-2.5 py-2"
+            className="flex items-start gap-2.5 border border-[var(--securist-border)] bg-black/30 px-2.5 py-2"
           >
-            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--ftw-accent)]" />
+            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--securist-accent)]" />
             <div className="min-w-0 flex-1">
               <div className="text-[13px] leading-snug text-[#e8e8ec] break-words">
                 {e.title}
               </div>
               {e.detail ? (
-                <p className="mt-0.5 text-[11px] text-[var(--ftw-muted)] break-words">
+                <p className="mt-0.5 text-[11px] text-[var(--securist-muted)] break-words">
                   {e.detail}
                 </p>
               ) : null}

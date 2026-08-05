@@ -19,22 +19,21 @@ function ModelsPage() {
 
   // Auto re-scout on pack change (no "Run" CTA)
   useEffect(() => {
-    let cancelled = false
+    const controller = new AbortController()
     ;(async () => {
       if (packId === initial.scout.packId && scout.hits.length) return
       setBusy(true)
       try {
         const res = await getHfScout({ data: { packId } })
-        if (!cancelled) setScout(res)
+        if (!controller.signal.aborted) setScout(res)
       } finally {
-        if (!cancelled) setBusy(false)
+        if (!controller.signal.aborted) setBusy(false)
       }
     })()
     return () => {
-      cancelled = true
+      controller.abort()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packId])
+  }, [initial.scout.packId, packId, scout.hits.length])
 
   const catalog = useMemo(() => {
     const rows = scout.curated.length ? scout.curated : initial.curated
@@ -91,7 +90,7 @@ function ModelsPage() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Filter hits + catalog…"
-        className="w-full border border-[var(--ftw-border)] bg-black/40 px-3 py-2 font-mono text-[12px] text-white outline-none focus:border-[var(--ftw-accent)]"
+        className="w-full border border-[var(--securist-border)] bg-black/40 px-3 py-2 font-mono text-[12px] text-white outline-none focus:border-[var(--securist-accent)]"
         aria-label="Filter models"
       />
 
@@ -100,11 +99,11 @@ function ModelsPage() {
       ) : null}
 
       <section className="ops-panel overflow-x-auto p-0">
-        <div className="border-b border-[var(--ftw-border)] px-3 py-2 ops-label">
+        <div className="border-b border-[var(--securist-border)] px-3 py-2 ops-label">
           Hub hits · {hits.length}
         </div>
         {hits.length === 0 ? (
-          <p className="px-3 py-3 text-[12px] text-[var(--ftw-muted)]">
+          <p className="px-3 py-3 text-[12px] text-[var(--securist-muted)]">
             No live hits — curated catalog below remains authoritative.
           </p>
         ) : (
@@ -113,7 +112,7 @@ function ModelsPage() {
               {hits.map((h) => (
                 <tr
                   key={h.id || h.modelId}
-                  className="border-t border-[var(--ftw-border)]"
+                  className="border-t border-[var(--securist-border)]"
                 >
                   <td className="px-3 py-2">
                     <a
@@ -125,7 +124,7 @@ function ModelsPage() {
                       {h.modelId}
                     </a>
                   </td>
-                  <td className="px-3 py-2 text-[var(--ftw-muted)]">
+                  <td className="px-3 py-2 text-[var(--securist-muted)]">
                     {h.pipeline_tag || '—'}
                   </td>
                   <td className="px-3 py-2 text-[var(--securistel)]">
@@ -147,7 +146,7 @@ function ModelsPage() {
         </div>
       </section>
 
-      <p className="text-[11px] text-[var(--ftw-muted)]">
+      <p className="text-[11px] text-[var(--securist-muted)]">
         TARX field notes · operator cache only ·{' '}
         <Link to="/daemon" className="ops-accent">
           Scout

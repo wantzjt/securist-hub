@@ -17,10 +17,10 @@ function UseCasesPage() {
           <h1 className="text-2xl font-semibold tracking-[0.06em] text-white uppercase">
             Use-cases
           </h1>
-          <p className="max-w-2xl text-sm text-[var(--ftw-muted)]">
-            Dual-forge bridges: every package slug is real under {BRAND.githubOrg}; HF
-            models are public hub artifacts (catalogScope public_hub) until{' '}
-            {BRAND.hfOrg} publishes house weights.
+          <p className="max-w-2xl text-sm text-[var(--securist-muted)]">
+            Dual-forge bridges: every package slug is real under{' '}
+            {BRAND.githubOrg}; HF models are public hub artifacts (catalogScope
+            public_hub) until {BRAND.hfOrg} publishes house weights.
           </p>
         </div>
         <CopyPage
@@ -42,7 +42,9 @@ function UseCasesPage() {
             <h2 className="mt-2 text-sm font-semibold tracking-wide text-white">
               {u.title}
             </h2>
-            <p className="mt-1 text-[12px] text-[var(--ftw-muted)]">{u.summary}</p>
+            <p className="mt-1 text-[12px] text-[var(--securist-muted)]">
+              {u.summary}
+            </p>
             <dl className="mt-3 grid gap-2 text-[11px] sm:grid-cols-2">
               <div>
                 <dt className="ops-label">Packages</dt>
@@ -51,7 +53,7 @@ function UseCasesPage() {
                     <a
                       key={p}
                       href={githubHttps(p)}
-                      className="ops-chip no-underline hover:border-[var(--ftw-accent)]"
+                      className="ops-chip no-underline hover:border-[var(--securist-accent)]"
                       rel="noreferrer"
                       target="_blank"
                     >
@@ -68,7 +70,7 @@ function UseCasesPage() {
                       <a
                         key={m}
                         href={`https://huggingface.co/${m}`}
-                        className="ops-chip no-underline break-all hover:border-[var(--ftw-accent)]"
+                        className="ops-chip no-underline break-all hover:border-[var(--securist-accent)]"
                         rel="noreferrer"
                         target="_blank"
                       >
@@ -88,7 +90,7 @@ function UseCasesPage() {
         ))}
       </div>
 
-      <p className="text-[12px] text-[var(--ftw-muted)]">
+      <p className="text-[12px] text-[var(--securist-muted)]">
         Field models on{' '}
         <Link to="/models" className="ops-accent">
           /models

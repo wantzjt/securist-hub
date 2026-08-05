@@ -1,9 +1,9 @@
 # Contributing to Securist (securist)
 
-UNCLASSIFIED // PUBLIC SOURCE  
 INFOSEC · OSINT · CTI · GEOIP · MODELS
 
 ## Rules
+
 - **Public sources / authorized use only**
 - Tag discoveries with **legal_risk**
 - **Agent drafts, human merges**
@@ -15,14 +15,16 @@ INFOSEC · OSINT · CTI · GEOIP · MODELS
 - HF weights: operator-controlled cache; no illegal rehost
 
 ## Dual-forge
-- **GitHub** (`securist`) — code packages  
-- **Hugging Face** (`securist`) — models/datasets/spaces discovery  
+
+- **GitHub** (`securist`) — code packages
+- **Hugging Face** (`securist`) — models/datasets/spaces discovery
 - Hub: https://secur.ist
 
 ## PR checklist
-- [ ] License / model card reviewed if HF-related  
-- [ ] legal_risk noted  
-- [ ] Smoke proof (route or `npm test`)  
-- [ ] No secrets  
+
+- [ ] License / model card reviewed if HF-related
+- [ ] legal_risk noted
+- [ ] Smoke proof (route or `npm test`)
+- [ ] No secrets
 
 Ops: ops@secur.ist · Security: https://secur.ist/security

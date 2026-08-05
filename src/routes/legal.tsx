@@ -13,23 +13,27 @@ function LegalPage() {
         <h1 className="text-2xl font-semibold tracking-[0.06em] text-white uppercase">
           Legal
         </h1>
-        <p className="text-sm text-[var(--ftw-muted)]">{BRAND.posture}</p>
+        <p className="text-sm text-[var(--securist-muted)]">{BRAND.posture}</p>
       </header>
 
       <section className="ops-panel p-4">
         <h2 className="ops-label">AUP</h2>
-        <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--ftw-muted)]">
+        <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--securist-muted)]">
           <li>Public sources and systems you are authorized to use only</li>
           <li>No unauthorized access, malware, or exploit weaponization</li>
           <li>Respect Hugging Face model card licenses; no illegal rehost</li>
-          <li>MaxMind GeoLite2: city/ASN honesty — no household GeoIP claims</li>
-          <li>TARX: upstream integration only — do not vendor proprietary surfaces</li>
+          <li>
+            MaxMind GeoLite2: city/ASN honesty — no household GeoIP claims
+          </li>
+          <li>
+            TARX: upstream integration only — do not vendor proprietary surfaces
+          </li>
         </ul>
       </section>
 
       <section className="ops-panel p-4">
         <h2 className="ops-label">Contact</h2>
-        <p className="mt-2 text-[12px] text-[var(--ftw-muted)]">
+        <p className="mt-2 text-[12px] text-[var(--securist-muted)]">
           Ops:{' '}
           <a className="ops-accent" href={`mailto:${BRAND.email}`}>
             {BRAND.email}

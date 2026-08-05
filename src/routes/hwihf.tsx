@@ -16,7 +16,7 @@ function HwihfRedirect() {
   }, [])
 
   return (
-    <div className="ops-panel p-6 text-[12px] text-[var(--ftw-muted)]">
+    <div className="ops-panel p-6 text-[12px] text-[var(--securist-muted)]">
       Field proof · ledger tick · redirecting to HF house…
       <br />
       <a className="ops-accent" href={HF}>

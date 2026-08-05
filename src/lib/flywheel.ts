@@ -29,7 +29,7 @@ export type FlywheelEvent = {
 
 export const SEED_EVENTS: FlywheelEvent[] = [
   {
-    id: 'seed-vantage-boot',
+    id: 'seed-securist-boot',
     source: 'seed',
     stage: 'discover',
     title: 'Securist dual-forge hub online',
@@ -53,7 +53,8 @@ export const SEED_EVENTS: FlywheelEvent[] = [
     source: 'hf_scout',
     stage: 'discover',
     title: 'HF Scout: CTI / NER query pack',
-    detail: 'Public hub search via huggingface.co/api · User-Agent securist-scout.',
+    detail:
+      'Public hub search via huggingface.co/api · User-Agent securist-scout.',
     actor: 'hf-model-scout',
     repo: 'securist',
     createdAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
@@ -63,7 +64,8 @@ export const SEED_EVENTS: FlywheelEvent[] = [
     source: 'model_pull',
     stage: 'field',
     title: 'model_pull: BGE small EN offline fielding',
-    detail: 'Operator-controlled cache · license reviewed · no rehost · TARX-local.',
+    detail:
+      'Operator-controlled cache · license reviewed · no rehost · TARX-local.',
     actor: 'field-agent',
     repo: 'BAAI/bge-small-en-v1.5',
     createdAt: new Date(Date.now() - 1000 * 60 * 55).toISOString(),
@@ -170,10 +172,7 @@ function mapOrgEvent(e: GhEvent): FlywheelEvent {
   }
 }
 
-async function fetchOrgEvents(
-  org: string,
-  token?: string,
-): Promise<GhEvent[]> {
+async function fetchOrgEvents(org: string, token?: string): Promise<GhEvent[]> {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
     'User-Agent': 'securist-scout',

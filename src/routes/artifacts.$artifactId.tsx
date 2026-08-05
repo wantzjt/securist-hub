@@ -40,7 +40,10 @@ function ArtifactProfilePage() {
     return (
       <div className="ops-panel p-6">
         <p className="text-sm text-white">Artifact not found.</p>
-        <Link to="/artifacts" className="ops-btn mt-3 inline-block no-underline">
+        <Link
+          to="/artifacts"
+          className="ops-btn mt-3 inline-block no-underline"
+        >
           All profiles
         </Link>
       </div>
@@ -71,13 +74,9 @@ function ArtifactProfilePage() {
           <h1 className="mt-1 text-xl font-semibold tracking-[0.06em] text-white">
             {a.name}
           </h1>
-          <p className="mt-1 text-[11px] text-[var(--ftw-muted)]">
+          <p className="mt-1 text-[11px] text-[var(--securist-muted)]">
             {a.kind} · {a.provider} ·{' '}
-            {a.isSeed ? (
-              <span className="ops-accent">SEED</span>
-            ) : (
-              'tracked'
-            )}
+            {a.isSeed ? <span className="ops-accent">SEED</span> : 'tracked'}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -116,30 +115,32 @@ function ArtifactProfilePage() {
         <dl className="grid gap-2 text-[12px] sm:grid-cols-2">
           <div>
             <dt className="ops-label">Recommended use boundary</dt>
-            <dd className="mt-0.5 text-[var(--ftw-muted)]">
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
               {a.recommendedBoundary}
             </dd>
           </div>
           <div>
             <dt className="ops-label">What changed since approval</dt>
-            <dd className="mt-0.5 text-[var(--ftw-muted)]">
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
               {profile.whatChangedSinceApproval}
             </dd>
           </div>
           <div>
             <dt className="ops-label">Review owner</dt>
-            <dd className="mt-0.5 text-[var(--ftw-muted)]">{a.reviewOwner}</dd>
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
+              {a.reviewOwner}
+            </dd>
           </div>
           <div>
             <dt className="ops-label">Next review</dt>
-            <dd className="mt-0.5 text-[var(--ftw-muted)]">
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
               {a.nextReviewAt || '—'}
             </dd>
           </div>
         </dl>
         <div>
           <div className="ops-label mb-1">Evidence coverage</div>
-          <p className="mb-2 text-[10px] text-[var(--ftw-muted)]">
+          <p className="mb-2 text-[10px] text-[var(--securist-muted)]">
             Coverage chips show presence of domain evidence. Seed evidence does
             not imply compliance or verified production approval.
           </p>
@@ -156,14 +157,18 @@ function ArtifactProfilePage() {
           </div>
         </div>
         {d ? (
-          <div className="grid gap-2 border-t border-[var(--ftw-border)] pt-3 text-[12px] sm:grid-cols-2">
+          <div className="grid gap-2 border-t border-[var(--securist-border)] pt-3 text-[12px] sm:grid-cols-2">
             <div>
               <div className="ops-label">Plain-language risk</div>
-              <p className="mt-0.5 text-[var(--ftw-muted)]">{d.riskPlain}</p>
+              <p className="mt-0.5 text-[var(--securist-muted)]">
+                {d.riskPlain}
+              </p>
             </div>
             <div>
               <div className="ops-label">Securist action</div>
-              <p className="mt-0.5 text-[var(--ftw-muted)]">{d.actionPlain}</p>
+              <p className="mt-0.5 text-[var(--securist-muted)]">
+                {d.actionPlain}
+              </p>
             </div>
           </div>
         ) : null}
@@ -175,7 +180,7 @@ function ArtifactProfilePage() {
         <dl className="grid gap-2 text-[12px] sm:grid-cols-2">
           <div>
             <dt className="ops-label">Canonical source</dt>
-            <dd className="mt-0.5 break-all text-[var(--ftw-muted)]">
+            <dd className="mt-0.5 break-all text-[var(--securist-muted)]">
               <a
                 href={a.canonicalUrl}
                 className="ops-accent no-underline"
@@ -188,20 +193,20 @@ function ArtifactProfilePage() {
           </div>
           <div>
             <dt className="ops-label">Provider / kind</dt>
-            <dd className="mt-0.5 text-[var(--ftw-muted)]">
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
               {a.provider} · {a.kind}
             </dd>
           </div>
         </dl>
 
         {ev ? (
-          <div className="rounded-sm border border-[var(--ftw-border)] p-3">
+          <div className="rounded-sm border border-[var(--securist-border)] p-3">
             <div className="ops-label">
               Policy {ev.policyId} · v{ev.policyVersion} · {ev.verdict}
             </div>
             <p className="mt-1 text-[12px] text-white">{ev.explanation}</p>
             {ev.failingChecks.length > 0 ? (
-              <ul className="mt-2 list-inside list-disc text-[11px] text-[var(--ftw-muted)]">
+              <ul className="mt-2 list-inside list-disc text-[11px] text-[var(--securist-muted)]">
                 {ev.failingChecks.map((c) => (
                   <li key={c}>{c}</li>
                 ))}
@@ -210,7 +215,7 @@ function ArtifactProfilePage() {
             {ev.requiredMitigation.length > 0 ? (
               <div className="mt-2">
                 <div className="ops-label">Required mitigation</div>
-                <ul className="mt-1 list-inside list-disc text-[11px] text-[var(--ftw-muted)]">
+                <ul className="mt-1 list-inside list-disc text-[11px] text-[var(--securist-muted)]">
                   {ev.requiredMitigation.map((m) => (
                     <li key={m}>{m}</li>
                   ))}
@@ -224,7 +229,7 @@ function ArtifactProfilePage() {
           <div className="ops-label mb-1">
             Evidence records · {evidence.length}
           </div>
-          <ul className="divide-y divide-[var(--ftw-border)] rounded-sm border border-[var(--ftw-border)]">
+          <ul className="divide-y divide-[var(--securist-border)] rounded-sm border border-[var(--securist-border)]">
             {evidence.map((e) => (
               <li key={e.id} className="px-3 py-2 text-[11px]">
                 <div className="flex flex-wrap gap-2">
@@ -232,7 +237,9 @@ function ArtifactProfilePage() {
                   <span className="ops-chip">{e.verification}</span>
                   {e.isSeed ? <span className="ops-chip">SEED</span> : null}
                 </div>
-                <p className="mt-1 text-[var(--ftw-muted)]">{e.assertion}</p>
+                <p className="mt-1 text-[var(--securist-muted)]">
+                  {e.assertion}
+                </p>
               </li>
             ))}
           </ul>
@@ -241,7 +248,7 @@ function ArtifactProfilePage() {
         {validations.length > 0 ? (
           <div>
             <div className="ops-label mb-1">Local validation (share-safe)</div>
-            <ul className="space-y-2 text-[11px] text-[var(--ftw-muted)]">
+            <ul className="space-y-2 text-[11px] text-[var(--securist-muted)]">
               {validations.map((v) => (
                 <li key={v.id} className="ops-panel p-2">
                   {v.resultSummary} · {v.runtime} · {v.boundary}
@@ -257,9 +264,14 @@ function ArtifactProfilePage() {
             <div className="ops-label mb-1">Material-change timeline</div>
             <ul className="space-y-2 text-[11px]">
               {changes.map((c) => (
-                <li key={c.id} className="border-l-2 border-[var(--ftw-accent)] pl-2">
+                <li
+                  key={c.id}
+                  className="border-l-2 border-[var(--securist-accent)] pl-2"
+                >
                   <div className="text-white">{c.whatHappened}</div>
-                  <div className="text-[var(--ftw-muted)]">{c.whyItMatters}</div>
+                  <div className="text-[var(--securist-muted)]">
+                    {c.whyItMatters}
+                  </div>
                   <div className="ops-accent">{c.securistAction}</div>
                 </li>
               ))}
@@ -279,7 +291,7 @@ function ArtifactProfilePage() {
           </Link>
         </div>
         {evaluations.length > 1 ? (
-          <p className="text-[10px] text-[var(--ftw-muted)]">
+          <p className="text-[10px] text-[var(--securist-muted)]">
             {evaluations.length} evaluations on record (latest shown).
           </p>
         ) : null}

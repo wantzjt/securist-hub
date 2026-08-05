@@ -34,13 +34,16 @@ function LinksPage() {
           <h1 className="text-2xl font-semibold tracking-[0.06em] text-white uppercase">
             Links
           </h1>
-          <p className="max-w-2xl text-sm text-[var(--ftw-muted)]">
+          <p className="max-w-2xl text-sm text-[var(--securist-muted)]">
             Short links write the site ledger (field stage). Proof token{' '}
             <code className="ops-accent">/hwihf</code> → HF house. Public source
             only.
           </p>
         </div>
-        <CopyPage title="Links" body="Proof: /hwihf → huggingface.co/securist" />
+        <CopyPage
+          title="Links"
+          body="Proof: /hwihf → huggingface.co/securist"
+        />
       </header>
 
       {msg ? (
@@ -53,11 +56,11 @@ function LinksPage() {
           {data.links.map((l) => (
             <li
               key={l.token}
-              className="flex flex-wrap items-center justify-between gap-2 border border-[var(--ftw-border)] bg-black/30 px-3 py-2"
+              className="flex flex-wrap items-center justify-between gap-2 border border-[var(--securist-border)] bg-black/30 px-3 py-2"
             >
               <div className="min-w-0">
                 <div className="font-mono text-sm text-white">/{l.token}</div>
-                <div className="text-[11px] text-[var(--ftw-muted)] break-all">
+                <div className="text-[11px] text-[var(--securist-muted)] break-all">
                   {l.label} · {l.target}
                 </div>
               </div>
@@ -76,7 +79,7 @@ function LinksPage() {
       <section>
         <h2 className="ops-label mb-2">Recent ledger</h2>
         {data.ledger.length === 0 ? (
-          <p className="text-[12px] text-[var(--ftw-muted)]">
+          <p className="text-[12px] text-[var(--securist-muted)]">
             Empty this process — fire a short link or open{' '}
             <Link to="/hwihf" className="ops-accent">
               /hwihf
@@ -84,7 +87,7 @@ function LinksPage() {
             .
           </p>
         ) : (
-          <ul className="space-y-1 text-[11px] text-[var(--ftw-muted)]">
+          <ul className="space-y-1 text-[11px] text-[var(--securist-muted)]">
             {data.ledger.map((e) => (
               <li key={e.id} className="ops-panel px-3 py-2">
                 <span className="ops-accent">{e.kind}</span> {e.path}{' '}
