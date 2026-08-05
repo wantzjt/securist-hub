@@ -58,9 +58,9 @@ function Home() {
           </h1>
           <p className="mt-1 text-[11px] text-[var(--securistel)]">
             Auto-boot · scout warm · activity merge
-            {data.boot?.throttled ? ' · throttled' : ''} · pulse{' '}
+            {data.boot.throttled ? ' · throttled' : ''} · pulse{' '}
             <span className="ops-accent">{data.pulse.mode}</span>
-            {typeof data.boot?.hfHits === 'number'
+            {typeof data.boot.hfHits === 'number'
               ? ` · hf hits ${data.boot.hfHits}`
               : ''}
           </p>
@@ -73,14 +73,20 @@ function Home() {
 
       {/* Source status — not marketing pills */}
       <div className="grid grid-cols-3 gap-2">
-        {(data.pulse.sourceCards || []).map((c) => (
+        {data.pulse.sourceCards.map((c) => (
           <div
             key={c.id}
-            className="border border-[var(--ftw-border)] bg-[var(--ftw-panel)] px-2 py-2"
+            className="border border-[var(--securist-border)] bg-[var(--securist-panel)] px-2 py-2"
           >
             <div className="ops-label truncate">{c.label}</div>
             <div className="mt-1 flex justify-between font-mono text-[12px]">
-              <span className={c.status === 'live' ? 'ops-accent' : 'text-[var(--ftw-muted)]'}>
+              <span
+                className={
+                  c.status === 'live'
+                    ? 'ops-accent'
+                    : 'text-[var(--securist-muted)]'
+                }
+              >
                 {c.status}
               </span>
               <span className="text-white">{c.count}</span>
@@ -95,7 +101,7 @@ function Home() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Filter catalog…"
-          className="min-w-[12rem] flex-1 border border-[var(--ftw-border)] bg-black/40 px-3 py-2 font-mono text-[12px] text-white outline-none focus:border-[var(--ftw-accent)]"
+          className="min-w-[12rem] flex-1 border border-[var(--securist-border)] bg-black/40 px-3 py-2 font-mono text-[12px] text-white outline-none focus:border-[var(--securist-accent)]"
           aria-label="Filter catalog"
         />
         {(['all', 'github', 'huggingface', 'bridge'] as const).map((l) => (
@@ -112,12 +118,12 @@ function Home() {
 
       {/* Packages table */}
       <section className="ops-panel overflow-x-auto p-0">
-        <div className="border-b border-[var(--ftw-border)] px-3 py-2 ops-label">
+        <div className="border-b border-[var(--securist-border)] px-3 py-2 ops-label">
           Packages · {filteredPkgs.length}
         </div>
         <table className="w-full min-w-[560px] text-left text-[11px]">
           <thead>
-            <tr className="border-b border-[var(--ftw-border)] text-[var(--securistel)]">
+            <tr className="border-b border-[var(--securist-border)] text-[var(--securistel)]">
               <th className="px-3 py-2 font-medium">ID</th>
               <th className="px-3 py-2 font-medium">Role</th>
               <th className="px-3 py-2 font-medium">Clone</th>
@@ -125,7 +131,10 @@ function Home() {
           </thead>
           <tbody>
             {filteredPkgs.map((p) => (
-              <tr key={p.id} className="border-t border-[var(--ftw-border)]">
+              <tr
+                key={p.id}
+                className="border-t border-[var(--securist-border)]"
+              >
                 <td className="px-3 py-2">
                   <Link
                     to="/tools"
@@ -134,8 +143,10 @@ function Home() {
                     {p.id}
                   </Link>
                 </td>
-                <td className="px-3 py-2 text-[var(--ftw-muted)]">{p.opsRole}</td>
-                <td className="ops-pre px-3 py-2 text-[10px] text-[var(--ftw-muted)]">
+                <td className="px-3 py-2 text-[var(--securist-muted)]">
+                  {p.opsRole}
+                </td>
+                <td className="ops-pre px-3 py-2 text-[10px] text-[var(--securist-muted)]">
                   {p.clone}
                 </td>
               </tr>
@@ -146,15 +157,18 @@ function Home() {
 
       {/* Models table */}
       <section className="ops-panel overflow-x-auto p-0">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--ftw-border)] px-3 py-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--securist-border)] px-3 py-2">
           <span className="ops-label">Models · {filteredModels.length}</span>
-          <Link to="/models" className="text-[10px] uppercase tracking-wide ops-accent no-underline">
+          <Link
+            to="/models"
+            className="text-[10px] uppercase tracking-wide ops-accent no-underline"
+          >
             open models
           </Link>
         </div>
         <table className="w-full min-w-[520px] text-left text-[11px]">
           <thead>
-            <tr className="border-b border-[var(--ftw-border)] text-[var(--securistel)]">
+            <tr className="border-b border-[var(--securist-border)] text-[var(--securistel)]">
               <th className="px-3 py-2 font-medium">Title</th>
               <th className="px-3 py-2 font-medium">Hub id</th>
               <th className="px-3 py-2 font-medium">Risk</th>
@@ -163,13 +177,20 @@ function Home() {
           </thead>
           <tbody>
             {filteredModels.map((m) => (
-              <tr key={m.id} className="border-t border-[var(--ftw-border)]">
+              <tr
+                key={m.id}
+                className="border-t border-[var(--securist-border)]"
+              >
                 <td className="px-3 py-2 text-white">{m.title}</td>
-                <td className="px-3 py-2 font-mono text-[var(--ftw-muted)] break-all">
+                <td className="px-3 py-2 font-mono text-[var(--securist-muted)] break-all">
                   {m.repoId}
                 </td>
-                <td className="px-3 py-2 text-[var(--ftw-muted)]">{m.legalRisk}</td>
-                <td className="px-3 py-2 text-[var(--securistel)]">{m.catalogScope}</td>
+                <td className="px-3 py-2 text-[var(--securist-muted)]">
+                  {m.legalRisk}
+                </td>
+                <td className="px-3 py-2 text-[var(--securistel)]">
+                  {m.catalogScope}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -178,13 +199,16 @@ function Home() {
 
       {/* Tools / surfaces table */}
       <section className="ops-panel overflow-x-auto p-0">
-        <div className="border-b border-[var(--ftw-border)] px-3 py-2 ops-label">
+        <div className="border-b border-[var(--securist-border)] px-3 py-2 ops-label">
           Surfaces · {filteredTools.length}
         </div>
         <table className="w-full min-w-[480px] text-left text-[11px]">
           <tbody>
             {filteredTools.map((t) => (
-              <tr key={t.id} className="border-t border-[var(--ftw-border)]">
+              <tr
+                key={t.id}
+                className="border-t border-[var(--securist-border)]"
+              >
                 <td className="px-3 py-2">
                   <Link
                     to={t.href.startsWith('/') ? t.href.split('#')[0] : '/'}
@@ -194,8 +218,12 @@ function Home() {
                   </Link>
                 </td>
                 <td className="px-3 py-2 text-[var(--securistel)]">{t.lane}</td>
-                <td className="px-3 py-2 text-[var(--ftw-muted)]">{t.opsRole}</td>
-                <td className="px-3 py-2 text-[var(--ftw-muted)]">{t.summary}</td>
+                <td className="px-3 py-2 text-[var(--securist-muted)]">
+                  {t.opsRole}
+                </td>
+                <td className="px-3 py-2 text-[var(--securist-muted)]">
+                  {t.summary}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -206,7 +234,10 @@ function Home() {
       <section className="ops-panel p-3">
         <div className="mb-2 flex items-center justify-between">
           <span className="ops-label">Activity</span>
-          <Link to="/activity" className="text-[10px] uppercase ops-accent no-underline">
+          <Link
+            to="/activity"
+            className="text-[10px] uppercase ops-accent no-underline"
+          >
             open
           </Link>
         </div>
@@ -214,7 +245,7 @@ function Home() {
           {data.pulse.events.slice(0, 6).map((e) => (
             <li
               key={e.id}
-              className="border border-[var(--ftw-border)] bg-black/20 px-2 py-1.5 text-[11px]"
+              className="border border-[var(--securist-border)] bg-black/20 px-2 py-1.5 text-[11px]"
             >
               <span className="ops-accent">{e.source}</span>{' '}
               <span className="text-white">{e.title}</span>

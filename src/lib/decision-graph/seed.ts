@@ -4,11 +4,7 @@
  */
 import { contentHash } from './hash'
 import { evaluatePolicy } from './policy'
-import type {
-  Artifact,
-  DecisionGraphSnapshot,
-  DecisionStatus,
-} from './types'
+import type { Artifact, DecisionGraphSnapshot, DecisionStatus } from './types'
 
 const TENANT = 'public-demo'
 const now = () => new Date().toISOString()
@@ -103,14 +99,15 @@ export function buildSeedSnapshot(): DecisionGraphSnapshot {
     isSeed: true,
   }))
 
-  const sources = artifacts.map((a) => ({
+  const sources: DecisionGraphSnapshot['sources'] = artifacts.map((a) => ({
     id: `src-${a.id}`,
     artifactId: a.id,
-    sourceType: (a.provider === 'huggingface'
-      ? 'huggingface'
-      : a.provider === 'github'
-        ? 'github'
-        : 'manual') as 'github' | 'huggingface' | 'manual',
+    sourceType:
+      a.provider === 'huggingface'
+        ? 'huggingface'
+        : a.provider === 'github'
+          ? 'github'
+          : 'manual',
     url: a.canonicalUrl,
     lastSnapshotAt: now(),
   }))
@@ -229,12 +226,12 @@ export function buildSeedSnapshot(): DecisionGraphSnapshot {
   }
 
   const decisions = evaluations.map((ev, i) => {
-    const art = artifacts[i]!
+    const art = artifacts[i]
     return {
       id: `dec-${art.id}`,
       tenantId: TENANT,
       artifactId: art.id,
-      status: statusMap[ev.verdict] || ('watching' as DecisionStatus),
+      status: statusMap[ev.verdict],
       summary: ev.explanation,
       riskPlain:
         ev.verdict === 'approve'

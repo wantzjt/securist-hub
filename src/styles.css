@@ -1,13 +1,18 @@
-@import "tailwindcss";
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-600.css';
+@import 'tailwindcss';
 
 :root {
   /* Cold ops accent — never printed as hex in UI copy */
-  --ftw-accent: #38adfa;
-  --ftw-accent-dim: rgba(56, 173, 250, 0.14);
-  --ftw-void: #050506;
-  --ftw-panel: #0a0a0c;
-  --ftw-border: rgba(255, 255, 255, 0.08);
-  --ftw-muted: #8a8a93;
+  --securist-accent: #38adfa;
+  --securist-accent-dim: rgba(56, 173, 250, 0.14);
+  --securist-contract-black: #222222;
+  --securist-void: var(--securist-contract-black);
+  --securist-panel: #191919;
+  --securist-border: rgba(255, 255, 255, 0.08);
+  --securist-muted: #8a8a93;
   --securistel: #6b6b75;
 }
 
@@ -23,30 +28,23 @@ body,
 
 body {
   margin: 0;
-  background: var(--ftw-void);
+  background: var(--securist-void);
   color: #e8e8ec;
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    'Liberation Mono',
-    'Courier New',
-    monospace;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 a {
-  color: var(--ftw-accent);
+  color: var(--securist-accent);
 }
 
 ::selection {
-  background: var(--ftw-accent-dim);
+  background: var(--securist-accent-dim);
 }
 
 /* Ops board utilities */
 .ops-label {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -55,13 +53,13 @@ a {
 }
 
 .ops-panel {
-  border: 1px solid var(--ftw-border);
-  background: var(--ftw-panel);
+  border: 1px solid var(--securist-border);
+  background: var(--securist-panel);
   border-radius: 2px;
 }
 
 .ops-accent {
-  color: var(--ftw-accent);
+  color: var(--securist-accent);
 }
 
 .ops-btn {
@@ -69,9 +67,9 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border: 1px solid var(--ftw-accent);
-  background: var(--ftw-accent-dim);
-  color: var(--ftw-accent);
+  border: 1px solid var(--securist-accent);
+  background: var(--securist-accent-dim);
+  color: var(--securist-accent);
   padding: 0.5rem 0.9rem;
   font-size: 12px;
   letter-spacing: 0.08em;
@@ -79,7 +77,7 @@ a {
   text-decoration: none;
   border-radius: 2px;
   cursor: pointer;
-  font-family: inherit;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 .ops-btn:hover {
@@ -87,9 +85,9 @@ a {
 }
 
 .ops-btn-solid {
-  background: var(--ftw-accent);
+  background: var(--securist-accent);
   color: #050506;
-  border-color: var(--ftw-accent);
+  border-color: var(--securist-accent);
   font-weight: 700;
 }
 
@@ -98,21 +96,22 @@ a {
 }
 
 .ops-chip {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--ftw-border);
+  border: 1px solid var(--securist-border);
   padding: 0.15rem 0.45rem;
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ftw-muted);
+  color: var(--securist-muted);
   border-radius: 2px;
 }
 
 .ops-chip-live {
   border-color: rgba(56, 173, 250, 0.35);
-  color: var(--ftw-accent);
-  background: var(--ftw-accent-dim);
+  color: var(--securist-accent);
+  background: var(--securist-accent-dim);
 }
 
 /* Mobile: prevent horizontal overflow */
@@ -122,6 +121,7 @@ a {
 }
 
 .ops-pre {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;

@@ -19,8 +19,7 @@ import type {
 import { EVE_AGENT_IDS } from './types'
 
 export type GatewayResult<T = unknown> =
-  | { ok: true; data: T }
-  | { ok: false; code: string; error: string }
+  { ok: true; data: T } | { ok: false; code: string; error: string }
 
 const workflow = {
   reviewTasks: [] as ReviewTaskV1[],
@@ -38,15 +37,39 @@ function redactOk(blob: string): boolean {
   )
 }
 
+/** Keep runtime boundaries intact when typed payloads arrive over a network edge. */
+function fieldEquals(
+  input: unknown,
+  field: string,
+  expected: unknown,
+): boolean {
+  return (
+    typeof input === 'object' &&
+    input !== null &&
+    (input as Record<string, unknown>)[field] === expected
+  )
+}
+
 /**
  * Scout / change analyst → candidate evidence (verification = observed at most).
  * Re-runs deterministic policy; may open a review task — never auto-approves.
  */
 export function submitCandidateEvidence(
   candidate: CandidateEvidenceV1,
-): GatewayResult<{ evidenceId: string; reviewTaskId?: string; verdict?: string }> {
-  if (candidate.contractVersion !== '1' || candidate.kind !== 'candidate_evidence') {
-    return { ok: false, code: 'contract', error: 'Invalid candidate evidence contract' }
+): GatewayResult<{
+  evidenceId: string
+  reviewTaskId?: string
+  verdict?: string
+}> {
+  if (
+    !fieldEquals(candidate, 'contractVersion', '1') ||
+    !fieldEquals(candidate, 'kind', 'candidate_evidence')
+  ) {
+    return {
+      ok: false,
+      code: 'contract',
+      error: 'Invalid candidate evidence contract',
+    }
   }
   if (!isEveAgent(candidate.agentId)) {
     return { ok: false, code: 'agent', error: 'Unknown or disallowed agentId' }
@@ -120,7 +143,8 @@ export function submitCandidateEvidence(
       artifactId: candidate.artifactId,
       whatHappened: `Re-review trigger for ${artifact.name}: ${evaluation.verdict}`,
       whyItMatters: evaluation.explanation.slice(0, 400),
-      securistAction: 'Open Artifact Profile and complete evidence before expanding use.',
+      securistAction:
+        'Open Artifact Profile and complete evidence before expanding use.',
       visibility: 'public',
       occurredAt: new Date().toISOString(),
       isSeed: false,
@@ -163,10 +187,13 @@ export function submitCandidateEvidence(
 export function submitValidationPlan(
   plan: ValidationPlanV1,
 ): GatewayResult<{ planId: string }> {
-  if (plan.contractVersion !== '1' || plan.kind !== 'validation_plan') {
+  if (
+    !fieldEquals(plan, 'contractVersion', '1') ||
+    !fieldEquals(plan, 'kind', 'validation_plan')
+  ) {
     return { ok: false, code: 'contract', error: 'Invalid validation plan' }
   }
-  if (plan.executesOnPrivateData !== false) {
+  if (!fieldEquals(plan, 'executesOnPrivateData', false)) {
     return {
       ok: false,
       code: 'boundary',
@@ -174,7 +201,11 @@ export function submitValidationPlan(
     }
   }
   if (!isEveAgent(plan.agentId) || plan.agentId !== 'validation_planner') {
-    return { ok: false, code: 'agent', error: 'Only validation_planner may submit plans' }
+    return {
+      ok: false,
+      code: 'agent',
+      error: 'Only validation_planner may submit plans',
+    }
   }
   if (!redactOk(JSON.stringify(plan))) {
     return { ok: false, code: 'redaction', error: 'Private material rejected' }
@@ -184,17 +215,27 @@ export function submitValidationPlan(
     return { ok: false, code: 'not_found', error: 'Unknown artifactId' }
   }
   workflow.validationPlans.unshift(plan)
-  return { ok: true, data: { planId: `vp-${contentHash(plan.createdAt + plan.artifactId)}` } }
+  return {
+    ok: true,
+    data: { planId: `vp-${contentHash(plan.createdAt + plan.artifactId)}` },
+  }
 }
 
 /** Contribution planner → draft only; never creates PR */
 export function submitContributionProposal(
   proposal: ContributionProposalV1,
 ): GatewayResult<{ proposalId: string }> {
-  if (proposal.contractVersion !== '1' || proposal.kind !== 'contribution_proposal') {
-    return { ok: false, code: 'contract', error: 'Invalid contribution proposal' }
+  if (
+    !fieldEquals(proposal, 'contractVersion', '1') ||
+    !fieldEquals(proposal, 'kind', 'contribution_proposal')
+  ) {
+    return {
+      ok: false,
+      code: 'contract',
+      error: 'Invalid contribution proposal',
+    }
   }
-  if (proposal.requiresHumanApproval !== true) {
+  if (!fieldEquals(proposal, 'requiresHumanApproval', true)) {
     return {
       ok: false,
       code: 'approval',
@@ -202,10 +243,21 @@ export function submitContributionProposal(
     }
   }
   if (proposal.status !== 'draft') {
-    return { ok: false, code: 'status', error: 'Eve may only create draft proposals' }
+    return {
+      ok: false,
+      code: 'status',
+      error: 'Eve may only create draft proposals',
+    }
   }
-  if (!isEveAgent(proposal.agentId) || proposal.agentId !== 'contribution_planner') {
-    return { ok: false, code: 'agent', error: 'Only contribution_planner may submit drafts' }
+  if (
+    !isEveAgent(proposal.agentId) ||
+    proposal.agentId !== 'contribution_planner'
+  ) {
+    return {
+      ok: false,
+      code: 'agent',
+      error: 'Only contribution_planner may submit drafts',
+    }
   }
   if (!redactOk(JSON.stringify(proposal))) {
     return { ok: false, code: 'redaction', error: 'Private material rejected' }
@@ -213,7 +265,9 @@ export function submitContributionProposal(
   workflow.contributionProposals.unshift(proposal)
   return {
     ok: true,
-    data: { proposalId: `cp-${contentHash(proposal.createdAt + proposal.title)}` },
+    data: {
+      proposalId: `cp-${contentHash(proposal.createdAt + proposal.title)}`,
+    },
   }
 }
 
@@ -221,7 +275,10 @@ export function submitContributionProposal(
 export function submitValidationSummary(
   summary: SignedValidationSummaryV1,
 ): GatewayResult<{ runId: string }> {
-  if (summary.contractVersion !== '1' || summary.kind !== 'validation_summary') {
+  if (
+    !fieldEquals(summary, 'contractVersion', '1') ||
+    !fieldEquals(summary, 'kind', 'validation_summary')
+  ) {
     return { ok: false, code: 'contract', error: 'Invalid validation summary' }
   }
   if (!redactOk(JSON.stringify(summary))) {
@@ -241,7 +298,8 @@ export function submitValidationSummary(
     artifactId: summary.artifactId,
     whatHappened: `Local validation summary from ${summary.runtime}`,
     whyItMatters: summary.resultSummary.slice(0, 400),
-    securistAction: 'Human reviews signed summary; may approve contribution next.',
+    securistAction:
+      'Human reviews signed summary; may approve contribution next.',
     visibility: 'organization',
     occurredAt: summary.ranAt,
     isSeed: false,
@@ -261,7 +319,9 @@ export function listWorkflowState() {
  * Demo vertical slice (deterministic, no live Eve process required).
  * Watched change → candidate evidence → policy → review task + test plan.
  */
-export function runVerticalSliceDemo(artifactId = 'art-scout-daemon'): GatewayResult<{
+export function runVerticalSliceDemo(
+  artifactId = 'art-scout-daemon',
+): GatewayResult<{
   stages: string[]
   evidenceId?: string
   reviewTaskId?: string
@@ -298,7 +358,8 @@ export function runVerticalSliceDemo(artifactId = 'art-scout-daemon'): GatewayRe
     tenantId: 'public-demo',
     artifactId: 'art-securebert',
     domain: 'license',
-    assertion: 'unknown license — Scout could not confirm SPDX on public card (demo).',
+    assertion:
+      'unknown license — Scout could not confirm SPDX on public card (demo).',
     sourceLabel: 'hf-public-card',
     observedAt: ts,
     agentId: 'change_analyst',

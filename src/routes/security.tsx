@@ -13,7 +13,7 @@ function SecurityPage() {
         <h1 className="text-2xl font-semibold tracking-[0.06em] text-white uppercase">
           Security
         </h1>
-        <p className="max-w-2xl text-sm text-[var(--ftw-muted)]">
+        <p className="max-w-2xl text-sm text-[var(--securist-muted)]">
           Dual-forge supply chain: GitHub for code, Hugging Face for models /
           datasets / spaces. Legal public-source only.
         </p>
@@ -21,7 +21,7 @@ function SecurityPage() {
 
       <section className="ops-panel p-4">
         <h2 className="ops-label">Reporting</h2>
-        <p className="mt-2 text-[12px] text-[var(--ftw-muted)]">
+        <p className="mt-2 text-[12px] text-[var(--securist-muted)]">
           Email{' '}
           <a className="ops-accent" href={`mailto:${BRAND.securityEmail}`}>
             {BRAND.securityEmail}
@@ -37,16 +37,17 @@ function SecurityPage() {
 
       <section className="ops-panel p-4">
         <h2 className="ops-label">Dual-forge supply chain</h2>
-        <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--ftw-muted)]">
+        <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--securist-muted)]">
           <li>
             <strong className="text-white">GitHub lane:</strong> public org
-            packages only; Scout is rate-limited; legal_risk tags; no private repo
-            access.
+            packages only; Scout is rate-limited; legal_risk tags; no private
+            repo access.
           </li>
           <li>
-            <strong className="text-white">Hugging Face lane:</strong> public hub
-            APIs via User-Agent securist-scout; model card license review required
-            before fielding; operator-controlled cache only — never illegal rehost.
+            <strong className="text-white">Hugging Face lane:</strong> public
+            hub APIs via User-Agent securist-scout; model card license review
+            required before fielding; operator-controlled cache only — never
+            illegal rehost.
           </li>
           <li>
             <strong className="text-white">TARX:</strong> upstream local private
@@ -54,19 +55,19 @@ function SecurityPage() {
             docs; no dark phone-home on weights.
           </li>
           <li>
-            <strong className="text-white">Geo:</strong> MaxMind GeoLite2 honesty —
-            city/ASN class signals only. No household GeoIP claims.
+            <strong className="text-white">Geo:</strong> MaxMind GeoLite2
+            honesty — city/ASN class signals only. No household GeoIP claims.
           </li>
           <li>
-            <strong className="text-white">Telemetry:</strong> implementer package
-            telemetry only. Weights stay offline on operator metal.
+            <strong className="text-white">Telemetry:</strong> implementer
+            package telemetry only. Weights stay offline on operator metal.
           </li>
         </ul>
       </section>
 
       <section className="ops-panel p-4">
         <h2 className="ops-label">License review</h2>
-        <p className="mt-2 text-[12px] text-[var(--ftw-muted)]">
+        <p className="mt-2 text-[12px] text-[var(--securist-muted)]">
           Every HF catalog row and Scout prompt requires license / card review
           before pull. Prefer explicit OSS licenses. When uncertain, legalRisk =
           review and stop.
@@ -75,10 +76,11 @@ function SecurityPage() {
 
       <section className="ops-panel p-4">
         <h2 className="ops-label">Edge + origin controls (live)</h2>
-        <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--ftw-muted)]">
+        <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--securist-muted)]">
           <li>
-            <strong className="text-white">Transport:</strong> HSTS preload-class
-            max-age, HTTPS only, TLS ≥ 1.2 at edge when Cloudflare is in path.
+            <strong className="text-white">Transport:</strong> HSTS
+            preload-class max-age, HTTPS only, TLS ≥ 1.2 at edge when Cloudflare
+            is in path.
           </li>
           <li>
             <strong className="text-white">Browser isolation:</strong> CSP
@@ -87,8 +89,8 @@ function SecurityPage() {
           </li>
           <li>
             <strong className="text-white">Vercel WAF:</strong> deny common
-            exploit probes (wp-admin, .env, .git, phpunit, aws creds); rate-limit
-            aggressive clients; deny empty UA on write methods.
+            exploit probes (wp-admin, .env, .git, phpunit, aws creds);
+            rate-limit aggressive clients; deny empty UA on write methods.
           </li>
           <li>
             <strong className="text-white">Disclosure:</strong>{' '}
@@ -97,24 +99,26 @@ function SecurityPage() {
             </a>
           </li>
           <li>
-            <strong className="text-white">Cloudflare:</strong> nameservers live;
-            Full (strict) SSL, Always HTTPS, Rocket Loader off, security level
-            high — see DEPLOY.md / scripts/cloudflare-secure-securist.sh.
+            <strong className="text-white">Cloudflare:</strong> nameservers
+            live; Full (strict) SSL, Always HTTPS, Rocket Loader off, security
+            level high — see DEPLOY.md / scripts/cloudflare-secure-securist.sh.
           </li>
         </ul>
       </section>
 
       <section className="ops-panel p-4">
         <h2 className="ops-label">Out of scope</h2>
-        <ul className="mt-2 list-disc space-y-1 pl-4 text-[12px] text-[var(--ftw-muted)]">
-          <li>Unauthorized access, credential stuffing, malware distribution</li>
+        <ul className="mt-2 list-disc space-y-1 pl-4 text-[12px] text-[var(--securist-muted)]">
+          <li>
+            Unauthorized access, credential stuffing, malware distribution
+          </li>
           <li>Private multiplayer spy networks</li>
           <li>Consulting marketplace or sales funnels</li>
           <li>Personal contributor marketing on public surfaces</li>
         </ul>
       </section>
 
-      <p className="text-[12px] text-[var(--ftw-muted)]">
+      <p className="text-[12px] text-[var(--securist-muted)]">
         Ethics / AUP:{' '}
         <Link to="/legal" className="ops-accent">
           /legal

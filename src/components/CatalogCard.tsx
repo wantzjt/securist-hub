@@ -23,35 +23,39 @@ export function CatalogCard({ row }: { row: HfCatalogRow }) {
         </a>
       </header>
 
-      <p className="text-[12px] leading-relaxed text-[var(--ftw-muted)]">
+      <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
         {row.summary}
       </p>
 
       <dl className="grid gap-2 text-[11px]">
         <div>
           <dt className="ops-label">Infosec use</dt>
-          <dd className="mt-0.5 text-[var(--ftw-muted)]">{row.infosecUse}</dd>
+          <dd className="mt-0.5 text-[var(--securist-muted)]">
+            {row.infosecUse}
+          </dd>
         </div>
         <div>
           <dt className="ops-label">License</dt>
-          <dd className="mt-0.5 text-[var(--ftw-muted)]">{row.license}</dd>
+          <dd className="mt-0.5 text-[var(--securist-muted)]">{row.license}</dd>
         </div>
         <div>
           <dt className="ops-label">GitHub bridge</dt>
-          <dd className="mt-0.5 text-[var(--ftw-muted)]">{row.githubBridge}</dd>
+          <dd className="mt-0.5 text-[var(--securist-muted)]">
+            {row.githubBridge}
+          </dd>
         </div>
         <div>
           <dt className="ops-label">Scope / packages</dt>
-          <dd className="mt-0.5 text-[var(--ftw-muted)]">
+          <dd className="mt-0.5 text-[var(--securist-muted)]">
             {row.catalogScope}
-            {row.packageSlugs?.length
-              ? ` · ${row.packageSlugs.join(', ')}`
-              : ''}
+            {row.packageSlugs.length ? ` · ${row.packageSlugs.join(', ')}` : ''}
           </dd>
         </div>
         <div>
           <dt className="ops-label">TARX pull</dt>
-          <dd className="ops-pre mt-0.5 text-[var(--ftw-muted)]">{row.tarxPull}</dd>
+          <dd className="ops-pre mt-0.5 text-[var(--securist-muted)]">
+            {row.tarxPull}
+          </dd>
         </div>
         <div>
           <dt className="ops-label">Ops action</dt>
@@ -60,7 +64,7 @@ export function CatalogCard({ row }: { row: HfCatalogRow }) {
         {row.pairings?.length ? (
           <div>
             <dt className="ops-label">Pairings</dt>
-            <dd className="mt-0.5 text-[var(--ftw-muted)]">
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
               {row.pairings.join(' · ')}
             </dd>
           </div>

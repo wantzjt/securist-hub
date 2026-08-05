@@ -19,13 +19,7 @@ const ALLOWED: Record<DecisionStatus, DecisionStatus[]> = {
     'retired',
     'not_reviewed',
   ],
-  conditional: [
-    'approved',
-    'watching',
-    'paused',
-    'review_required',
-    'retired',
-  ],
+  conditional: ['approved', 'watching', 'paused', 'review_required', 'retired'],
   /** alias used in product copy */
   conditionally_approved: [
     'approved',
@@ -53,7 +47,7 @@ export function canTransition(
   to: DecisionStatus,
 ): boolean {
   if (from === to) return true
-  const next = ALLOWED[from] || []
+  const next = ALLOWED[from]
   return next.includes(to)
 }
 

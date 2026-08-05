@@ -2,23 +2,23 @@
 
 **Do not use Hobby / personal / `tarx-75a403e7` for Securist.**
 
-| Item | Value |
-|------|--------|
-| Team slug | **`tarx`** |
-| Team name | **TARX** |
-| Team ID | `team_bfsWCYAbPeMELSnBhOAriqGF` |
-| Project | **`securist-hub`** |
-| Project ID | `prj_VKeQgS5c1ZV2MDDbLEepyPtfSKLb` |
-| Domain | **secur.ist** (+ www) owned by team **tarx** |
-| Git | https://github.com/wantzjt/securist-hub |
+| Item       | Value                                        |
+| ---------- | -------------------------------------------- |
+| Team slug  | **`tarx`**                                   |
+| Team name  | **TARX**                                     |
+| Team ID    | `team_bfsWCYAbPeMELSnBhOAriqGF`              |
+| Project    | **`securist-hub`**                           |
+| Project ID | `prj_VKeQgS5c1ZV2MDDbLEepyPtfSKLb`           |
+| Domain     | **secur.ist** (+ www) owned by team **tarx** |
+| Git        | https://github.com/wantzjt/securist-hub      |
 
 ## Forbidden scopes
 
-| Scope | Why |
-|-------|-----|
-| `tarx-75a403e7` / team name **Hobby** | Old accidental home of `vantage-hub` — do not redeploy Securist here |
-| Personal account | Not used for Securist |
-| Any other team | Unless operator explicitly migrates |
+| Scope                                 | Why                                                  |
+| ------------------------------------- | ---------------------------------------------------- |
+| `tarx-75a403e7` / team name **Hobby** | Legacy deployment home — do not deploy Securist here |
+| Personal account                      | Not used for Securist                                |
+| Any other team                        | Unless operator explicitly migrates                  |
 
 ## CLI rules (always)
 
@@ -55,4 +55,4 @@ If `orgId` is `team_OLBxkrr2xfgpcruoeMn9Plh3` (Hobby), **stop** and re-link to t
 ## Domains
 
 - `secur.ist` lives under **tarx** team domains.
-- Never attach secur.ist to Hobby project `vantage-hub` again.
+- Never attach `secur.ist` to a project outside the TARX team.

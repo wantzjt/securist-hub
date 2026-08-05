@@ -17,7 +17,7 @@ function ToolsPage() {
           <h1 className="text-2xl font-semibold tracking-[0.06em] text-white uppercase">
             Tools
           </h1>
-          <p className="max-w-2xl text-sm text-[var(--ftw-muted)]">
+          <p className="max-w-2xl text-sm text-[var(--securist-muted)]">
             Canonical package list for org{' '}
             <a
               href={BRAND.githubUrl}
@@ -43,7 +43,7 @@ function ToolsPage() {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse text-left text-[12px]">
           <thead>
-            <tr className="border-b border-[var(--ftw-border)] ops-label">
+            <tr className="border-b border-[var(--securist-border)] ops-label">
               <th className="py-2 pr-3 font-medium">Package</th>
               <th className="py-2 pr-3 font-medium">Ops role</th>
               <th className="py-2 pr-3 font-medium">Clone</th>
@@ -52,7 +52,10 @@ function ToolsPage() {
           </thead>
           <tbody>
             {REPOS.map((r) => (
-              <tr key={r.id} className="border-b border-[var(--ftw-border)]">
+              <tr
+                key={r.id}
+                className="border-b border-[var(--securist-border)]"
+              >
                 <td className="py-2 pr-3">
                   <a
                     href={githubHttps(r.id)}
@@ -63,12 +66,17 @@ function ToolsPage() {
                     {r.id}
                   </a>
                 </td>
-                <td className="py-2 pr-3 text-[var(--ftw-muted)]">{r.opsRole}</td>
-                <td className="ops-pre py-2 pr-3 text-[10px] text-[var(--ftw-muted)]">
+                <td className="py-2 pr-3 text-[var(--securist-muted)]">
+                  {r.opsRole}
+                </td>
+                <td className="ops-pre py-2 pr-3 text-[10px] text-[var(--securist-muted)]">
                   {r.clone}
                 </td>
                 <td className="py-2">
-                  <Link to={r.siteHref.split('#')[0]} className="ops-accent text-[11px]">
+                  <Link
+                    to={r.siteHref.split('#')[0]}
+                    className="ops-accent text-[11px]"
+                  >
                     open
                   </Link>
                 </td>
@@ -86,11 +94,17 @@ function ToolsPage() {
               <span className="ops-chip">{r.stage}</span>
             </div>
             <h2 className="font-mono text-sm text-white">{r.id}</h2>
-            <p className="text-[12px] text-[var(--ftw-muted)]">{r.summary}</p>
-            <p className="text-[11px] text-[var(--securistel)]">{r.securityNote}</p>
-            <p className="ops-pre text-[10px] text-[var(--ftw-muted)]">{r.clone}</p>
+            <p className="text-[12px] text-[var(--securist-muted)]">
+              {r.summary}
+            </p>
+            <p className="text-[11px] text-[var(--securistel)]">
+              {r.securityNote}
+            </p>
+            <p className="ops-pre text-[10px] text-[var(--securist-muted)]">
+              {r.clone}
+            </p>
             {r.hfModels?.length ? (
-              <p className="text-[11px] text-[var(--ftw-muted)]">
+              <p className="text-[11px] text-[var(--securist-muted)]">
                 HF bridge:{' '}
                 {r.hfModels.map((m) => (
                   <a
@@ -105,12 +119,15 @@ function ToolsPage() {
                 ))}
               </p>
             ) : null}
-            <AgentPrompt title={`${r.id} agent prompt`} prompt={r.agentPrompt} />
+            <AgentPrompt
+              title={`${r.id} agent prompt`}
+              prompt={r.agentPrompt}
+            />
           </article>
         ))}
       </div>
 
-      <p className="text-[12px] text-[var(--ftw-muted)]">
+      <p className="text-[12px] text-[var(--securist-muted)]">
         Scouts:{' '}
         <Link to="/daemon" className="ops-accent">
           GH Scout

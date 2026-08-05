@@ -18,7 +18,7 @@ export const Route = createRootRoute({
         name: 'description',
         content: `${BRAND.tagline} ${BRAND.posture}`,
       },
-      { name: 'theme-color', content: '#050506' },
+      { name: 'theme-color', content: '#222222' },
       { name: 'robots', content: 'index,follow' },
     ],
     links: [
