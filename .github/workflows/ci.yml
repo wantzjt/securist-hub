@@ -20,7 +20,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          # Match lockfile rebuild target; keep CI and local install in sync
+          node-version: '24'
           cache: npm
 
       - name: Install
