@@ -280,7 +280,7 @@ export async function getFlywheelPulse(options?: {
     fetchedAt: new Date().toISOString(),
     sources,
     events,
-    classification: 'UNCLASSIFIED // PUBLIC SOURCE',
+    classification: 'INFOSEC',
     stack: 'INFOSEC · OSINT · CTI · GEOIP · MODELS',
   }
   cache = { at: now, pulse }
