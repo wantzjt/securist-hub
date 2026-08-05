@@ -1,5 +1,7 @@
 # Decision Graph
 
+> **Foundation gate:** Read `docs/SYSTEM-MODEL.md`, `CANONICAL-CONTRACTS.md`, `SURFACE-CONTRACTS.md`, `DECISION-LIFECYCLE.md`, and `OPERATIONS.md` first. The graph is canonical; every surface is a view.
+
 Securist’s durable product is the **Decision Graph**:
 
 ```

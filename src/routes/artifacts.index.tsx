@@ -10,8 +10,10 @@ export const Route = createFileRoute('/artifacts/')({
 const STATUS_LABEL: Record<string, string> = {
   not_reviewed: 'Not reviewed',
   watching: 'Watching',
-  conditionally_approved: 'Conditionally approved',
+  conditional: 'Conditional',
+  conditionally_approved: 'Conditional',
   approved: 'Approved',
+  review_required: 'Review required',
   paused: 'Paused',
   retired: 'Retired',
 }

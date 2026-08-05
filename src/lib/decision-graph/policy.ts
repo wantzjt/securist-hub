@@ -221,10 +221,11 @@ export function verdictToStatus(
     case 'approve':
       return 'approved'
     case 'conditional':
-      return 'conditionally_approved'
+      return 'conditional'
     case 'deny':
       return 'paused'
     case 'review_required':
+      return 'review_required'
     default:
       return 'watching'
   }

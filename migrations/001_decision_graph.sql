@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS artifact_versions (
   version_label TEXT NOT NULL,
   commit_or_digest TEXT,
   released_at TIMESTAMPTZ,
+  observed_at TIMESTAMPTZ,
   is_seed BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -95,15 +96,33 @@ CREATE TABLE IF NOT EXISTS decisions (
   id TEXT PRIMARY KEY,
   tenant_id TEXT NOT NULL REFERENCES tenants(id),
   artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+  artifact_version_id TEXT,
   status TEXT NOT NULL,
   summary TEXT NOT NULL,
   risk_plain TEXT NOT NULL,
   action_plain TEXT NOT NULL,
   evaluation_id TEXT,
+  evidence_ids JSONB NOT NULL DEFAULT '[]',
+  policy_id TEXT,
+  policy_version TEXT,
+  scope JSONB,
   decided_at TIMESTAMPTZ NOT NULL,
   decided_by TEXT NOT NULL,
   expires_at TIMESTAMPTZ,
   is_seed BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS outbox_events (
+  id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  artifact_id TEXT,
+  event_type TEXT NOT NULL,
+  actor_type TEXT NOT NULL,
+  payload_fingerprint TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  projected BOOLEAN NOT NULL DEFAULT FALSE,
+  dead_letter BOOLEAN NOT NULL DEFAULT FALSE,
+  error_code TEXT
 );
 
 CREATE TABLE IF NOT EXISTS validation_runs (
@@ -143,6 +162,10 @@ CREATE TABLE IF NOT EXISTS change_events (
   securist_action TEXT NOT NULL,
   verification TEXT NOT NULL,
   visibility TEXT NOT NULL,
+  before_fingerprint TEXT,
+  after_fingerprint TEXT,
+  materiality TEXT,
+  re_review_trigger BOOLEAN NOT NULL DEFAULT FALSE,
   occurred_at TIMESTAMPTZ NOT NULL,
   is_seed BOOLEAN NOT NULL DEFAULT FALSE
 );

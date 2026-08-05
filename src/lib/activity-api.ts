@@ -13,6 +13,7 @@ import {
   getDecisionGraphStore,
   evaluatePolicy,
   ingestDaemonEvent,
+  runE2ELifecycleFixture,
   type DaemonIngestPayload,
 } from './decision-graph'
 import {
@@ -321,3 +322,8 @@ export const runEveVerticalSliceDemo = createServerFn({ method: 'POST' })
   .handler(async ({ data }) =>
     runVerticalSliceDemo(data?.artifactId || 'art-scout-daemon'),
   )
+
+/** Prove operating contract: artifact→…→review_required→Activity */
+export const runLifecycleFixture = createServerFn({ method: 'GET' }).handler(
+  async () => runE2ELifecycleFixture(),
+)

@@ -15,8 +15,10 @@ export type ArtifactKind =
 export type DecisionStatus =
   | 'not_reviewed'
   | 'watching'
-  | 'conditionally_approved'
+  | 'conditional'
+  | 'conditionally_approved' // alias of conditional (legacy seed)
   | 'approved'
+  | 'review_required'
   | 'paused'
   | 'retired'
 
@@ -26,6 +28,23 @@ export type VerificationState =
   | 'human_reviewed'
   | 'policy_approved'
   | 'seed'
+
+/** Stable public/private artifact identity (canonical ref). */
+export type ArtifactRef = {
+  id: string
+  kind: ArtifactKind
+  provider: string
+  canonicalUrl: string
+  visibility: 'public' | 'private'
+}
+
+export type DecisionScope = {
+  tenantId: string
+  environment: EnvironmentScope
+  intendedUse: string
+  dataClassification: DataClassification
+  deploymentBoundary: DeploymentBoundary
+}
 
 export type PolicyVerdict =
   | 'approve'
@@ -91,6 +110,8 @@ export type ArtifactVersion = {
   versionLabel: string
   commitOrDigest?: string
   releasedAt?: string
+  /** When this version was first observed by Securist */
+  observedAt?: string
   isSeed: boolean
 }
 
@@ -151,11 +172,17 @@ export type Decision = {
   id: string
   tenantId: TenantId
   artifactId: string
+  /** Approvals bind to one version — never silent inherit */
+  artifactVersionId?: string
   status: DecisionStatus
   summary: string
   riskPlain: string
   actionPlain: string
   evaluationId?: string
+  evidenceIds?: string[]
+  policyId?: string
+  policyVersion?: string
+  scope?: DecisionScope
   decidedAt: string
   decidedBy: string
   expiresAt?: string
@@ -199,6 +226,10 @@ export type ChangeEvent = {
   securistAction: string
   verification: VerificationState
   visibility: 'public' | 'organization' | 'operator'
+  beforeFingerprint?: string
+  afterFingerprint?: string
+  materiality?: string
+  reReviewTrigger?: boolean
   occurredAt: string
   isSeed: boolean
 }

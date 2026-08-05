@@ -67,7 +67,7 @@ export function buildSeedSnapshot(): DecisionGraphSnapshot {
       domains: ['cloud', 'appsec'],
       canonicalUrl: 'https://github.com/Securist-InfoSec/geolite2-bridge',
       provider: 'github',
-      status: 'conditionally_approved',
+      status: 'conditional',
       reviewOwner: 'Geo/platform',
       nextReviewAt: days(60),
       isSeed: true,
@@ -223,8 +223,8 @@ export function buildSeedSnapshot(): DecisionGraphSnapshot {
 
   const statusMap: Record<string, DecisionStatus> = {
     approve: 'approved',
-    conditional: 'conditionally_approved',
-    review_required: 'watching',
+    conditional: 'conditional',
+    review_required: 'review_required',
     deny: 'paused',
   }
 

@@ -10,5 +10,6 @@
 export * from './evidence'
 export * from './proposals'
 export * from './agents'
+export * from './graph'
 
-export const CONTRACTS_VERSION = '0.1.0' as const
+export const CONTRACTS_VERSION = '0.1.1' as const

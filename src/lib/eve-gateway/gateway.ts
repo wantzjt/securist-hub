@@ -6,7 +6,8 @@
 import { contentHash } from '../decision-graph/hash'
 import { evaluatePolicy } from '../decision-graph/policy'
 import { getDecisionGraphStore } from '../decision-graph/store'
-import type { EvidenceRecord, DecisionStatus } from '../decision-graph/types'
+import { applyMaterialTrigger } from '../decision-graph/state-machine'
+import type { EvidenceRecord } from '../decision-graph/types'
 import type {
   CandidateEvidenceV1,
   ContributionProposalV1,
@@ -125,15 +126,27 @@ export function submitCandidateEvidence(
       isSeed: false,
     })
 
-    // Mark artifact watching/paused — never silently approve
-    const status: DecisionStatus =
+    // Never silently leave approved; force review_required on material policy hit
+    const next =
       evaluation.verdict === 'deny'
-        ? 'paused'
-        : evaluation.verdict === 'conditional'
-          ? 'conditionally_approved'
-          : 'watching'
-    artifact.status = status
-    artifact.updatedAt = new Date().toISOString()
+        ? applyMaterialTrigger(
+            artifact.status === 'approved' || artifact.status === 'conditional'
+              ? artifact.status
+              : 'watching',
+          )
+        : applyMaterialTrigger(
+            artifact.status === 'approved' ? 'approved' : artifact.status,
+          )
+    if (next.ok) {
+      artifact.status = next.to
+      artifact.updatedAt = new Date().toISOString()
+    } else if (evaluation.verdict === 'deny') {
+      artifact.status = 'paused'
+      artifact.updatedAt = new Date().toISOString()
+    } else {
+      artifact.status = 'review_required'
+      artifact.updatedAt = new Date().toISOString()
+    }
   }
 
   return {
