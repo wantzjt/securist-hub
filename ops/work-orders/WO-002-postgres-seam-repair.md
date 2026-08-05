@@ -1,7 +1,7 @@
 ---
 id: WO-002
 title: Repair and re-review Postgres Decision Graph seam (PR #2)
-status: in_progress
+status: complete
 owner: grok
 branch: feat/postgres-seam-repair
 depends_on:
@@ -55,3 +55,8 @@ PR #2 sketched a Postgres adapter but was not merge-ready (tenant scope, transac
 ## Progress
 
 - 2026-08-05: Claimed by grok on `feat/postgres-seam-repair`.
+- 2026-08-05: Merged as PR #4 (`2bea5de`). Complete. Production switch is WO-005 / RM-003.
+
+## Blockers
+
+- None for this WO.
