@@ -14,6 +14,7 @@ contracts:
   - docs/STRATEGIC-WEDGE-RESEARCH.md
 acceptance:
   - docs/STRATEGIC-WEDGE-RESEARCH.md published with cited primary sources
+  - Deep-dive competitive map, JTBD forces, design-partner kit, RM-003 checklist linkage
   - First buyer JTBD, alternatives, wedge, ICP, pricing hypothesis, design-partner questions
   - One-page recommendation with first customer, artifact class, paid workflow, outcome, and 12-month non-build list
   - No invented market statistics
@@ -47,8 +48,9 @@ Securist’s compounding asset is the Decision Graph (adopt → validate → gov
 
 ## Progress
 
-- 2026-08-05: Claimed; research draft in progress on `docs/wo-003-strategic-wedge-research`.
+- 2026-08-05: Claimed; research on `docs/wo-003-strategic-wedge-research` (PR #5).
+- 2026-08-05: Deep dive — competitive map, JTBD forces, kit, WO-004/WO-005, roadmap realignment.
 
 ## Blockers
 
-- None for research PR. Design-partner execution and RM-003 provision remain human-owned.
+- None for research PR. Interviews = WO-004 (human). Provision = WO-005 (human).
