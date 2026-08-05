@@ -49,11 +49,24 @@ Do not drop silently.
 Log structured: `eventId`, `tenantId`, `actorType`, `artifactId`, `code`, `durationMs`.  
 Never log secrets or private payloads.
 
+## Decision Graph store mode
+
+| Variable | Values | Notes |
+|----------|--------|--------|
+| `SECURIST_GRAPH_STORE` | `memory` \| `seed` \| `postgres` | Default **memory** (seed snapshot). Local/demo only. |
+| `DATABASE_URL` | Postgres URL | **Required** when mode is `postgres`. Fail-closed if missing. |
+| `SECURIST_DATABASE_URL` | Postgres URL | Optional alias. |
+| `SECURIST_DEFAULT_TENANT_ID` | Tenant id | **Required** when mode is `postgres` (public surfaces omit per-request tenant). Fail-closed: `missing_default_tenant_id`. Writes still need explicit `tenantId`. |
+
+Durable writes (evidence/activity) append **outbox rows in the same transaction**.  
+See `docs/INFRA-AUDIT-POSTGRES.md`. Do **not** provision credentials in-repo.
+
 ## Migrations
 
 - Author SQL under `migrations/`.  
-- Test against clean DB **and** existing snapshot.  
-- Fixtures: `src/lib/decision-graph/fixtures/e2e-lifecycle.ts`.
+- Reuse `001_decision_graph.sql` — no competing shapes.  
+- Fixtures: `src/lib/decision-graph/fixtures/e2e-lifecycle.ts`.  
+- Seam tests: `npm run test:graph`.
 
 ## Vercel scope
 

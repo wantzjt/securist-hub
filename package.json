@@ -11,6 +11,7 @@
     "generate-routes": "tsr generate",
     "build": "vite build",
     "test:lifecycle": "tsx src/lib/decision-graph/fixtures/run-e2e-lifecycle.ts",
+    "test:graph": "tsx src/lib/decision-graph/fixtures/run-store-tests.ts",
     "verify:coordination": "node scripts/verify-coordination.mjs",
     "preview": "vite preview --host 0.0.0.0 --port 8080",
     "typecheck": "tsc --noEmit",
@@ -27,6 +28,7 @@
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-start": "latest",
     "nitro": "3.0.260610-beta",
+    "pg": "^8.22.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.18"
@@ -36,6 +38,7 @@
     "@tanstack/eslint-config": "latest",
     "@tanstack/router-cli": "^1.132.0",
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.20.4",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",

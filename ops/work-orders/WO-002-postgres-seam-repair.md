@@ -1,20 +1,22 @@
 ---
 id: WO-002
 title: Repair and re-review Postgres Decision Graph seam (PR #2)
-status: ready
-owner: unassigned
-branch: ""
+status: in_progress
+owner: grok
+branch: feat/postgres-seam-repair
 depends_on:
   - WO-001
 contracts:
   - migrations/001_decision_graph.sql
   - src/lib/decision-graph/store.ts
   - src/lib/decision-graph/outbox.ts
+  - src/lib/decision-graph/postgres-store.ts
   - docs/SYSTEM-MODEL.md
   - docs/CANONICAL-CONTRACTS.md
   - docs/OPERATIONS.md
+  - docs/INFRA-AUDIT-POSTGRES.md
 acceptance:
-  - PR #2 rebased on current main with no unrelated product churn
+  - Rebased on current main (post WO-001) as feat/postgres-seam-repair
   - Tenant-scoped reads and writes enforced at the store boundary
   - Transactional outbox behavior (graph mutation + outbox atomicity)
   - Bootstrap path clear for local/demo vs postgres mode
@@ -22,12 +24,11 @@ acceptance:
   - Codex re-review recorded; human merge approval
   - Explicit non-claim: no production provision until RM-003 / human ops
 non_goals:
-  - Merging PR #2 before repair criteria pass
   - Provisioning Postgres or setting production DATABASE_URL
   - Deploying durable mode to secur.ist
   - Enabling Eve, remote LLMs, or daemon product flags
   - Competing schema shapes outside migrations/001_decision_graph.sql
-  - Implementing this repair inside the agent-control-plane PR
+  - Changing Decision Graph domain types or state-machine transitions
 verification:
   - npm run lint
   - npm run typecheck
@@ -35,28 +36,22 @@ verification:
   - npm run test:graph
   - npm run build
   - npm run verify:coordination
-  - Codex review notes on tenant scope + transactional outbox
 ---
 
-# WO-002 — Postgres seam repair (PR #2)
+# WO-002 — Postgres seam repair
 
 ## Context
 
-PR #2 (`feat/postgres-decision-graph-store`) introduced a store seam sketch. It is **not merge-ready**. Known follow-ups include tenant-scoped reads/writes, transactional outbox behavior, bootstrap clarity, and lint. Do **not** provision infrastructure or claim production durability until this work order is `complete` and a human approves RM-003.
+PR #2 sketched a Postgres adapter but was not merge-ready (tenant scope, transactional outbox, bootstrap, lint; conflicting with main after V1 + control plane). This work order implements the repair on `feat/postgres-seam-repair` from current `main`.
 
-## Plan (for the future owner — not this PR)
+## Plan
 
-1. Rebase `feat/postgres-decision-graph-store` (or successor branch) onto current `main`.
-2. Fix tenant isolation for all read/write paths; add honest tests (no static-analysis theater).
-3. Make outbox append transactional with durable graph writes.
-4. Document bootstrap; keep memory/seed default until switch is approved.
-5. Open or update PR; Codex review; human merge decision only.
+1. Re-implement seam on main with tenant-scoped R/W.
+2. Transactional outbox for evidence/activity writes.
+3. Clear bootstrap (memory default; postgres fail-closed).
+4. Tests + docs; open PR under Work-Order: WO-002.
+5. Supersede PR #2; no provision/deploy.
 
 ## Progress
 
-- 2026-08-05: Work order filed as `ready`; depends on WO-001. No implementation in control-plane PR.
-
-## Blockers
-
-- Depends on WO-001 merge for coordination process (soft process dep).
-- Human credentials and provision remain blocked until repair acceptance (RM-003).
+- 2026-08-05: Claimed by grok on `feat/postgres-seam-repair`.
