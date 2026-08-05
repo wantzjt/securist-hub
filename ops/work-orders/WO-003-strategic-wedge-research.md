@@ -1,7 +1,7 @@
 ---
 id: WO-003
 title: Strategic wedge research (Decision Graph GTM)
-status: in_progress
+status: in_review
 owner: grok
 branch: docs/wo-003-strategic-wedge-research
 depends_on:
