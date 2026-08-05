@@ -13,3 +13,16 @@ __unconfig*
 todos.json
 .vercel
 .env*
+node_modules/
+.tanstack/
+.vercel/
+.securist/
+screenshots/
+attachments/
+artifacts/
+dist/
+.output/
+.env.*
+*.log
+docs/*.tgz
+docs/securist-hub-source.tgz
