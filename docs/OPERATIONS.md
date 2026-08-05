@@ -44,6 +44,23 @@ Do not drop silently.
 | `SECURIST_FEATURE_AUTO_DRAFT_PR` | **Off by default** — never auto-create PRs without human approval |
 | `SECURIST_DAEMON_SECRET` | Dev-only shared secret |
 
+## Decision Graph store mode
+
+| Variable | Values | Notes |
+|----------|--------|--------|
+| `SECURIST_GRAPH_STORE` | `memory` \| `seed` \| `postgres` | Default **`memory`** (seed snapshot). `memory`/`seed` are **local/demo only**. |
+| `DATABASE_URL` | Postgres URL | **Required** when `SECURIST_GRAPH_STORE=postgres`. Fail-closed if missing. |
+| `SECURIST_DATABASE_URL` | Postgres URL | Optional alias if `DATABASE_URL` unset. |
+
+Production durable path:
+
+1. Provision Postgres (tarx scope).  
+2. Apply `migrations/001_decision_graph.sql`.  
+3. Set `DATABASE_URL` + `SECURIST_GRAPH_STORE=postgres`.  
+
+See `docs/INFRA-AUDIT-POSTGRES.md` for the full Vercel env checklist.  
+Do **not** create credentials in-repo or enable Eve/daemon by flipping store mode.
+
 ## Observability
 
 Log structured: `eventId`, `tenantId`, `actorType`, `artifactId`, `code`, `durationMs`.  
@@ -52,8 +69,10 @@ Never log secrets or private payloads.
 ## Migrations
 
 - Author SQL under `migrations/`.  
+- Reuse `001_decision_graph.sql` — do not invent competing graph shapes.  
 - Test against clean DB **and** existing snapshot.  
-- Fixtures: `src/lib/decision-graph/fixtures/e2e-lifecycle.ts`.
+- Fixtures: `src/lib/decision-graph/fixtures/e2e-lifecycle.ts`.  
+- Seam tests: `npm run test:graph`.
 
 ## Vercel scope
 

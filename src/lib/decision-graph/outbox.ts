@@ -1,31 +1,96 @@
 /**
  * Outbox / event table — durable facts first, Activity projection second.
  * Prevents Activity from drifting into an independent ledger.
+ *
+ * Default: process-memory port (local/demo).
+ * Production: postgres outbox via createPostgresOutbox (migrations/001).
+ *
+ * Sync helpers (appendOutbox, markProjected, …) operate on the memory
+ * backend used by fixtures and seed mode. Prefer getOutbox() for async
+ * production code paths.
  */
-export type OutboxActorType =
-  | 'scout'
-  | 'eve'
-  | 'operator'
-  | 'policy'
-  | 'human'
-  | 'system'
+import type {
+  OutboxActorType,
+  OutboxEvent,
+  OutboxPort,
+} from './outbox-types'
 
-export type OutboxEvent = {
-  id: string
-  tenantId: string
-  artifactId?: string
-  eventType: string
-  actorType: OutboxActorType
-  payloadFingerprint: string
-  createdAt: string
-  /** false until Activity projector consumes */
-  projected: boolean
-  deadLetter?: boolean
-  errorCode?: string
+export type { OutboxActorType, OutboxEvent, OutboxPort }
+
+type MemoryState = {
+  outbox: OutboxEvent[]
+  deadLetter: OutboxEvent[]
 }
 
-const outbox: OutboxEvent[] = []
-const deadLetter: OutboxEvent[] = []
+function createMemoryState(): MemoryState {
+  return { outbox: [], deadLetter: [] }
+}
+
+/** In-memory outbox (seed/demo and unit tests). */
+export function createMemoryOutbox(
+  state: MemoryState = createMemoryState(),
+): OutboxPort {
+  return {
+    async append(event) {
+      const row: OutboxEvent = {
+        ...event,
+        createdAt: event.createdAt || new Date().toISOString(),
+        projected: false,
+      }
+      state.outbox.unshift(row)
+      return row
+    },
+    async markProjected(id: string) {
+      const row = state.outbox.find((e) => e.id === id)
+      if (row) row.projected = true
+    },
+    async sendToDeadLetter(event: OutboxEvent, errorCode: string) {
+      const marked = { ...event, deadLetter: true, errorCode }
+      state.deadLetter.unshift(marked)
+      const idx = state.outbox.findIndex((e) => e.id === event.id)
+      if (idx >= 0) state.outbox[idx] = marked
+    },
+    async list(limit = 100) {
+      return state.outbox.slice(0, limit)
+    },
+    async listDeadLetter(limit = 50) {
+      return state.deadLetter.slice(0, limit)
+    },
+    async pendingProjections(tenantId?: string) {
+      return state.outbox.filter(
+        (e) =>
+          !e.projected &&
+          !e.deadLetter &&
+          (!tenantId || e.tenantId === tenantId),
+      )
+    },
+  }
+}
+
+/** Shared memory state so sync helpers and port stay coherent. */
+let memoryState = createMemoryState()
+let memoryPort: OutboxPort = createMemoryOutbox(memoryState)
+let activeOutbox: OutboxPort = memoryPort
+let usingMemory = true
+
+export function getOutbox(): OutboxPort {
+  return activeOutbox
+}
+
+/** Swap outbox backend (postgres factory or test reset). */
+export function setOutbox(port: OutboxPort): void {
+  activeOutbox = port
+  usingMemory = false
+}
+
+export function resetOutboxForTests(): void {
+  memoryState = createMemoryState()
+  memoryPort = createMemoryOutbox(memoryState)
+  activeOutbox = memoryPort
+  usingMemory = true
+}
+
+/* —— Sync convenience wrappers for fixtures / seed path —— */
 
 export function appendOutbox(
   event: Omit<OutboxEvent, 'projected' | 'createdAt'> & {
@@ -37,30 +102,50 @@ export function appendOutbox(
     createdAt: event.createdAt || new Date().toISOString(),
     projected: false,
   }
-  outbox.unshift(row)
+  if (usingMemory) {
+    memoryState.outbox.unshift(row)
+    return row
+  }
+  void activeOutbox.append(event)
   return row
 }
 
 export function markProjected(id: string): void {
-  const row = outbox.find((e) => e.id === id)
-  if (row) row.projected = true
+  if (usingMemory) {
+    const row = memoryState.outbox.find((e) => e.id === id)
+    if (row) row.projected = true
+    return
+  }
+  void activeOutbox.markProjected(id)
 }
 
 export function sendToDeadLetter(
   event: OutboxEvent,
   errorCode: string,
 ): void {
-  deadLetter.unshift({ ...event, deadLetter: true, errorCode })
+  if (usingMemory) {
+    const marked = { ...event, deadLetter: true, errorCode }
+    memoryState.deadLetter.unshift(marked)
+    const idx = memoryState.outbox.findIndex((e) => e.id === event.id)
+    if (idx >= 0) memoryState.outbox[idx] = marked
+    return
+  }
+  void activeOutbox.sendToDeadLetter(event, errorCode)
 }
 
 export function listOutbox(limit = 100): OutboxEvent[] {
-  return outbox.slice(0, limit)
+  if (usingMemory) return memoryState.outbox.slice(0, limit)
+  return []
 }
 
 export function listDeadLetter(limit = 50): OutboxEvent[] {
-  return deadLetter.slice(0, limit)
+  if (usingMemory) return memoryState.deadLetter.slice(0, limit)
+  return []
 }
 
 export function pendingProjections(): OutboxEvent[] {
-  return outbox.filter((e) => !e.projected && !e.deadLetter)
+  if (usingMemory) {
+    return memoryState.outbox.filter((e) => !e.projected && !e.deadLetter)
+  }
+  return []
 }

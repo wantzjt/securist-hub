@@ -38,22 +38,22 @@ function serverToken(): string | undefined {
 export const getActivity = createServerFn({ method: 'GET' }).handler(
   async () => {
     const pulse = await getFlywheelPulse({ token: serverToken() })
-    const store = getDecisionGraphStore()
-    const decisionActivity = store.listActivity({ publicOnly: true }).map(
-      (a) => ({
-        id: a.id,
-        source: a.isSeed ? 'seed' : a.source,
-        stage: a.verification,
-        title: a.whatHappened,
-        detail: `${a.whyItMatters} · Action: ${a.securistAction}${a.isSeed ? ' · [SEED]' : ''}`,
-        repo: a.artifactId,
-        createdAt: a.occurredAt,
-        verification: a.verification,
-        isSeed: a.isSeed,
-        whyItMatters: a.whyItMatters,
-        securistAction: a.securistAction,
-      }),
-    )
+    const store = await getDecisionGraphStore()
+    const decisionActivity = (
+      await store.listActivity({ publicOnly: true })
+    ).map((a) => ({
+      id: a.id,
+      source: a.isSeed ? 'seed' : a.source,
+      stage: a.verification,
+      title: a.whatHappened,
+      detail: `${a.whyItMatters} · Action: ${a.securistAction}${a.isSeed ? ' · [SEED]' : ''}`,
+      repo: a.artifactId,
+      createdAt: a.occurredAt,
+      verification: a.verification,
+      isSeed: a.isSeed,
+      whyItMatters: a.whyItMatters,
+      securistAction: a.securistAction,
+    }))
     const flywheelEvents = pulse.events.map((e) => ({
       ...e,
       verification: e.source === 'seed' ? 'seed' : 'observed',
@@ -67,22 +67,25 @@ export const getActivity = createServerFn({ method: 'GET' }).handler(
     const events = [...decisionActivity, ...flywheelEvents].sort((a, b) =>
       b.createdAt.localeCompare(a.createdAt),
     )
+    const allActivity = await store.listActivity()
+    const artifacts = await store.listArtifacts()
     const sourceCards = [
       ...pulse.sources,
       {
         id: 'decision_graph',
         label: 'Decision Graph',
         status: 'seed' as const,
-        count: store.listArtifacts().length,
-        detail: 'Artifact profiles · policy · evidence (seed until Postgres)',
+        count: artifacts.length,
+        detail:
+          'Artifact profiles · policy · evidence (seed until Postgres mode)',
       },
       {
         id: 'operator',
         label: 'Operator',
         status: 'seed' as const,
-        count: store
-          .listActivity()
-          .filter((a) => a.source === 'operator' && !a.isSeed).length,
+        count: allActivity.filter(
+          (a) => a.source === 'operator' && !a.isSeed,
+        ).length,
         detail: 'Authenticated ingest only · organization visibility',
       },
     ]
@@ -227,9 +230,9 @@ export const hitShortLink = createServerFn({ method: 'POST' })
 
 export const listArtifactProfiles = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const store = getDecisionGraphStore()
+    const store = await getDecisionGraphStore()
     return {
-      artifacts: store.listArtifacts(),
+      artifacts: await store.listArtifacts(),
       note: 'Seed profiles are explicitly isSeed; never treat as LIVE org telemetry.',
     }
   },
@@ -238,12 +241,12 @@ export const listArtifactProfiles = createServerFn({ method: 'GET' }).handler(
 export const getArtifactProfile = createServerFn({ method: 'GET' })
   .validator((data: { artifactId: string }) => data)
   .handler(async ({ data }) => {
-    const store = getDecisionGraphStore()
-    const profile = store.getProfile(data.artifactId)
+    const store = await getDecisionGraphStore()
+    const profile = await store.getProfile(data.artifactId)
     if (!profile) return { ok: false as const, error: 'not_found' }
-    const evidence = store.listEvidence(data.artifactId)
-    const evaluations = store.listEvaluations(data.artifactId)
-    const snap = store.getSnapshot()
+    const evidence = await store.listEvidence(data.artifactId)
+    const evaluations = await store.listEvaluations(data.artifactId)
+    const snap = await store.getSnapshot()
     const changes = snap.changes.filter((c) => c.artifactId === data.artifactId)
     const validations = snap.validations.filter(
       (v) => v.artifactId === data.artifactId,
@@ -272,10 +275,10 @@ export const runPolicyDemo = createServerFn({ method: 'GET' })
     }) => data,
   )
   .handler(async ({ data }) => {
-    const store = getDecisionGraphStore()
-    const artifact = store.getArtifact(data.artifactId)
+    const store = await getDecisionGraphStore()
+    const artifact = await store.getArtifact(data.artifactId)
     if (!artifact) return { ok: false as const, error: 'not_found' }
-    const evidence = store.listEvidence(data.artifactId)
+    const evidence = await store.listEvidence(data.artifactId)
     const evaluation = evaluatePolicy({
       artifact,
       evidence,

@@ -35,8 +35,10 @@ function timingSafeEqual(a: string, b: string): boolean {
   return out === 0
 }
 
-export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
-  const store = getDecisionGraphStore()
+export async function ingestDaemonEvent(
+  payload: DaemonIngestPayload,
+): Promise<IngestResult> {
+  const store = await getDecisionGraphStore()
   const maxSkewMs = 10 * 60 * 1000
   const ts = Date.parse(payload.timestamp)
   if (Number.isNaN(ts)) {
@@ -65,7 +67,7 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
     return { ok: false, code: 'missing_fields', error: 'operatorId and nonce required' }
   }
 
-  if (!store.consumeNonce(payload.operatorId, payload.nonce)) {
+  if (!(await store.consumeNonce(payload.operatorId, payload.nonce))) {
     return {
       ok: false,
       code: 'nonce_replay',
@@ -96,10 +98,18 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
     }
   }
 
+  if (!payload.tenantId?.trim()) {
+    return {
+      ok: false,
+      code: 'tenant_required',
+      error: 'tenantId required before persist',
+    }
+  }
+
   const eventId = `ing-${contentHash(payload.operatorId + payload.nonce + payload.timestamp)}`
   const activity: ActivityEventV2 = {
     id: eventId,
-    tenantId: payload.tenantId || 'public-demo',
+    tenantId: payload.tenantId,
     source: e.source || 'operator',
     verification: e.verification || 'observed',
     artifactId: e.artifactId,
@@ -112,7 +122,7 @@ export function ingestDaemonEvent(payload: DaemonIngestPayload): IngestResult {
   }
 
   // organization-visible only by default — never force public
-  store.appendActivity(activity)
+  await store.appendActivity(activity)
 
   return { ok: true, eventId }
 }

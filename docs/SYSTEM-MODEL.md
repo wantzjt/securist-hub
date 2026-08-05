@@ -71,7 +71,12 @@ Enforced in `src/lib/decision-graph/state-machine.ts`.
 
 | Env | Store |
 |-----|--------|
-| Dev (now) | Memory + seed fixtures |
-| Prod | Postgres via migrations + outbox table |
+| Dev / demo (default) | Memory + seed fixtures (`SECURIST_GRAPH_STORE=memory\|seed`) — **explicitly non-production** |
+| Prod | Postgres adapter (`SECURIST_GRAPH_STORE=postgres` + `DATABASE_URL`) via `migrations/001_decision_graph.sql` + `outbox_events` |
 
-Outbox ensures DB writes and Activity projections cannot drift (`src/lib/decision-graph/outbox.ts`).
+Factory: `src/lib/decision-graph/store.ts`.  
+Postgres seam: `postgres-store.ts` / `postgres-outbox.ts`.  
+Config validation fails closed if postgres mode lacks a connection string.
+
+Outbox ensures DB writes and Activity projections cannot drift (`src/lib/decision-graph/outbox.ts`).  
+Full env checklist: `docs/INFRA-AUDIT-POSTGRES.md`.

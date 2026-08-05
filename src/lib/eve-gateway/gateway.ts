@@ -42,9 +42,11 @@ function redactOk(blob: string): boolean {
  * Scout / change analyst → candidate evidence (verification = observed at most).
  * Re-runs deterministic policy; may open a review task — never auto-approves.
  */
-export function submitCandidateEvidence(
+export async function submitCandidateEvidence(
   candidate: CandidateEvidenceV1,
-): GatewayResult<{ evidenceId: string; reviewTaskId?: string; verdict?: string }> {
+): Promise<
+  GatewayResult<{ evidenceId: string; reviewTaskId?: string; verdict?: string }>
+> {
   if (candidate.contractVersion !== '1' || candidate.kind !== 'candidate_evidence') {
     return { ok: false, code: 'contract', error: 'Invalid candidate evidence contract' }
   }
@@ -54,9 +56,15 @@ export function submitCandidateEvidence(
   if (!redactOk(JSON.stringify(candidate))) {
     return { ok: false, code: 'redaction', error: 'Private material rejected' }
   }
+  if (!candidate.tenantId?.trim()) {
+    return { ok: false, code: 'tenant_required', error: 'tenantId required before persist' }
+  }
 
-  const store = getDecisionGraphStore()
-  const artifact = store.getArtifact(candidate.artifactId)
+  const store = await getDecisionGraphStore()
+  const artifact = await store.getArtifact(
+    candidate.artifactId,
+    candidate.tenantId,
+  )
   if (!artifact) {
     return { ok: false, code: 'not_found', error: 'Unknown artifactId' }
   }
@@ -75,9 +83,12 @@ export function submitCandidateEvidence(
     contentHash: candidate.contentHash || contentHash(candidate.assertion),
     isSeed: false,
   }
-  store.appendEvidence(record)
+  await store.appendEvidence(record)
 
-  const evidence = store.listEvidence(candidate.artifactId)
+  const evidence = await store.listEvidence(
+    candidate.artifactId,
+    candidate.tenantId,
+  )
   const evaluation = evaluatePolicy({
     artifact,
     evidence,
@@ -112,7 +123,7 @@ export function submitCandidateEvidence(
     workflow.reviewTasks.unshift(task)
 
     // Surface on public Activity as observed policy signal (not LIVE fake)
-    store.appendActivity({
+    await store.appendActivity({
       id: `act-${reviewTaskId}`,
       tenantId: candidate.tenantId,
       source: 'policy',
@@ -127,6 +138,7 @@ export function submitCandidateEvidence(
     })
 
     // Never silently leave approved; force review_required on material policy hit
+    // (in-memory mutation only; durable decision writes are human-gated)
     const next =
       evaluation.verdict === 'deny'
         ? applyMaterialTrigger(
@@ -160,9 +172,9 @@ export function submitCandidateEvidence(
 }
 
 /** Policy explainer / validation planner → store proposal only */
-export function submitValidationPlan(
+export async function submitValidationPlan(
   plan: ValidationPlanV1,
-): GatewayResult<{ planId: string }> {
+): Promise<GatewayResult<{ planId: string }>> {
   if (plan.contractVersion !== '1' || plan.kind !== 'validation_plan') {
     return { ok: false, code: 'contract', error: 'Invalid validation plan' }
   }
@@ -179,8 +191,8 @@ export function submitValidationPlan(
   if (!redactOk(JSON.stringify(plan))) {
     return { ok: false, code: 'redaction', error: 'Private material rejected' }
   }
-  const store = getDecisionGraphStore()
-  if (!store.getArtifact(plan.artifactId)) {
+  const store = await getDecisionGraphStore()
+  if (!(await store.getArtifact(plan.artifactId, plan.tenantId))) {
     return { ok: false, code: 'not_found', error: 'Unknown artifactId' }
   }
   workflow.validationPlans.unshift(plan)
@@ -218,22 +230,25 @@ export function submitContributionProposal(
 }
 
 /** TARX / local operator → signed validation summary (minimized) */
-export function submitValidationSummary(
+export async function submitValidationSummary(
   summary: SignedValidationSummaryV1,
-): GatewayResult<{ runId: string }> {
+): Promise<GatewayResult<{ runId: string }>> {
   if (summary.contractVersion !== '1' || summary.kind !== 'validation_summary') {
     return { ok: false, code: 'contract', error: 'Invalid validation summary' }
   }
   if (!redactOk(JSON.stringify(summary))) {
     return { ok: false, code: 'redaction', error: 'Private material rejected' }
   }
-  const store = getDecisionGraphStore()
-  if (!store.getArtifact(summary.artifactId)) {
+  if (!summary.tenantId?.trim()) {
+    return { ok: false, code: 'tenant_required', error: 'tenantId required before persist' }
+  }
+  const store = await getDecisionGraphStore()
+  if (!(await store.getArtifact(summary.artifactId, summary.tenantId))) {
     return { ok: false, code: 'not_found', error: 'Unknown artifactId' }
   }
   const runId = `val-${contentHash(summary.operatorId + summary.ranAt)}`
-  // Store as organization activity + validation run via evidence path
-  store.appendActivity({
+  // Store as organization activity projection (not source ledger)
+  await store.appendActivity({
     id: `act-${runId}`,
     tenantId: summary.tenantId,
     source: 'operator',
@@ -261,17 +276,21 @@ export function listWorkflowState() {
  * Demo vertical slice (deterministic, no live Eve process required).
  * Watched change → candidate evidence → policy → review task + test plan.
  */
-export function runVerticalSliceDemo(artifactId = 'art-scout-daemon'): GatewayResult<{
-  stages: string[]
-  evidenceId?: string
-  reviewTaskId?: string
-  planId?: string
-}> {
+export async function runVerticalSliceDemo(
+  artifactId = 'art-scout-daemon',
+): Promise<
+  GatewayResult<{
+    stages: string[]
+    evidenceId?: string
+    reviewTaskId?: string
+    planId?: string
+  }>
+> {
   const stages: string[] = []
   const ts = new Date().toISOString()
 
   stages.push('watched_artifact_changed')
-  const ev = submitCandidateEvidence({
+  const ev = await submitCandidateEvidence({
     contractVersion: '1',
     kind: 'candidate_evidence',
     tenantId: 'public-demo',
@@ -292,7 +311,7 @@ export function runVerticalSliceDemo(artifactId = 'art-scout-daemon'): GatewayRe
   if (ev.data.reviewTaskId) stages.push('profile_review_required')
 
   // Force a material gap for explainer demo: submit incomplete license observation
-  const gap = submitCandidateEvidence({
+  const gap = await submitCandidateEvidence({
     contractVersion: '1',
     kind: 'candidate_evidence',
     tenantId: 'public-demo',
@@ -306,7 +325,7 @@ export function runVerticalSliceDemo(artifactId = 'art-scout-daemon'): GatewayRe
   })
   stages.push('eve_explanation_and_test_plan')
 
-  const plan = submitValidationPlan({
+  const plan = await submitValidationPlan({
     contractVersion: '1',
     kind: 'validation_plan',
     tenantId: 'public-demo',
