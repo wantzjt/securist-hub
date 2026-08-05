@@ -61,13 +61,34 @@ function testConfigValidation() {
   assert('postgres without URL throws', threw)
   assert('error code missing_database_url', code === 'missing_database_url')
 
+  threw = false
+  code = ''
+  try {
+    const noTenantEnv: NodeJS.ProcessEnv = {
+      SECURIST_GRAPH_STORE: 'postgres',
+      DATABASE_URL: 'postgres://user:pass@localhost:5432/securist',
+    }
+    resolveDecisionGraphConfig(noTenantEnv)
+  } catch (e) {
+    threw = true
+    if (e instanceof DecisionGraphConfigError) code = e.code
+  }
+  assert('postgres without default tenant throws', threw)
+  assert(
+    'error code missing_default_tenant_id',
+    code === 'missing_default_tenant_id',
+  )
+
   const pgOkEnv: NodeJS.ProcessEnv = {
     SECURIST_GRAPH_STORE: 'postgres',
     DATABASE_URL: 'postgres://user:pass@localhost:5432/securist',
     SECURIST_DEFAULT_TENANT_ID: 'public-demo',
   }
   const pg = resolveDecisionGraphConfig(pgOkEnv)
-  assert('postgres with DATABASE_URL ok', pg.mode === 'postgres' && !pg.isSeedMode)
+  assert(
+    'postgres fully configured ok',
+    pg.mode === 'postgres' && !pg.isSeedMode,
+  )
   assert('defaultTenantId captured', pg.defaultTenantId === 'public-demo')
 }
 

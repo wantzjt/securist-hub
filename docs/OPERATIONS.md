@@ -56,7 +56,7 @@ Never log secrets or private payloads.
 | `SECURIST_GRAPH_STORE` | `memory` \| `seed` \| `postgres` | Default **memory** (seed snapshot). Local/demo only. |
 | `DATABASE_URL` | Postgres URL | **Required** when mode is `postgres`. Fail-closed if missing. |
 | `SECURIST_DATABASE_URL` | Postgres URL | Optional alias. |
-| `SECURIST_DEFAULT_TENANT_ID` | Tenant id | Optional default for Postgres **reads** only. Writes always need explicit `tenantId`. |
+| `SECURIST_DEFAULT_TENANT_ID` | Tenant id | **Required** when mode is `postgres` (public surfaces omit per-request tenant). Fail-closed: `missing_default_tenant_id`. Writes still need explicit `tenantId`. |
 
 Durable writes (evidence/activity) append **outbox rows in the same transaction**.  
 See `docs/INFRA-AUDIT-POSTGRES.md`. Do **not** provision credentials in-repo.

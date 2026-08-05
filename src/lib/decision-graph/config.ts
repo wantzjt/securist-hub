@@ -5,8 +5,9 @@
  * - memory | seed — process-local seed snapshot (local/demo only; always isSeed-labeled)
  * - postgres      — durable facts via migrations/001_decision_graph.sql
  *
- * Production path: set SECURIST_GRAPH_STORE=postgres and DATABASE_URL (or
- * SECURIST_DATABASE_URL). Missing connection string fails loudly.
+ * Production path: SECURIST_GRAPH_STORE=postgres + DATABASE_URL (or
+ * SECURIST_DATABASE_URL) + SECURIST_DEFAULT_TENANT_ID. Missing connection
+ * string or default tenant fails at config resolve (before serving requests).
  */
 
 export type GraphStoreMode = 'memory' | 'seed' | 'postgres'
@@ -18,7 +19,8 @@ export type DecisionGraphConfig = {
   /** Explicit demo/seed labeling for ops surfaces */
   isSeedMode: boolean
   /**
-   * Optional default tenant for Postgres read paths when callers omit tenantId.
+   * Default tenant for Postgres read paths when callers omit tenantId.
+   * **Required** in postgres mode (current public surfaces do not pass tenant).
    * From SECURIST_DEFAULT_TENANT_ID. Writes still require explicit tenantId.
    */
   defaultTenantId?: string
@@ -74,6 +76,20 @@ export function resolveDecisionGraphConfig(
         'Run migrations/001_decision_graph.sql before switching production.',
         'Do not use memory/seed modes in production durable path.',
         'Bootstrap: leave SECURIST_GRAPH_STORE unset (memory/seed) for local demo.',
+      ].join(' '),
+    )
+  }
+
+  // Public server functions read without an explicit tenant; require a default
+  // at startup so requests do not fail mid-flight with tenant_scope.
+  if (!defaultTenantId) {
+    throw new DecisionGraphConfigError(
+      'missing_default_tenant_id',
+      [
+        'SECURIST_GRAPH_STORE=postgres requires SECURIST_DEFAULT_TENANT_ID.',
+        'Current public Securist surfaces call the store without a per-request tenant.',
+        'Set SECURIST_DEFAULT_TENANT_ID (e.g. public-demo) before serving requests.',
+        'Writes still require an explicit tenantId on each record/event.',
       ].join(' '),
     )
   }

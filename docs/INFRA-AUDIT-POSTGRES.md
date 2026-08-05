@@ -12,10 +12,10 @@
 | Canonical schema | `migrations/001_decision_graph.sql` only |
 | Memory/seed store | **Still the default** (local/demo) |
 | Postgres adapter | `postgres-store.ts` + transactional outbox |
-| Tenant-scoped reads | Required tenantId or `SECURIST_DEFAULT_TENANT_ID` |
+| Tenant-scoped reads | Explicit `tenantId` or required default (below) |
 | Tenant-scoped writes | Required `tenantId`; parent artifact same-tenant check |
 | Outbox | Same transaction as evidence/activity writes |
-| Config fail-closed | `postgres` without URL → `missing_database_url` |
+| Config fail-closed | `postgres` without URL → `missing_database_url`; without default tenant → `missing_default_tenant_id` |
 | Eve / LLM / daemon product flags | **Not enabled** by this seam |
 | Production switch | **Not done** — human RM-003 after merge approval |
 
@@ -24,7 +24,9 @@
 | Mode | Env | Behavior |
 |------|-----|----------|
 | Local/demo (default) | unset or `SECURIST_GRAPH_STORE=memory\|seed` | Process memory + seed snapshot (`isSeed`) |
-| Durable | `SECURIST_GRAPH_STORE=postgres` + `DATABASE_URL` | Postgres adapter; optional `SECURIST_DEFAULT_TENANT_ID` for read defaults |
+| Durable | `SECURIST_GRAPH_STORE=postgres` + `DATABASE_URL` + **`SECURIST_DEFAULT_TENANT_ID`** | Postgres adapter; default tenant **required** for current public surfaces |
+
+Public server functions (Activity, Artifact Profiles, etc.) call the store **without** a per-request tenant. In postgres mode, missing `SECURIST_DEFAULT_TENANT_ID` fails at **config resolve** (`missing_default_tenant_id`) before serving — not mid-request with `tenant_scope`.
 
 ```bash
 # Demo (default)
@@ -33,7 +35,7 @@ npm run dev
 # After human provisions DB and applies migration (RM-003 — not this PR):
 # SECURIST_GRAPH_STORE=postgres
 # DATABASE_URL=postgres://...
-# SECURIST_DEFAULT_TENANT_ID=public-demo   # optional read default
+# SECURIST_DEFAULT_TENANT_ID=public-demo   # REQUIRED for current public surface
 ```
 
 ## Exact Vercel env vars (document only — do not set here)
@@ -43,9 +45,9 @@ Team **tarx** · Project **securist-hub**
 | Name | When |
 |------|------|
 | `SECURIST_GRAPH_STORE` | `postgres` only after WO-002 merge + human RM-003 |
-| `DATABASE_URL` | Required with postgres mode |
-| `SECURIST_DATABASE_URL` | Optional alias |
-| `SECURIST_DEFAULT_TENANT_ID` | Optional default for read paths |
+| `DATABASE_URL` | **Required** with postgres mode |
+| `SECURIST_DATABASE_URL` | Optional alias for `DATABASE_URL` |
+| `SECURIST_DEFAULT_TENANT_ID` | **Required** with postgres mode (current public Securist surface) |
 
 ## Tests
 
