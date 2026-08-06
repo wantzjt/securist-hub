@@ -1,9 +1,9 @@
 ---
-id: WO-010
+id: WO-011
 title: Internal system graph and regression guardrails
 status: in_review
 owner: codex
-branch: ops/wo-010-internal-system-graph
+branch: ops/wo-011-internal-system-graph
 depends_on:
   - WO-001
   - WO-007
@@ -37,7 +37,7 @@ verification:
   - npm run verify:clean-worktree after commit
 ---
 
-# WO-010 — Internal system graph and regression guardrails
+# WO-011 — Internal system graph and regression guardrails
 
 ## Context
 
@@ -53,7 +53,7 @@ The product Decision Graph is canonical, but the repository had no executable ma
 
 ## Progress notes
 
-- 2026-08-06: Claimed by Codex on `ops/wo-010-internal-system-graph` from clean `main` at `fb510f5`.
+- 2026-08-06: Claimed by Codex from clean `main` at `fb510f5`; renumbered to WO-011 after detecting Grok's earlier remote WO-010 claim.
 - 2026-08-06: Added graph, schema, validator, clean-tree verifier, CI wiring, stable invariant IDs, and authority correction.
 - 2026-08-06: Added exactly-one-owner coverage for contracts, Decision Graph, migrations, and Eve gateway sources; made regression tests mandatory for contract-sensitive changes.
 - 2026-08-06: Full local suite green: lint, typecheck, lifecycle, graph 31/31, build, coordination, release readiness, and system graph.
