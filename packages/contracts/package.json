@@ -8,7 +8,8 @@
     ".": "./src/index.ts",
     "./evidence": "./src/evidence.ts",
     "./proposals": "./src/proposals.ts",
-    "./agents": "./src/agents.ts"
+    "./agents": "./src/agents.ts",
+    "./public-assess": "./src/public-assess.ts"
   },
   "files": ["src"]
 }

@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { assessPublicRepository } from '#/lib/activity-api'
 import type {
-  AssessBoundary,
-  AssessEnvironment,
-  PublicDecisionBrief,
-} from '#/lib/public-repo-assess'
+  PublicAssessBoundaryV1,
+  PublicAssessEnvironmentV1,
+  PublicDecisionBriefV1,
+} from '#/lib/decision-graph/surface-contracts'
 import { CopyPage } from '#/components/CopyPage'
 
 export const Route = createFileRoute('/assess')({
@@ -19,14 +19,14 @@ export const Route = createFileRoute('/assess')({
   component: AssessPage,
 })
 
-const ENVS: AssessEnvironment[] = [
+const ENVS: PublicAssessEnvironmentV1[] = [
   'research',
   'development',
   'staging',
   'production',
 ]
 
-const BOUNDARIES: { id: AssessBoundary; label: string }[] = [
+const BOUNDARIES: { id: PublicAssessBoundaryV1; label: string }[] = [
   { id: 'local_only', label: 'Local only' },
   { id: 'controlled_cloud', label: 'Controlled cloud' },
   { id: 'external_service', label: 'External service' },
@@ -41,12 +41,12 @@ function AssessPage() {
       : 'Evaluate for engineering / security tooling adoption',
   )
   const [environment, setEnvironment] =
-    useState<AssessEnvironment>('development')
+    useState<PublicAssessEnvironmentV1>('development')
   const [deploymentBoundary, setDeploymentBoundary] =
-    useState<AssessBoundary>('controlled_cloud')
+    useState<PublicAssessBoundaryV1>('controlled_cloud')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [brief, setBrief] = useState<PublicDecisionBrief | null>(null)
+  const [brief, setBrief] = useState<PublicDecisionBriefV1 | null>(null)
 
   const sampleUrl = useMemo(
     () => 'https://github.com/Securist-InfoSec/scout-daemon',
@@ -150,7 +150,7 @@ function AssessPage() {
               className="mt-1 w-full rounded-sm border border-[var(--securist-border)] bg-black/40 px-3 py-2 text-[13px] text-white"
               value={environment}
               onChange={(ev) =>
-                setEnvironment(ev.target.value as AssessEnvironment)
+                setEnvironment(ev.target.value as PublicAssessEnvironmentV1)
               }
             >
               {ENVS.map((env) => (
@@ -169,7 +169,7 @@ function AssessPage() {
               className="mt-1 w-full rounded-sm border border-[var(--securist-border)] bg-black/40 px-3 py-2 text-[13px] text-white"
               value={deploymentBoundary}
               onChange={(ev) =>
-                setDeploymentBoundary(ev.target.value as AssessBoundary)
+                setDeploymentBoundary(ev.target.value as PublicAssessBoundaryV1)
               }
             >
               {BOUNDARIES.map((b) => (
@@ -222,7 +222,7 @@ function BriefResult({
   brief,
   onDownload,
 }: {
-  brief: PublicDecisionBrief
+  brief: PublicDecisionBriefV1
   onDownload: () => void
 }) {
   return (

@@ -31,7 +31,6 @@ import type {
   SignedValidationSummaryV1,
 } from './eve-gateway/types'
 import { assessPublicGithubRepo } from './public-repo-assess'
-import type { PublicRepoAssessInput } from './public-repo-assess'
 
 function serverToken(): string | undefined {
   return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined
@@ -234,11 +233,13 @@ export const hitShortLink = createServerFn({ method: 'POST' })
   })
 
 /* —— Public assess (ephemeral Decision Brief; no private persistence) —— */
+/* Anonymous assess must NEVER receive GITHUB_TOKEN / GH_TOKEN / serverToken(). */
 
 export const assessPublicRepository = createServerFn({ method: 'POST' })
-  .validator((data: PublicRepoAssessInput) => data)
+  .validator((data: unknown) => data)
   .handler(async ({ data }) => {
-    return assessPublicGithubRepo(data, serverToken())
+    // Privileged tokens remain for first-party Scout only — not public assess.
+    return assessPublicGithubRepo(data)
   })
 
 /* —— Decision Graph —— */

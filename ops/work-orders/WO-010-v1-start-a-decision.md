@@ -71,6 +71,7 @@ Depends on system graph / clean-tree gates from **WO-011** (merged).
 - 2026-08-06: Spec filed; earlier blocked under freeze.
 - 2026-08-06: D-010 + WO-011 unlocked; implementation on this branch.
 - 2026-08-06: Public assess lib, `/assess` route, homepage rewrite, nav, profile CTA, system graph.
+- 2026-08-06 fixup P1: (1) anonymous assess never uses privileged GH token; (2) `PublicDecisionBriefV1` in `@securist/contracts`; (3) runtime validation + fixtures (`test:public-assess`); (4) system-graph coverage roots.
 
 ## Public-data behavior (exact)
 

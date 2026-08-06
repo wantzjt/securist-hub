@@ -31,6 +31,16 @@
       "path": "migrations",
       "extensions": [".sql"],
       "excludePrefixes": []
+    },
+    {
+      "path": "src/lib/public-repo-assess.ts",
+      "extensions": [".ts"],
+      "excludePrefixes": []
+    },
+    {
+      "path": "src/routes/assess.tsx",
+      "extensions": [".tsx"],
+      "excludePrefixes": []
     }
   ],
   "checks": [
@@ -154,6 +164,7 @@
         "packages/contracts/src/graph.ts",
         "packages/contracts/src/index.ts",
         "packages/contracts/src/proposals.ts",
+        "packages/contracts/src/public-assess.ts",
         "src/lib/decision-graph/outbox-types.ts",
         "src/lib/decision-graph/store-types.ts",
         "src/lib/decision-graph/types.ts",
@@ -294,7 +305,7 @@
         "src/routes/models.tsx",
         "src/routes/tools.tsx"
       ],
-      "dependsOn": ["activity-projection", "public-assess"],
+      "dependsOn": ["activity-projection"],
       "invariants": ["INV-003", "INV-006", "INV-009"],
       "verifiedBy": ["typecheck", "build"]
     },

@@ -2,106 +2,190 @@
  * Public GitHub repository assess — share-safe Decision Brief draft.
  * Deterministic collection of public API facts only.
  * Never persists customer data; never claims vulns from narrative; not a pentest.
+ *
+ * Anonymous assess NEVER uses a privileged GitHub token (no Authorization header).
+ * Contract types live in @securist/contracts (public-assess).
  */
 
-export type AssessEnvironment =
-  | 'research'
-  | 'development'
-  | 'staging'
-  | 'production'
+import type {
+  PublicAssessBoundaryV1,
+  PublicAssessEnvironmentV1,
+  PublicDecisionBriefV1,
+  PublicObservedFactV1,
+  PublicRepoAssessInputV1,
+  PublicRepoAssessResultV1,
+} from '../../packages/contracts/src/public-assess'
+import {
+  PUBLIC_ASSESS_BOUNDARIES_V1,
+  PUBLIC_ASSESS_ENVIRONMENTS_V1,
+  PUBLIC_ASSESS_LIMITS_V1,
+} from '../../packages/contracts/src/public-assess'
 
-export type AssessBoundary =
-  | 'local_only'
-  | 'controlled_cloud'
-  | 'external_service'
-
-export type PublicRepoAssessInput = {
-  repositoryUrl: string
-  intendedUse: string
-  environment: AssessEnvironment
-  deploymentBoundary: AssessBoundary
+/** Re-export contract types for hub adapters (canonical source is packages/contracts). */
+export type {
+  PublicAssessBoundaryV1 as AssessBoundary,
+  PublicAssessEnvironmentV1 as AssessEnvironment,
+  PublicDecisionBriefV1 as PublicDecisionBrief,
+  PublicRepoAssessInputV1 as PublicRepoAssessInput,
+  PublicRepoAssessResultV1 as PublicRepoAssessResult,
+  PublicObservedFactV1 as ObservedFact,
 }
 
-export type ObservedFact = {
-  domain: string
-  assertion: string
-  verification: 'observed' | 'seed'
-  source: string
-}
-
-export type PublicDecisionBrief = {
-  contractVersion: '1'
-  kind: 'public_decision_brief'
-  /** Never a durable tenant decision */
-  durable: false
-  persistence: 'ephemeral_client_only'
-  label: 'LIVE' | 'HYBRID' | 'SEED'
-  decisionStatus: 'not_reviewed'
-  repository: {
-    owner: string
-    name: string
-    fullName: string
-    htmlUrl: string
-    description: string | null
-    defaultBranch: string
-    visibility: 'public'
-    language: string | null
-    licenseSpdx: string | null
-    licenseName: string | null
-    pushedAt: string | null
-    updatedAt: string | null
-    archived: boolean
-    fork: boolean
-    topics: string[]
-    latestReleaseTag: string | null
-    latestReleasePublishedAt: string | null
-    headSha: string | null
-    packageName: string | null
-    packageVersion: string | null
-  }
-  scope: {
-    intendedUse: string
-    environment: AssessEnvironment
-    deploymentBoundary: AssessBoundary
-  }
-  observed: ObservedFact[]
-  unknowns: string[]
-  evidenceGaps: string[]
-  reReviewTriggers: string[]
-  policyHints: string[]
-  disclaimers: string[]
-  fetchedAt: string
-  draftJson: string
-}
-
-export type PublicRepoAssessResult =
-  | { ok: true; brief: PublicDecisionBrief }
-  | { ok: false; code: string; error: string }
+export type AssessFetch = (
+  input: string | URL | Request,
+  init?: RequestInit,
+) => Promise<Response>
 
 const GH_REPO =
   /^(?:https?:\/\/)?(?:www\.)?github\.com\/([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?\/?(?:[?#].*)?$/i
 
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
 function rejectPrivateMaterial(s: string): string | null {
-  if (/-----BEGIN |api[_-]?key|password=|ghp_[A-Za-z0-9]|\/Users\/|C:\\\\/i.test(s)) {
+  if (
+    /-----BEGIN |api[_-]?key|password=|ghp_[A-Za-z0-9]|gho_[A-Za-z0-9]|github_pat_[A-Za-z0-9_]|\/Users\/|C:\\\\|file:\/\//i.test(
+      s,
+    )
+  ) {
     return 'Input appears to contain private material; use a public GitHub URL only'
   }
-  if (/github\.com\/[^/]+\/[^/]+\/(settings|security|network)/i.test(s)) {
+  if (/github\.com\/[^/]+\/[^/]+\/(settings|security|network|pull|issues|tree|blob|commit)/i.test(s)) {
     return 'Use the repository root URL only'
   }
   return null
 }
 
+/**
+ * Runtime validation for public POST input.
+ * Never trusts TypeScript shapes alone.
+ */
+export function validatePublicRepoAssessInput(
+  raw: unknown,
+):
+  | { ok: true; data: PublicRepoAssessInputV1 }
+  | { ok: false; code: string; error: string } {
+  if (raw === null || raw === undefined) {
+    return { ok: false, code: 'schema', error: 'Request body is required' }
+  }
+  if (typeof raw !== 'object' || Array.isArray(raw)) {
+    return {
+      ok: false,
+      code: 'schema',
+      error: 'Request body must be a JSON object',
+    }
+  }
+  if (!isPlainObject(raw)) {
+    return { ok: false, code: 'schema', error: 'Request body must be a plain object' }
+  }
+
+  const { repositoryUrl, intendedUse, environment, deploymentBoundary } = raw
+
+  if (typeof repositoryUrl !== 'string') {
+    return {
+      ok: false,
+      code: 'schema',
+      error: 'repositoryUrl must be a string',
+    }
+  }
+  if (typeof intendedUse !== 'string') {
+    return {
+      ok: false,
+      code: 'schema',
+      error: 'intendedUse must be a string',
+    }
+  }
+  if (repositoryUrl.length > PUBLIC_ASSESS_LIMITS_V1.repositoryUrlMax) {
+    return {
+      ok: false,
+      code: 'schema',
+      error: `repositoryUrl exceeds ${PUBLIC_ASSESS_LIMITS_V1.repositoryUrlMax} characters`,
+    }
+  }
+  if (intendedUse.length > PUBLIC_ASSESS_LIMITS_V1.intendedUseMax) {
+    return {
+      ok: false,
+      code: 'schema',
+      error: `intendedUse exceeds ${PUBLIC_ASSESS_LIMITS_V1.intendedUseMax} characters`,
+    }
+  }
+
+  if (
+    typeof environment !== 'string' ||
+    !PUBLIC_ASSESS_ENVIRONMENTS_V1.includes(
+      environment as PublicAssessEnvironmentV1,
+    )
+  ) {
+    return {
+      ok: false,
+      code: 'schema',
+      error:
+        'environment must be one of: research, development, staging, production',
+    }
+  }
+  if (
+    typeof deploymentBoundary !== 'string' ||
+    !PUBLIC_ASSESS_BOUNDARIES_V1.includes(
+      deploymentBoundary as PublicAssessBoundaryV1,
+    )
+  ) {
+    return {
+      ok: false,
+      code: 'schema',
+      error:
+        'deploymentBoundary must be one of: local_only, controlled_cloud, external_service',
+    }
+  }
+
+  const intended = intendedUse.trim()
+  if (!intended) {
+    return { ok: false, code: 'schema', error: 'Intended use is required' }
+  }
+
+  const parsed = parsePublicGithubUrl(repositoryUrl)
+  if ('error' in parsed) {
+    return { ok: false, code: 'invalid_url', error: parsed.error }
+  }
+
+  return {
+    ok: true,
+    data: {
+      contractVersion: '1',
+      repositoryUrl: repositoryUrl.trim(),
+      intendedUse: intended,
+      environment: environment as PublicAssessEnvironmentV1,
+      deploymentBoundary: deploymentBoundary as PublicAssessBoundaryV1,
+    },
+  }
+}
+
 export function parsePublicGithubUrl(
   raw: string,
 ): { owner: string; repo: string } | { error: string } {
+  if (typeof raw !== 'string') {
+    return { error: 'Repository URL is required' }
+  }
   const trimmed = raw.trim()
   if (!trimmed) return { error: 'Repository URL is required' }
   const bad = rejectPrivateMaterial(trimmed)
   if (bad) return { error: bad }
+  if (
+    /^(\/|~\/|\.\/|\.\.\/|file:)/i.test(trimmed) ||
+    /^[A-Za-z]:\\/.test(trimmed)
+  ) {
+    return { error: 'Local paths are not accepted; use a public GitHub URL' }
+  }
   if (/gitlab\.com|bitbucket\.org|huggingface\.co|npmjs\.com/i.test(trimmed)) {
     return {
       error:
         'Only public GitHub repository URLs are supported in this assess path',
+    }
+  }
+  if (!/github\.com/i.test(trimmed) && !GH_REPO.test(trimmed)) {
+    return {
+      error:
+        'Enter a public github.com/owner/repo URL (no private hosts or local paths)',
     }
   }
   const m = trimmed.match(GH_REPO)
@@ -121,17 +205,21 @@ export function parsePublicGithubUrl(
   return { owner, repo }
 }
 
-async function ghJson<T>(
+/**
+ * Unauthenticated GitHub API GET — never attaches Authorization.
+ * Privileged tokens remain for first-party Scout only.
+ */
+async function ghJsonPublic<T>(
   path: string,
-  token?: string,
+  fetchImpl: AssessFetch,
 ): Promise<{ ok: true; data: T; status: number } | { ok: false; status: number }> {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
     'User-Agent': 'securist-public-assess',
     'X-GitHub-Api-Version': '2022-11-28',
   }
-  if (token) headers.Authorization = `Bearer ${token}`
-  const res = await fetch(`https://api.github.com${path}`, { headers })
+  // Intentionally no Authorization header — anonymous public assess only.
+  const res = await fetchImpl(`https://api.github.com${path}`, { headers })
   if (!res.ok) return { ok: false, status: res.status }
   const data = (await res.json()) as T
   return { ok: true, data, status: res.status }
@@ -175,25 +263,37 @@ function decodeContent(c: GhContent): string | null {
   }
 }
 
+export type AssessPublicGithubOptions = {
+  /** Injected fetch for tests. Must never receive Authorization from this module. */
+  fetchImpl?: AssessFetch
+}
+
 /**
  * Collect public GitHub facts and produce an ephemeral Decision Brief draft.
- * Does not write to Decision Graph store or any private persistence.
+ * Does not write to Decision Graph store, tenant workspace, or Postgres.
+ * Does not use privileged GitHub tokens.
  */
 export async function assessPublicGithubRepo(
-  input: PublicRepoAssessInput,
-  token?: string,
-): Promise<PublicRepoAssessResult> {
-  const intendedUse = input.intendedUse.trim().slice(0, 500)
-  if (!intendedUse) {
-    return { ok: false, code: 'schema', error: 'Intended use is required' }
+  rawInput: unknown,
+  options?: AssessPublicGithubOptions,
+): Promise<PublicRepoAssessResultV1> {
+  const validated = validatePublicRepoAssessInput(rawInput)
+  if (!validated.ok) {
+    return { ok: false, code: validated.code, error: validated.error }
   }
+  const input = validated.data
+  const fetchImpl = options?.fetchImpl ?? globalThis.fetch.bind(globalThis)
+
   const parsed = parsePublicGithubUrl(input.repositoryUrl)
   if ('error' in parsed) {
     return { ok: false, code: 'invalid_url', error: parsed.error }
   }
 
   const { owner, repo } = parsed
-  const repoRes = await ghJson<GhRepo>(`/repos/${owner}/${repo}`, token)
+  const repoRes = await ghJsonPublic<GhRepo>(
+    `/repos/${owner}/${repo}`,
+    fetchImpl,
+  )
   if (!repoRes.ok) {
     if (repoRes.status === 404) {
       return {
@@ -227,14 +327,17 @@ export async function assessPublicGithubRepo(
   }
 
   const [releaseRes, commitRes, pkgRes] = await Promise.all([
-    ghJson<GhRelease>(`/repos/${owner}/${repo}/releases/latest`, token),
-    ghJson<GhCommit[]>(
-      `/repos/${owner}/${repo}/commits?per_page=1&sha=${encodeURIComponent(r.default_branch)}`,
-      token,
+    ghJsonPublic<GhRelease>(
+      `/repos/${owner}/${repo}/releases/latest`,
+      fetchImpl,
     ),
-    ghJson<GhContent>(
+    ghJsonPublic<GhCommit[]>(
+      `/repos/${owner}/${repo}/commits?per_page=1&sha=${encodeURIComponent(r.default_branch)}`,
+      fetchImpl,
+    ),
+    ghJsonPublic<GhContent>(
       `/repos/${owner}/${repo}/contents/package.json?ref=${encodeURIComponent(r.default_branch)}`,
-      token,
+      fetchImpl,
     ),
   ])
 
@@ -260,7 +363,7 @@ export async function assessPublicGithubRepo(
   const headSha =
     commitRes.ok && commitRes.data[0] ? commitRes.data[0].sha : null
 
-  const observed: ObservedFact[] = [
+  const observed: PublicObservedFactV1[] = [
     {
       domain: 'provenance',
       assertion: `Public GitHub repository ${r.full_name} on default branch ${r.default_branch}${headSha ? ` (HEAD ${headSha.slice(0, 7)})` : ''}.`,
@@ -330,14 +433,17 @@ export async function assessPublicGithubRepo(
   ]
 
   const policyHints: string[] = [
-    `Intended use (stated): ${intendedUse}`,
+    `Intended use (stated): ${input.intendedUse}`,
     `Environment: ${input.environment}`,
     `Deployment boundary: ${input.deploymentBoundary}`,
     'Human decision required before treating this as approved for production use.',
-    'This brief is not an authoritative Decision Graph approval.',
+    'This brief is not an authoritative Decision Graph approval. Policy hints are non-authoritative.',
   ]
 
-  if (input.deploymentBoundary === 'external_service' || input.environment === 'production') {
+  if (
+    input.deploymentBoundary === 'external_service' ||
+    input.environment === 'production'
+  ) {
     policyHints.push(
       'Production / external_service scope requires stronger evidence and explicit human approval under tenant policy.',
     )
@@ -386,7 +492,7 @@ export async function assessPublicGithubRepo(
     decisionStatus: 'not_reviewed' as const,
     repository,
     scope: {
-      intendedUse,
+      intendedUse: input.intendedUse,
       environment: input.environment,
       deploymentBoundary: input.deploymentBoundary,
     },
@@ -399,7 +505,7 @@ export async function assessPublicGithubRepo(
     fetchedAt: new Date().toISOString(),
   }
 
-  const brief: PublicDecisionBrief = {
+  const brief: PublicDecisionBriefV1 = {
     ...briefCore,
     draftJson: JSON.stringify(briefCore, null, 2),
   }
