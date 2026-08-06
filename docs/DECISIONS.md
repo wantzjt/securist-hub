@@ -215,3 +215,29 @@ PR #2 sketched a Postgres adapter but is not merge-ready (tenant scope, transact
 
 **Consequences**  
 Coordination plane (RM-001) lands first. Infrastructure work is human-gated after code review.
+
+---
+
+### D-009 — Freeze process work; two active tracks only
+
+| | |
+|--|--|
+| **Date** | 2026-08-06 |
+| **Owner** | human · founder ops |
+| **Status** | accepted |
+
+**Context**  
+PR #9 delivered honest R0–R3 release gates. Further process invention risks theater. Founder thesis requires real interview and PoV evidence before surface expansion.
+
+**Decision**  
+1. **Freeze** new operational-process frameworks (no new release trains, meta-verifiers, or coordination systems unless human reopens).  
+2. Cadence: **Grok** one WO / one PR / full local verify → **Codex** approve or P0–P1 blocker or go-no-go → **Human** credentials, migration, prod evidence, interviews, release signature.  
+3. **Only two active tracks:** [WO-008](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) (R1 Postgres, human) and [WO-004](../ops/work-orders/WO-004-design-partner-interviews.md) (interviews + PoV, human).  
+4. **No** new UI, agents, feeds, or model integrations until one track produces real evidence.
+
+**Alternatives considered**  
+- Continue building process and product surface in parallel — rejected (dilutes decision-system focus).  
+- Agent-owned provision — rejected (D-008 / D-006).
+
+**Consequences**  
+Grok does not open product WOs under freeze. Codex does not expand scope. R1 stays unclaimed until human WO-008 exit. Roadmap NEXT items stay frozen until evidence.

@@ -99,6 +99,7 @@ psql "$DATABASE_URL" -f migrations/001_decision_graph.sql
 ## Progress
 
 - 2026-08-06: Filed `blocked` pending human provision authority. No credentials created.
+- 2026-08-06: Confirmed as **one of two active tracks** under D-009 freeze (with WO-004). No product expansion on this track—activation only.
 
 ## Blockers
 

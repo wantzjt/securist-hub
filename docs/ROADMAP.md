@@ -1,144 +1,75 @@
 # Securist roadmap — now / next / later
 
 **Canonical operational roadmap** for the hub repository.  
-Launch history and V1 thesis live in [`docs/V1-LAUNCH-ROADMAP.md`](./V1-LAUNCH-ROADMAP.md) — do **not** fork a second strategy document.  
-GTM research: [`STRATEGIC-WEDGE-RESEARCH.md`](./STRATEGIC-WEDGE-RESEARCH.md) (hypothesis until design partners).
+Launch history: [`V1-LAUNCH-ROADMAP.md`](./V1-LAUNCH-ROADMAP.md).  
+GTM: [`STRATEGIC-WEDGE-RESEARCH.md`](./STRATEGIC-WEDGE-RESEARCH.md) · Company: [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md).  
+Release train: [`RELEASE-PLAN.md`](./RELEASE-PLAN.md).
 
 | Field | Meaning |
 |-------|---------|
-| **ID** | Stable work item id (maps to a work order when active) |
+| **ID** | Stable work item id |
 | **Owner** | `grok` \| `codex` \| `human` \| shared |
 | **Status** | `now` \| `next` \| `later` \| `blocked` \| `done` |
-| **Depends on** | Other item IDs that must complete first |
-| **Acceptance** | Done when… |
-| **Non-goals** | Explicitly out of scope for this item |
 
-Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISIONS.md) · [`AGENT-OPERATIONS.md`](./AGENT-OPERATIONS.md) · [`ops/work-orders/`](../ops/work-orders/)
+Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISIONS.md) · [`AGENT-OPERATIONS.md`](./AGENT-OPERATIONS.md)
 
 ---
 
-## NOW (two parallel tracks)
+## FREEZE — operational process
 
-### RM-003 — Provision TARX-scoped Postgres
+**As of PR #9 merge:** stop inventing new process frameworks, release-train docs, or coordination machinery.
 
-| | |
-|--|--|
-| **Owner** | human (credentials + provision) · codex (scope/smoke check) |
-| **Status** | `now` |
-| **Depends on** | RM-002 (done) |
-| **Work order** | [`WO-005`](../ops/work-orders/WO-005-rm003-postgres-provision.md) |
-| **Checklist** | [`RM-003-PROVISION-CHECKLIST.md`](./RM-003-PROVISION-CHECKLIST.md) |
+| Actor | Cadence |
+|-------|---------|
+| **Grok** | At most **one** active implementation work order · **one** narrow PR · full local verification |
+| **Codex** | Adversarial review: scope, contracts, tenant safety, tests, release impact → **approve** / **P0–P1 blocker** / **go-no-go** |
+| **Human** | Credentials, migration, production evidence, customer interviews, **final release signature** |
 
-**Acceptance**
-
-- [ ] Postgres under **tarx** / `securist-hub` only  
-- [ ] `migrations/001_decision_graph.sql` applied  
-- [ ] `SECURIST_GRAPH_STORE=postgres`  
-- [ ] `DATABASE_URL` set  
-- [ ] `SECURIST_DEFAULT_TENANT_ID` set (required; fail-closed if missing)  
-- [ ] Production redeploy + smoke; rollback to memory documented  
-
-**Non-goals**
-
-- Agent-created credentials · Eve/LLM enablement · Hobby scope  
-
-### RM-010 — Strategic wedge research + design partners
-
-| | |
-|--|--|
-| **Owner** | grok (research docs) · human (interviews) |
-| **Status** | `now` |
-| **Depends on** | RM-001 (done) |
-| **Work orders** | [`WO-003`](../ops/work-orders/WO-003-strategic-wedge-research.md) (done) · [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) (interviews) |
-
-**Acceptance**
-
-- [x] Cited research: JTBD, alternatives, wedge, ICP, pricing, interviews  
-- [x] Design-partner kit  
-- [ ] ≥5 interviews scored confirm/revise/kill  
-- [ ] Human accepts or rejects ICP in [`DECISIONS.md`](./DECISIONS.md)  
-
-**Non-goals**
-
-- Product code · deploy · inventing market stats · closing enterprise deals as research success  
-
-### RM-011 — Founder thesis (category-defining company)
-
-| | |
-|--|--|
-| **Owner** | grok (draft) · human (accept/reject after interviews) |
-| **Status** | `now` |
-| **Depends on** | RM-010 research draft (WO-003 done) |
-| **Work order** | [`WO-006`](../ops/work-orders/WO-006-founder-thesis.md) |
-| **Artifact** | [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) |
-
-**Acceptance**
-
-- [x] Explicit choices: contrarian insight, enduring product, wedge path, moat, business model, risks, 90-day plan  
-- [ ] Human records accept/revise/kill after design partners (WO-004)  
-
-**Non-goals**
-
-- Product code · provision · inventing ARR/TAM · autonomous agents  
-
-### RM-012 — Strong release operations (R0–R3)
-
-| | |
-|--|--|
-| **Owner** | grok (process docs + verifier) · human (R1/R3 execution) |
-| **Status** | `now` |
-| **Depends on** | RM-011 thesis published |
-| **Work orders** | [`WO-007`](../ops/work-orders/WO-007-strong-release-ops.md) · [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) (R1 human) |
-| **Artifacts** | [`RELEASE-PLAN.md`](./RELEASE-PLAN.md) · [`ops/release/R3-STRONG-RELEASE.md`](../ops/release/R3-STRONG-RELEASE.md) |
-
-**Acceptance**
-
-- [ ] R0–R3 entry/exit documented; R1 not claimed pre-provision  
-- [ ] R3 executable checklist with P0/P1/P2 stop rules  
-- [ ] `npm run verify:release-readiness` offline + CI  
-- [ ] WO-008 blocked until human provision authority  
-
-**Non-goals**
-
-- Deploy · credentials · product UI · Eve/daemon · faking live evidence in CI  
+**No new UI, agents, feeds, or model integrations** until an active track produces real evidence (R1 live and/or interview+PoV bar).
 
 ---
 
-## NEXT
+## NOW — only two active tracks
 
-### RM-004 — Allowlisted change detection
-
-| | |
-|--|--|
-| **Owner** | shared |
-| **Status** | `next` |
-| **Depends on** | RM-003 preferred for durable facts; RM-010 interviews inform priority |
-
-**Acceptance**
-
-- [ ] Explicit watchlists only — never whole-internet crawl  
-- [ ] Immutable public snapshots; material diffs → re-review  
-- [ ] Version/digest/license/model-card/provenance fingerprints  
-
-### RM-005 — Signed operator evidence alpha
+### Track A — Durable graph (R1)
 
 | | |
 |--|--|
-| **Owner** | shared |
-| **Status** | `next` |
-| **Depends on** | RM-003; interview signal that local validation will be attached |
+| **Owner** | **human** only |
+| **Status** | `now` · **blocked** on provision authority |
+| **Work order** | [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) |
+| **Checklist** | [`RM-003-PROVISION-CHECKLIST.md`](./RM-003-PROVISION-CHECKLIST.md) · twin notes on [WO-005](../ops/work-orders/WO-005-rm003-postgres-provision.md) |
+
+**Do:** TARX Postgres, migration `001`, set `SECURIST_GRAPH_STORE` + `DATABASE_URL` + `SECURIST_DEFAULT_TENANT_ID`, smoke, rollback, evidence.  
+**Do not:** product expansion, Eve/daemon, agent-created credentials.
+
+**R1 is not active** until WO-008 exit is human-signed.
+
+### Track B — Wedge validation (R2 inputs)
+
+| | |
+|--|--|
+| **Owner** | **human** (conversations) |
+| **Status** | `now` |
+| **Work order** | [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) |
+| **Kit** | [`DESIGN-PARTNER-INTERVIEW-KIT.md`](./DESIGN-PARTNER-INTERVIEW-KIT.md) |
+
+**Do:** ≥5 scored interviews; ≥3 confirm wedge; ≥2 end-to-end **stale-approval kill** PoVs.  
+**Do not:** invent product surface to impress partners.
+
+**Founder bar before major surface expansion** ([`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) §7): interviews + PoVs as above.
 
 ---
 
-## LATER
+## NEXT (frozen until evidence)
 
-### RM-006 — Eve proposals (still propose-only)
+Open **only** after Track A and/or B produce real evidence and a new work order is explicitly unblocked.
 
-| | |
-|--|--|
-| **Owner** | shared |
-| **Status** | `later` |
-| **Depends on** | Explicit feature-flag review; automation gates in V1 launch roadmap |
+| ID | Item | Unblock when |
+|----|------|----------------|
+| RM-004 | Allowlisted change detection | R1 durable preferred + interview signal |
+| RM-005 | Signed operator evidence alpha | Interview signal + R1 |
+| RM-006 | Eve proposals (propose-only) | Feature-flag review + founder bar |
 
 ---
 
@@ -146,15 +77,17 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 
 | ID | Item | Note |
 |----|------|------|
-| RM-000 | Public Decision Graph V1 | On `main` |
+| RM-000 | Public Decision Graph V1 | `main` |
 | RM-001 | Agent coordination control plane | PR #3 |
-| RM-002 | Postgres Decision Graph store seam repair | PR #4 (superseded sketch PR #2) |
+| RM-002 | Postgres store seam | PR #4 |
+| RM-010–011 | Wedge research + founder thesis | PR #5–#7 |
+| RM-012 | Strong release ops (R0–R3 docs + verifier) | PR #9 · **process complete** |
 
 ---
 
-## How to use this file
+## How to use this file under freeze
 
-1. Pick the highest **now** item with deps satisfied (human ops vs GTM can parallelize).  
-2. One work order → one branch → one PR.  
-3. Chat is never canonical.  
-4. Scope shifts → append [`DECISIONS.md`](./DECISIONS.md).
+1. Work **only** WO-004 or WO-008 unless a human opens a new WO after evidence.  
+2. Grok does not open parallel product WOs.  
+3. Codex returns approve / P0–P1 blocker / go-no-go — not scope expansion.  
+4. Chat is never canonical.

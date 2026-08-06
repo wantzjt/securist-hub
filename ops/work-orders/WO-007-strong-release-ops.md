@@ -1,7 +1,7 @@
 ---
 id: WO-007
 title: Strong Release Operations (R0–R3 train)
-status: in_review
+status: complete
 owner: grok
 branch: ops/wo-007-strong-release
 depends_on:
@@ -52,7 +52,8 @@ Founder thesis (WO-006) and wedge research set the bar for design-partner beta. 
 ## Progress
 
 - 2026-08-06: Claimed on `ops/wo-007-strong-release`.
+- 2026-08-06: Merged as PR #9 (`592218e`). Complete. Process freeze in effect (D-009).
 
 ## Blockers
 
-- None for docs/CI process PR. R1 activation remains blocked on human provision authority (WO-008 / WO-005).
+- None for this WO. Active human tracks: WO-008 (R1) and WO-004 (interviews/PoV).
