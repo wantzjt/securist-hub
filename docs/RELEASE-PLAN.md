@@ -8,6 +8,8 @@
 
 **Hard rule (product surface):** No major surface expansion until founder bar: ≥5 interviews (≥3 confirm) and ≥2 stale-approval PoV runs ([`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) §7).
 
+**Hard rule (process freeze, D-009):** After PR #9, do not invent further release/process machinery. Execute this train via **WO-008** (R1 human) and **WO-004** (interviews/PoV). Cadence: Grok one narrow WO/PR → Codex approve|blocker|go-no-go → Human credentials/migration/evidence/interviews/signature.
+
 ---
 
 ## Train overview

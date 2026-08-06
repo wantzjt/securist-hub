@@ -7,15 +7,28 @@ Canonical state lives in **git**: work orders, roadmap, decision log, PR bodies.
 
 ---
 
-## Roles
+## Freeze cadence (post PR #9)
 
-| Actor | Owns | Does not own |
-|-------|------|----------------|
-| **Grok** | Bounded implementation on **one** work order / **one** branch; keep WO + PR body current; run local verification | Credentials, migrations in prod, policy authority, material merge/deploy, concurrent second work order |
-| **Codex** | Contract review, integration judgment, release verification, TARX-scoped deploy checks | Silent scope expansion; inventing domain models; unattended production credential creation |
-| **Human** | Credentials, DB provision/migrations, policy changes, external-write authorization, material merge and deploy decisions | Expecting agents to “just ship” past gates |
+**Operational-process work is frozen.** Do not invent new release frameworks, verifiers, or meta-process unless a human explicitly reopens process work.
 
-See also root [`AGENT.md`](../AGENT.md) (fielding rules) and [`docs/VERCEL-SCOPE.md`](./VERCEL-SCOPE.md).
+### Roles (operating loop)
+
+| Actor | Owns | Returns / does not |
+|-------|------|---------------------|
+| **Grok** | **One** active work order · **one** narrow PR · full local verification (`lint`, `typecheck`, `test:lifecycle`, `test:graph` if present, `build`, `verify:coordination`, `verify:release-readiness`) | Concurrent WOs; credentials; deploy; silent scope expansion |
+| **Codex** | Adversarial review of scope, contracts, tenant safety, tests, release impact | **approve** · **P0–P1 blocker** · **go-no-go** — not product brainstorms |
+| **Human** | Credentials, migration, production evidence, customer interviews, final release signature | Expecting agents to ship past gates |
+
+### Only two active tracks
+
+| Track | WO | Owner |
+|-------|-----|--------|
+| **R1 durable Postgres** | [WO-008](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) | human (blocked until provision authority) |
+| **Wedge validation** | [WO-004](../ops/work-orders/WO-004-design-partner-interviews.md) | human (interviews + PoV) |
+
+**Forbidden until one track produces real evidence:** new UI, agents, feeds, model integrations, or major Decision Graph surface expansion.
+
+Evidence means: R1 human-signed exit and/or founder bar (≥5 interviews, ≥3 confirm, ≥2 stale-approval PoVs) — see [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) §7 and [`RELEASE-PLAN.md`](./RELEASE-PLAN.md).
 
 ---
 
@@ -35,33 +48,31 @@ Format: [`ops/work-orders/README.md`](../ops/work-orders/README.md).
 ### Always
 
 - Read `docs/SYSTEM-MODEL.md`, `docs/CANONICAL-CONTRACTS.md`, and the active work order before coding.  
-- Reference **Work-Order: WO-XXX** in the PR body (template enforces fields).  
-- Update the work order when status, acceptance checks, or blockers change.  
-- Prefer extending Decision Graph contracts over new route-local models.  
-- Keep non-goals visible; refuse silent scope expansion.
+- Reference **Work-Order: WO-XXX** in the PR body.  
+- Update the work order when status or blockers change.  
+- Prefer Decision Graph contracts over route-local models.  
+- Keep non-goals visible.
 
 ### Never
 
 - Merge or deploy past human gates on credentials, migrations, or external writes.  
-- Treat PR #2 as complete or production-ready without WO-002 repair + re-review.  
-- Provision infrastructure or touch Vercel settings unless the work order and a human explicitly authorize it.  
-- Invent parallel strategy docs that compete with [`ROADMAP.md`](./ROADMAP.md) / [`V1-LAUNCH-ROADMAP.md`](./V1-LAUNCH-ROADMAP.md).  
-- Claim tenant isolation or security properties that tests and review have not established.
+- Provision infrastructure or touch Vercel without explicit human authority (WO-008).  
+- Claim R1 active, tenant isolation in production, or security properties without human evidence.  
+- Open product WOs for UI/agents/feeds/models while freeze is in effect.  
+- Invent process docs competing with [`ROADMAP.md`](./ROADMAP.md) / [`RELEASE-PLAN.md`](./RELEASE-PLAN.md).
 
 ---
 
 ## Handoff pattern
 
 ```text
-Human / roadmap picks item
-    → Work order ready
-        → Grok implements on WO branch
-            → PR + verify:coordination + CI
-                → Codex contract/integration review
-                    → Human merge / deploy / credentials as needed
+Active track (WO-004 or WO-008 only under freeze)
+    → Grok: narrow PR + full local verify (if code/docs change)
+        → Codex: approve | P0–P1 blocker | go-no-go
+            → Human: credentials · migration · prod evidence · interviews · release signature
 ```
 
-If blocked: set WO `status: blocked`, note dependency or decision needed in the WO body and PR — do not invent a workaround that violates contracts.
+If blocked: set WO `status: blocked` — do not invent a contract-violating workaround.
 
 ---
 
@@ -71,13 +82,13 @@ If blocked: set WO `status: blocked`, note dependency or decision needed in the 
 npm run lint
 npm run typecheck
 npm run test:lifecycle
+npm run test:graph
 npm run build
 npm run verify:coordination
-# If present (after Postgres seam lands):
-npm run test:graph
+npm run verify:release-readiness
 ```
 
-CI runs the same set (see `.github/workflows/ci.yml`). `test:graph` is optional until the repaired Postgres seam lands on `main`.
+CI: `.github/workflows/ci.yml` (includes offline release-readiness — **not** live prod proof).
 
 ---
 
@@ -85,7 +96,8 @@ CI runs the same set (see `.github/workflows/ci.yml`). `test:graph` is optional 
 
 | Doc | Role |
 |-----|------|
-| [`ROADMAP.md`](./ROADMAP.md) | Now / next / later work items |
-| [`DECISIONS.md`](./DECISIONS.md) | Append-only decision log |
-| [`OPERATIONS.md`](./OPERATIONS.md) | Runtime ops, flags, outbox |
-| [`V1-LAUNCH-ROADMAP.md`](./V1-LAUNCH-ROADMAP.md) | Launch history (not a competing strategy) |
+| [`ROADMAP.md`](./ROADMAP.md) | Active tracks under freeze |
+| [`RELEASE-PLAN.md`](./RELEASE-PLAN.md) | R0–R3 trains |
+| [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) | Company bar before surface expansion |
+| [`DECISIONS.md`](./DECISIONS.md) | Append-only decisions |
+| [`OPERATIONS.md`](./OPERATIONS.md) | Runtime ops |

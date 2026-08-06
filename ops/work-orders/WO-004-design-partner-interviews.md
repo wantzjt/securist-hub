@@ -42,6 +42,7 @@ WO-003 published a cited wedge hypothesis. Validation requires human conversatio
 ## Progress
 
 - 2026-08-05: Filed `ready`; blocked on human calendar, not engineering.
+- 2026-08-06: Confirmed as **one of two active tracks** under D-009 freeze (with WO-008). No product WOs until this track or R1 produces evidence.
 
 ## Blockers
 
