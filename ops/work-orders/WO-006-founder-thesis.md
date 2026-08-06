@@ -1,7 +1,7 @@
 ---
 id: WO-006
 title: Founder thesis — category-defining decision infrastructure
-status: in_review
+status: complete
 owner: grok
 branch: docs/wo-006-founder-thesis
 depends_on:
@@ -48,7 +48,9 @@ Wedge research (WO-003) defined ICP and JTBD. Founder thesis answers whether Sec
 ## Progress
 
 - 2026-08-05: Claimed on `docs/wo-006-founder-thesis`.
+- 2026-08-06: Merged as PR #7 (`d808b82`). Complete.
+- Operating bar (founder thesis §7): no major surface expansion until ≥5 interviews with ≥3 confirm and ≥2 end-to-end stale-approval PoV runs.
 
 ## Blockers
 
-- None for docs PR. Interviews (WO-004) and provision (WO-005) remain human tracks.
+- None for this WO. Validation continues on WO-004; infra on WO-005.
