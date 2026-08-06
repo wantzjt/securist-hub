@@ -206,7 +206,7 @@ function Home() {
           <tbody>
             {filteredTools.map((t) => (
               <tr
-                key={t.id}
+                key={`${t.id}-${t.name}-${t.href}`}
                 className="border-t border-[var(--securist-border)]"
               >
                 <td className="px-3 py-2">

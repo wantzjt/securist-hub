@@ -18,6 +18,7 @@ import { Route as LegalRouteImport } from './routes/legal'
 import { Route as LinksRouteImport } from './routes/links'
 import { Route as ModelsRouteImport } from './routes/models'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as ServicesRouteImport } from './routes/services'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as UseCasesRouteImport } from './routes/use-cases'
@@ -71,6 +72,11 @@ const SecurityRoute = SecurityRouteImport.update({
   path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesRoute = ServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/links': typeof LinksRoute
   '/models': typeof ModelsRoute
   '/security': typeof SecurityRoute
+  '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/links': typeof LinksRoute
   '/models': typeof ModelsRoute
   '/security': typeof SecurityRoute
+  '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/links': typeof LinksRoute
   '/models': typeof ModelsRoute
   '/security': typeof SecurityRoute
+  '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/use-cases': typeof UseCasesRoute
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/links'
     | '/models'
     | '/security'
+    | '/services'
     | '/terms'
     | '/tools'
     | '/use-cases'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/links'
     | '/models'
     | '/security'
+    | '/services'
     | '/terms'
     | '/tools'
     | '/use-cases'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/links'
     | '/models'
     | '/security'
+    | '/services'
     | '/terms'
     | '/tools'
     | '/use-cases'
@@ -231,6 +243,7 @@ export interface RootRouteChildren {
   LinksRoute: typeof LinksRoute
   ModelsRoute: typeof ModelsRoute
   SecurityRoute: typeof SecurityRoute
+  ServicesRoute: typeof ServicesRoute
   TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   UseCasesRoute: typeof UseCasesRoute
@@ -301,6 +314,13 @@ declare module '@tanstack/react-router' {
       path: '/security'
       fullPath: '/security'
       preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services': {
+      id: '/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -378,6 +398,7 @@ const rootRouteChildren: RootRouteChildren = {
   LinksRoute: LinksRoute,
   ModelsRoute: ModelsRoute,
   SecurityRoute: SecurityRoute,
+  ServicesRoute: ServicesRoute,
   TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   UseCasesRoute: UseCasesRoute,

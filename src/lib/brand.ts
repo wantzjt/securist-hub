@@ -79,6 +79,7 @@ export const ROUTE_TOKENS = [
   'daemon',
   'tools',
   'use-cases',
+  'services',
   'activity',
   'links',
   'ecosystem',
