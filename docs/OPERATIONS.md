@@ -68,6 +68,23 @@ See `docs/INFRA-AUDIT-POSTGRES.md`. Do **not** provision credentials in-repo.
 - Fixtures: `src/lib/decision-graph/fixtures/e2e-lifecycle.ts`.  
 - Seam tests: `npm run test:graph`.
 
+## Release train (R0–R3)
+
+Design-partner beta is gated by the release train in [`docs/RELEASE-PLAN.md`](./RELEASE-PLAN.md):
+
+| Train | Meaning |
+|-------|---------|
+| R0 | Public authority (profiles, SEED honesty) |
+| R1 | Durable Postgres Decision Graph (human provision only) |
+| R2 | Stale-approval proof-of-value + interviews |
+| R3 | Strong release go/no-go — [`ops/release/R3-STRONG-RELEASE.md`](../ops/release/R3-STRONG-RELEASE.md) |
+
+```bash
+npm run verify:release-readiness   # offline docs/gates only — not live prod proof
+```
+
+**R1 is not active** until a human completes WO-008 / RM-003 under **tarx**.
+
 ## Vercel scope
 
 Always `--scope tarx` for Securist hub. Never Hobby. See `docs/VERCEL-SCOPE.md`.

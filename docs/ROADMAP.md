@@ -81,6 +81,27 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 
 - Product code · provision · inventing ARR/TAM · autonomous agents  
 
+### RM-012 — Strong release operations (R0–R3)
+
+| | |
+|--|--|
+| **Owner** | grok (process docs + verifier) · human (R1/R3 execution) |
+| **Status** | `now` |
+| **Depends on** | RM-011 thesis published |
+| **Work orders** | [`WO-007`](../ops/work-orders/WO-007-strong-release-ops.md) · [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) (R1 human) |
+| **Artifacts** | [`RELEASE-PLAN.md`](./RELEASE-PLAN.md) · [`ops/release/R3-STRONG-RELEASE.md`](../ops/release/R3-STRONG-RELEASE.md) |
+
+**Acceptance**
+
+- [ ] R0–R3 entry/exit documented; R1 not claimed pre-provision  
+- [ ] R3 executable checklist with P0/P1/P2 stop rules  
+- [ ] `npm run verify:release-readiness` offline + CI  
+- [ ] WO-008 blocked until human provision authority  
+
+**Non-goals**
+
+- Deploy · credentials · product UI · Eve/daemon · faking live evidence in CI  
+
 ---
 
 ## NEXT
