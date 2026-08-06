@@ -1,7 +1,7 @@
 ---
 id: WO-007
 title: Strong Release Operations (R0–R3 train)
-status: in_progress
+status: in_review
 owner: grok
 branch: ops/wo-007-strong-release
 depends_on:
