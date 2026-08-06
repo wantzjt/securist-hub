@@ -13,6 +13,7 @@
     "test:lifecycle": "tsx src/lib/decision-graph/fixtures/run-e2e-lifecycle.ts",
     "test:graph": "tsx src/lib/decision-graph/fixtures/run-store-tests.ts",
     "verify:coordination": "node scripts/verify-coordination.mjs",
+    "verify:release-readiness": "node scripts/verify-release-readiness.mjs",
     "preview": "vite preview --host 0.0.0.0 --port 8080",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
