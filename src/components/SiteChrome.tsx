@@ -19,6 +19,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
     items: [
       { to: '/tools', label: 'Packages' },
       { to: '/use-cases', label: 'Cases' },
+      { to: '/services', label: 'Services' },
       { to: '/security', label: 'Security' },
     ],
   },
@@ -100,6 +101,9 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             </Link>
             <Link to="/security" className="ops-accent no-underline">
               Security
+            </Link>
+            <Link to="/services" className="ops-accent no-underline">
+              Services
             </Link>
             <Link to="/terms" className="ops-accent no-underline">
               Terms
