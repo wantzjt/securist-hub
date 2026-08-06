@@ -12,13 +12,14 @@ Related: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`CANONICAL-CONTRACTS.md`](./
 ```markdown
 ### D-NNN — Short title
 
-| | |
-|--|--|
-| **Date** | YYYY-MM-DD |
-| **Owner** | name or role |
+|            |                                 |
+| ---------- | ------------------------------- |
+| **Date**   | YYYY-MM-DD                      |
+| **Owner**  | name or role                    |
 | **Status** | accepted \| superseded by D-XXX |
 
-**Context**  
+**Context**
+
 Why a decision was needed.
 
 **Decision**  
@@ -27,7 +28,8 @@ What we chose.
 **Alternatives considered**  
 What we rejected and why (brief).
 
-**Consequences**  
+**Consequences**
+
 What must now be true in code, ops, and reviews.
 ```
 
@@ -37,11 +39,11 @@ What must now be true in code, ops, and reviews.
 
 ### D-001 — Decision Graph is canonical
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · foundation gate |
-| **Status** | accepted |
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-05              |
+| **Owner**  | human · foundation gate |
+| **Status** | accepted                |
 
 **Context**  
 Surfaces (`/models`, `/tools`, Scout, Activity, daemon, Eve) risk inventing parallel domain shapes.
@@ -49,8 +51,9 @@ Surfaces (`/models`, `/tools`, Scout, Activity, daemon, Eve) risk inventing para
 **Decision**  
 The Decision Graph + policy engine is the source of truth for trust, evidence, and decisions. Every product surface is a view of the graph. No route-local competing domain models.
 
-**Alternatives considered**  
-- Graph database first — deferred until query/scale needs prove it.  
+**Alternatives considered**
+
+- Graph database first — deferred until query/scale needs prove it.
 - Per-route TypeScript models — rejected (drift and dual authority).
 
 **Consequences**  
@@ -60,11 +63,11 @@ New features extend `src/lib/decision-graph/` and `packages/contracts` (or proje
 
 ### D-002 — Activity is a projection
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · foundation gate |
-| **Status** | accepted |
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-05              |
+| **Owner**  | human · foundation gate |
+| **Status** | accepted                |
 
 **Context**  
 Ops UIs often become accidental ledgers.
@@ -72,7 +75,8 @@ Ops UIs often become accidental ledgers.
 **Decision**  
 Activity is a **read projection** of durable graph facts (via outbox consumers). It must not invent source facts or accept unauthenticated public writes as authority.
 
-**Alternatives considered**  
+**Alternatives considered**
+
 - Activity as mutable event store — rejected (dual ledger).
 
 **Consequences**  
@@ -82,21 +86,23 @@ Outbox / event table is the bridge from durable writes to UI. Projectors never o
 
 ### D-003 — LIVE is not SEED
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · foundation gate |
-| **Status** | accepted |
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-05              |
+| **Owner**  | human · foundation gate |
+| **Status** | accepted                |
 
 **Context**  
 Demo and curated data must not be mistaken for organization telemetry.
 
-**Decision**  
-- **LIVE** = a current live source returned data this fetch.  
-- **HYBRID** = mix of live + seed/curated.  
+**Decision**
+
+- **LIVE** = a current live source returned data this fetch.
+- **HYBRID** = mix of live + seed/curated.
 - **SEED** = curated fallback / demo — always labeled (`isSeed`, verification `seed`, or UI [SEED]).
 
-**Alternatives considered**  
+**Alternatives considered**
+
 - Silent fallback to seed without labels — rejected (false confidence).
 
 **Consequences**  
@@ -106,11 +112,11 @@ Public Activity and Artifact Profiles must not present seed rows as live org sig
 
 ### D-004 — AI proposes only
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · foundation gate |
-| **Status** | accepted |
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-05              |
+| **Owner**  | human · foundation gate |
+| **Status** | accepted                |
 
 **Context**  
 LLMs and Eve agents can generate fluent but unowned claims.
@@ -118,7 +124,8 @@ LLMs and Eve agents can generate fluent but unowned claims.
 **Decision**  
 AI / Eve output is a **proposal or extracted candidate fact** only. Verification stays `observed` at most until humans/policy elevate. No authoritative durable decision writes from AI paths.
 
-**Alternatives considered**  
+**Alternatives considered**
+
 - Auto-approve on model confidence — rejected.
 
 **Consequences**  
@@ -128,11 +135,11 @@ Eve gateway remains propose-only. Feature flags for remote LLM stay off until ex
 
 ### D-005 — External writes need policy + human
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · foundation gate |
-| **Status** | accepted |
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-05              |
+| **Owner**  | human · foundation gate |
+| **Status** | accepted                |
 
 **Context**  
 Upstream PRs, adapters, and cloud writes can harm customers and reputation if automated carelessly.
@@ -140,7 +147,8 @@ Upstream PRs, adapters, and cloud writes can harm customers and reputation if au
 **Decision**  
 External writes require **explicit policy permission and human approval**. `SECURIST_FEATURE_AUTO_DRAFT_PR` remains off by default; draft-only workflows still need human authorization before default-branch impact.
 
-**Alternatives considered**  
+**Alternatives considered**
+
 - Fully automated contribution bots — rejected for V1+.
 
 **Consequences**  
@@ -150,11 +158,11 @@ Contribution records and draft PR paths must record human approval. Agents must 
 
 ### D-006 — TARX Vercel scope only
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · ops |
-| **Status** | accepted |
+|            |             |
+| ---------- | ----------- |
+| **Date**   | 2026-08-05  |
+| **Owner**  | human · ops |
+| **Status** | accepted    |
 
 **Context**  
 Securist was briefly associated with Hobby / wrong team scope.
@@ -162,7 +170,8 @@ Securist was briefly associated with Hobby / wrong team scope.
 **Decision**  
 All Securist hub deploys and production resources use Vercel team **tarx**, project **securist-hub**. Never Hobby or personal account for production.
 
-**Alternatives considered**  
+**Alternatives considered**
+
 - Hobby for “just testing prod domains” — rejected (domain and secret drift).
 
 **Consequences**  
@@ -172,11 +181,11 @@ CLI always `--scope tarx`. See [`VERCEL-SCOPE.md`](./VERCEL-SCOPE.md). Agents do
 
 ### D-007 — Version-bound approvals; material change re-opens trust
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · foundation gate |
-| **Status** | accepted |
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-05              |
+| **Owner**  | human · foundation gate |
+| **Status** | accepted                |
 
 **Context**  
 Trust must not silently inherit across releases.
@@ -184,7 +193,8 @@ Trust must not silently inherit across releases.
 **Decision**  
 An approval binds to one artifact version, policy version, scope, and evidence set. Material source/policy/validation/evidence changes force `review_required` (or equivalent re-open) — never quiet `approved`.
 
-**Alternatives considered**  
+**Alternatives considered**
+
 - Sticky approvals until manual revoke — rejected.
 
 **Consequences**  
@@ -194,23 +204,25 @@ State machine and lifecycle fixture are gates. Store adapters must not bypass tr
 
 ### D-008 — Postgres seam before provision (process)
 
-| | |
-|--|--|
-| **Date** | 2026-08-05 |
-| **Owner** | human · ops |
-| **Status** | accepted |
+|            |             |
+| ---------- | ----------- |
+| **Date**   | 2026-08-05  |
+| **Owner**  | human · ops |
+| **Status** | accepted    |
 
 **Context**  
 PR #2 sketched a Postgres adapter but is not merge-ready (tenant scope, transactional outbox, bootstrap, lint).
 
-**Decision**  
-1. Do **not** merge or deploy PR #2 as-is.  
-2. Repair and re-review on a rebased branch (roadmap RM-002 / WO-002).  
-3. Provision TARX-scoped Postgres **only after** repair approval (RM-003).  
+**Decision**
+
+1. Do **not** merge or deploy PR #2 as-is.
+2. Repair and re-review on a rebased branch (roadmap RM-002 / WO-002).
+3. Provision TARX-scoped Postgres **only after** repair approval (RM-003).
 4. Agents never create credentials or claim production durability without human ops.
 
-**Alternatives considered**  
-- Merge now and fix forward in production — rejected.  
+**Alternatives considered**
+
+- Merge now and fix forward in production — rejected.
 - Parallel competing schemas — rejected; reuse `migrations/001_decision_graph.sql`.
 
 **Consequences**  
@@ -220,24 +232,58 @@ Coordination plane (RM-001) lands first. Infrastructure work is human-gated afte
 
 ### D-009 — Freeze process work; two active tracks only
 
-| | |
-|--|--|
-| **Date** | 2026-08-06 |
-| **Owner** | human · founder ops |
-| **Status** | accepted |
+|            |                     |
+| ---------- | ------------------- |
+| **Date**   | 2026-08-06          |
+| **Owner**  | human · founder ops |
+| **Status** | accepted            |
 
 **Context**  
 PR #9 delivered honest R0–R3 release gates. Further process invention risks theater. Founder thesis requires real interview and PoV evidence before surface expansion.
 
-**Decision**  
-1. **Freeze** new operational-process frameworks (no new release trains, meta-verifiers, or coordination systems unless human reopens).  
-2. Cadence: **Grok** one WO / one PR / full local verify → **Codex** approve or P0–P1 blocker or go-no-go → **Human** credentials, migration, prod evidence, interviews, release signature.  
-3. **Only two active tracks:** [WO-008](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) (R1 Postgres, human) and [WO-004](../ops/work-orders/WO-004-design-partner-interviews.md) (interviews + PoV, human).  
+**Decision**
+
+1. **Freeze** new operational-process frameworks (no new release trains, meta-verifiers, or coordination systems unless human reopens).
+2. Cadence: **Grok** one WO / one PR / full local verify → **Codex** approve or P0–P1 blocker or go-no-go → **Human** credentials, migration, prod evidence, interviews, release signature.
+3. **Only two active tracks:** [WO-008](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) (R1 Postgres, human) and [WO-004](../ops/work-orders/WO-004-design-partner-interviews.md) (interviews + PoV, human).
 4. **No** new UI, agents, feeds, or model integrations until one track produces real evidence.
 
-**Alternatives considered**  
-- Continue building process and product surface in parallel — rejected (dilutes decision-system focus).  
+**Alternatives considered**
+
+- Continue building process and product surface in parallel — rejected (dilutes decision-system focus).
 - Agent-owned provision — rejected (D-008 / D-006).
 
 **Consequences**  
 Grok does not open product WOs under freeze. Codex does not expand scope. R1 stays unclaimed until human WO-008 exit. Roadmap NEXT items stay frozen until evidence.
+
+---
+
+### D-010 — Founder scope authority and regression guardrails
+
+|            |                                                 |
+| ---------- | ----------------------------------------------- |
+| **Date**   | 2026-08-06                                      |
+| **Owner**  | human · founder                                 |
+| **Status** | accepted · supersedes D-009 clauses 1, 3, and 4 |
+
+**Context**
+
+D-009 correctly stopped process theater but was later applied as an absolute veto over explicit founder direction. That inverted the authority model and blocked the conversion surface the product needs. The repository also lacked a machine-checkable map from product authority to code, invariants, tests, and human gates.
+
+**Decision**
+
+1. The founder may explicitly authorize product or operational scope. Evidence bars inform sequencing; they do not overrule direct human scope authority.
+2. Keep the useful cadence from D-009: one work order, one branch, one narrow PR, complete verification, human control of credentials, production migration, deploy, and external writes.
+3. `ops/system-graph.json` is the canonical **repository architecture map**. It maps authority → implementation → invariant → automated check or human gate. It never replaces the customer Decision Graph.
+4. Every work order starts and ends with a clean git tree. Generated tracked changes or non-ignored residue fail CI.
+5. A change may extend the system, but it may not weaken an established invariant without an explicit superseding decision, updated contract, and regression proof.
+
+**Alternatives considered**
+
+- Preserve D-009 as an absolute product freeze — rejected; process cannot outrank explicit founder direction.
+- Rely on prose architecture alone — rejected; paths and enforcement drift silently.
+- Treat a green build as regression proof — rejected; it does not map product authority or detect generated tree residue.
+
+**Consequences**
+
+Product work may proceed through explicitly authorized work orders. CI validates the internal system graph before merge and checks repository cleanliness before install and after verification. R1 and external-write claims remain human-gated; this decision does not activate Postgres, private customer persistence, autonomous PRs, or deploy authority.

@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   verify:
-    name: lint · typecheck · lifecycle · build · coordination · release-docs
+    name: clean · lint · typecheck · lifecycle · graph · build · contracts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +23,9 @@ jobs:
           # Match lockfile rebuild target; keep CI and local install in sync
           node-version: '24'
           cache: npm
+
+      - name: Clean checkout preflight
+        run: npm run verify:clean-worktree
 
       - name: Install
         run: npm ci
@@ -58,3 +61,10 @@ jobs:
       # Offline-only: release document/gate completeness (no deploy, DB, or secrets)
       - name: Release readiness (docs process)
         run: npm run verify:release-readiness
+
+      - name: Internal system graph
+        run: npm run verify:system-graph
+
+      # Catch generated tracked files and any non-ignored residue from verification.
+      - name: Clean checkout after verification
+        run: npm run verify:clean-worktree

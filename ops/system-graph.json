@@ -1,0 +1,400 @@
+{
+  "$schema": "./system-graph.schema.json",
+  "schemaVersion": 1,
+  "name": "Securist repository system graph",
+  "purpose": "Machine-checkable map from product authority to implementation, verification, and human gates. This is not customer Decision Graph data.",
+  "canonicalProductAuthority": "decision-graph",
+  "sourceDocuments": [
+    "docs/SYSTEM-MODEL.md",
+    "docs/CANONICAL-CONTRACTS.md",
+    "docs/DECISION-LIFECYCLE.md",
+    "docs/OPERATIONS.md",
+    "docs/DECISIONS.md"
+  ],
+  "coverageRoots": [
+    {
+      "path": "packages/contracts/src",
+      "extensions": [".ts"],
+      "excludePrefixes": []
+    },
+    {
+      "path": "src/lib/decision-graph",
+      "extensions": [".ts"],
+      "excludePrefixes": ["src/lib/decision-graph/fixtures/"]
+    },
+    {
+      "path": "src/lib/eve-gateway",
+      "extensions": [".ts"],
+      "excludePrefixes": []
+    },
+    {
+      "path": "migrations",
+      "extensions": [".sql"],
+      "excludePrefixes": []
+    }
+  ],
+  "checks": [
+    {
+      "id": "typecheck",
+      "mode": "automated",
+      "command": "npm run typecheck"
+    },
+    {
+      "id": "lint",
+      "mode": "automated",
+      "command": "npm run lint"
+    },
+    {
+      "id": "build",
+      "mode": "automated",
+      "command": "npm run build"
+    },
+    {
+      "id": "lifecycle",
+      "mode": "automated",
+      "command": "npm run test:lifecycle"
+    },
+    {
+      "id": "graph-store",
+      "mode": "automated",
+      "command": "npm run test:graph"
+    },
+    {
+      "id": "coordination",
+      "mode": "automated",
+      "command": "npm run verify:coordination"
+    },
+    {
+      "id": "release-readiness",
+      "mode": "automated",
+      "command": "npm run verify:release-readiness"
+    },
+    {
+      "id": "system-graph",
+      "mode": "automated",
+      "command": "npm run verify:system-graph"
+    },
+    {
+      "id": "clean-worktree",
+      "mode": "automated",
+      "command": "npm run verify:clean-worktree"
+    },
+    {
+      "id": "human-decision",
+      "mode": "human",
+      "evidence": "A named reviewer records the scoped decision and approval basis."
+    },
+    {
+      "id": "human-external-write",
+      "mode": "human",
+      "evidence": "A human with proven control authorizes the exact target and external mutation."
+    },
+    {
+      "id": "human-r1-signature",
+      "mode": "human",
+      "evidence": "WO-008 records migration, tenant, smoke, rollback, and TARX production evidence."
+    }
+  ],
+  "invariants": [
+    {
+      "id": "INV-001",
+      "statement": "Approval binds one artifact version, policy version, scope, and evidence set.",
+      "enforcedBy": ["lifecycle", "graph-store"]
+    },
+    {
+      "id": "INV-002",
+      "statement": "Later artifact versions never silently inherit approval.",
+      "enforcedBy": ["lifecycle", "graph-store"]
+    },
+    {
+      "id": "INV-003",
+      "statement": "Automated claims carry provenance and verification state.",
+      "enforcedBy": ["typecheck", "lifecycle"]
+    },
+    {
+      "id": "INV-004",
+      "statement": "Sensitive events are tenant-scoped before persistence.",
+      "enforcedBy": ["graph-store"]
+    },
+    {
+      "id": "INV-005",
+      "statement": "Activity is a projection of durable facts, not a source ledger.",
+      "enforcedBy": ["lifecycle", "graph-store"]
+    },
+    {
+      "id": "INV-006",
+      "statement": "LIVE, HYBRID, and SEED remain visibly distinct.",
+      "enforcedBy": ["graph-store", "typecheck"]
+    },
+    {
+      "id": "INV-007",
+      "statement": "AI output remains a proposal or candidate fact, never an authoritative decision.",
+      "enforcedBy": ["typecheck", "human-decision"]
+    },
+    {
+      "id": "INV-008",
+      "statement": "External writes require explicit policy permission and human authorization.",
+      "enforcedBy": ["human-external-write"]
+    },
+    {
+      "id": "INV-009",
+      "statement": "Public profiles never expose private evidence, local paths, secrets, prompts, or customer data.",
+      "enforcedBy": ["typecheck", "human-decision"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "contracts",
+      "kind": "contract",
+      "authority": "canonical-shape",
+      "status": "implemented",
+      "paths": [
+        "packages/contracts/src/agents.ts",
+        "packages/contracts/src/evidence.ts",
+        "packages/contracts/src/graph.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/proposals.ts",
+        "src/lib/decision-graph/outbox-types.ts",
+        "src/lib/decision-graph/store-types.ts",
+        "src/lib/decision-graph/types.ts",
+        "src/lib/decision-graph/surface-contracts.ts"
+      ],
+      "dependsOn": [],
+      "invariants": ["INV-001", "INV-003", "INV-006", "INV-009"],
+      "verifiedBy": ["typecheck", "system-graph"]
+    },
+    {
+      "id": "decision-graph",
+      "kind": "authority",
+      "authority": "canonical-product-state",
+      "status": "implemented",
+      "paths": [
+        "src/lib/decision-graph/hash.ts",
+        "src/lib/decision-graph/index.ts",
+        "src/lib/decision-graph/ingest.ts",
+        "src/lib/decision-graph/mappers.ts",
+        "src/lib/decision-graph/sql.ts",
+        "src/lib/decision-graph/state-machine.ts"
+      ],
+      "dependsOn": ["contracts"],
+      "invariants": ["INV-001", "INV-002", "INV-004", "INV-006"],
+      "verifiedBy": ["lifecycle", "graph-store", "typecheck"]
+    },
+    {
+      "id": "policy-engine",
+      "kind": "authority",
+      "authority": "deterministic-evaluation-only",
+      "status": "implemented",
+      "paths": ["src/lib/decision-graph/policy.ts"],
+      "dependsOn": ["contracts", "decision-graph"],
+      "invariants": ["INV-001", "INV-007", "INV-008"],
+      "verifiedBy": ["lifecycle", "typecheck", "human-external-write"]
+    },
+    {
+      "id": "memory-store",
+      "kind": "adapter",
+      "authority": "seed-demo-adapter",
+      "status": "implemented",
+      "paths": [
+        "src/lib/decision-graph/store.ts",
+        "src/lib/decision-graph/seed.ts"
+      ],
+      "dependsOn": ["decision-graph"],
+      "invariants": ["INV-004", "INV-006"],
+      "verifiedBy": ["graph-store"]
+    },
+    {
+      "id": "postgres-store",
+      "kind": "adapter",
+      "authority": "durable-adapter",
+      "status": "implemented-not-production-active",
+      "paths": [
+        "migrations/001_decision_graph.sql",
+        "src/lib/decision-graph/postgres-store.ts",
+        "src/lib/decision-graph/config.ts"
+      ],
+      "dependsOn": ["decision-graph", "outbox"],
+      "invariants": ["INV-004", "INV-005"],
+      "verifiedBy": ["graph-store", "human-r1-signature"]
+    },
+    {
+      "id": "outbox",
+      "kind": "boundary",
+      "authority": "durable-fact-before-projection",
+      "status": "implemented",
+      "paths": [
+        "src/lib/decision-graph/outbox.ts",
+        "src/lib/decision-graph/postgres-outbox.ts"
+      ],
+      "dependsOn": ["contracts"],
+      "invariants": ["INV-004", "INV-005"],
+      "verifiedBy": ["graph-store", "lifecycle"]
+    },
+    {
+      "id": "read-projections",
+      "kind": "projection",
+      "authority": "pure-read-models",
+      "status": "implemented",
+      "paths": ["src/lib/decision-graph/profile.ts"],
+      "dependsOn": ["decision-graph", "contracts"],
+      "invariants": ["INV-001", "INV-003", "INV-005", "INV-009"],
+      "verifiedBy": ["graph-store", "typecheck"]
+    },
+    {
+      "id": "activity-projection",
+      "kind": "projection",
+      "authority": "read-only-view",
+      "status": "implemented-hybrid",
+      "paths": ["src/lib/activity-api.ts", "src/routes/activity.tsx"],
+      "dependsOn": [
+        "decision-graph",
+        "outbox",
+        "contracts",
+        "read-projections"
+      ],
+      "invariants": ["INV-003", "INV-005", "INV-006", "INV-009"],
+      "verifiedBy": ["lifecycle", "graph-store", "build"]
+    },
+    {
+      "id": "artifact-profile",
+      "kind": "projection",
+      "authority": "share-safe-read-model",
+      "status": "implemented-seed",
+      "paths": [
+        "src/routes/artifacts.$artifactId.tsx",
+        "src/routes/artifacts.$artifactId.evidence.tsx"
+      ],
+      "dependsOn": ["decision-graph", "contracts", "read-projections"],
+      "invariants": ["INV-001", "INV-003", "INV-006", "INV-009"],
+      "verifiedBy": ["typecheck", "build", "human-decision"]
+    },
+    {
+      "id": "public-research",
+      "kind": "acquisition-surface",
+      "authority": "public-source-observation",
+      "status": "implemented-hybrid",
+      "paths": [
+        "src/lib/pulse-core.ts",
+        "src/lib/hf-scout.ts",
+        "src/routes/index.tsx",
+        "src/routes/models.tsx",
+        "src/routes/tools.tsx"
+      ],
+      "dependsOn": ["activity-projection"],
+      "invariants": ["INV-003", "INV-006", "INV-009"],
+      "verifiedBy": ["typecheck", "build"]
+    },
+    {
+      "id": "eve-proposals",
+      "kind": "proposal-boundary",
+      "authority": "proposal-only",
+      "status": "spec-and-gateway-only",
+      "paths": [
+        "agent-runtime/README.md",
+        "src/lib/eve-gateway/gateway.ts",
+        "src/lib/eve-gateway/types.ts"
+      ],
+      "dependsOn": ["decision-graph", "contracts"],
+      "invariants": ["INV-003", "INV-004", "INV-007", "INV-008"],
+      "verifiedBy": ["typecheck", "human-decision", "human-external-write"]
+    },
+    {
+      "id": "human-authority",
+      "kind": "human-gate",
+      "authority": "decision-and-escalation",
+      "status": "required",
+      "paths": ["docs/SYSTEM-MODEL.md", "docs/DECISION-LIFECYCLE.md"],
+      "dependsOn": ["decision-graph", "policy-engine"],
+      "invariants": ["INV-001", "INV-007", "INV-008", "INV-009"],
+      "verifiedBy": ["human-decision", "human-external-write"]
+    },
+    {
+      "id": "r1-production-activation",
+      "kind": "release-gate",
+      "authority": "human-production-evidence",
+      "status": "blocked",
+      "paths": [
+        "ops/work-orders/WO-008-r1-postgres-activation-prep.md",
+        "docs/RM-003-PROVISION-CHECKLIST.md"
+      ],
+      "dependsOn": ["postgres-store", "human-authority"],
+      "invariants": ["INV-004", "INV-006", "INV-009"],
+      "verifiedBy": ["release-readiness", "human-r1-signature"]
+    }
+  ],
+  "edges": [
+    {
+      "from": "public-research",
+      "to": "artifact-profile",
+      "type": "supplies-public-evidence"
+    },
+    {
+      "from": "artifact-profile",
+      "to": "human-authority",
+      "type": "supports-decision"
+    },
+    {
+      "from": "human-authority",
+      "to": "decision-graph",
+      "type": "records-scoped-decision"
+    },
+    {
+      "from": "decision-graph",
+      "to": "outbox",
+      "type": "emits-durable-fact"
+    },
+    {
+      "from": "outbox",
+      "to": "activity-projection",
+      "type": "projects"
+    },
+    {
+      "from": "eve-proposals",
+      "to": "human-authority",
+      "type": "requests-review"
+    },
+    {
+      "from": "postgres-store",
+      "to": "r1-production-activation",
+      "type": "requires-production-proof"
+    }
+  ],
+  "valueLoop": [
+    {
+      "order": 1,
+      "stage": "observe-public-artifact",
+      "node": "public-research",
+      "status": "implemented-hybrid"
+    },
+    {
+      "order": 2,
+      "stage": "understand-evidence-and-policy",
+      "node": "artifact-profile",
+      "status": "implemented-seed"
+    },
+    {
+      "order": 3,
+      "stage": "record-scoped-human-decision",
+      "node": "human-authority",
+      "status": "contracted-not-self-serve"
+    },
+    {
+      "order": 4,
+      "stage": "retain-private-decision",
+      "node": "r1-production-activation",
+      "status": "blocked"
+    },
+    {
+      "order": 5,
+      "stage": "detect-material-change",
+      "node": "decision-graph",
+      "status": "fixture-proven-not-operated"
+    },
+    {
+      "order": 6,
+      "stage": "force-re-review",
+      "node": "human-authority",
+      "status": "fixture-proven-not-self-serve"
+    }
+  ]
+}

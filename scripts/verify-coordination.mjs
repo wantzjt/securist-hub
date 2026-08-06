@@ -203,9 +203,14 @@ function loadAllWorkOrders() {
 
 function readPrBody() {
   if (process.env.PR_BODY) return process.env.PR_BODY
-  if (process.env.GITHUB_EVENT_PATH && existsSync(process.env.GITHUB_EVENT_PATH)) {
+  if (
+    process.env.GITHUB_EVENT_PATH &&
+    existsSync(process.env.GITHUB_EVENT_PATH)
+  ) {
     try {
-      const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
+      const event = JSON.parse(
+        readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'),
+      )
       return event.pull_request?.body || event.issue?.body || ''
     } catch {
       return ''
@@ -330,18 +335,15 @@ function checkContractChangeHygiene(files) {
       f.includes('test:'),
   )
 
-  if (!hasDocs && !hasTests) {
+  if (!hasTests) {
     fail(
-      `contract/migration/state-machine changes without docs or tests in the same change set:\n  - ${contracty.join('\n  - ')}\n` +
-        'Add docs/* and/or fixtures/tests. (Heuristic — does not prove tenant isolation.)',
+      `contract/migration/state-machine changes without regression tests in the same change set:\n  - ${contracty.join('\n  - ')}\n` +
+        'Add or update fixtures/tests. Documentation alone is not regression proof.',
     )
-  } else if (!hasDocs) {
+  }
+  if (!hasDocs) {
     warn(
       'contract/migration/state-machine changes present without docs/* updates — confirm intentional',
-    )
-  } else if (!hasTests) {
-    warn(
-      'contract/migration/state-machine changes present without fixture/test updates — confirm intentional',
     )
   }
 
