@@ -1,24 +1,24 @@
 # Securist V1: Start a Decision
 
-**Status:** Build specification (implementation not started)  
+**Status:** Build specification · **WO-010 implementation**  
 **Date:** 2026-08-06  
 **Locked company sentence:** *Securist is the chain of custody for permission and authorized defensive work under change.*  
 **External lead (not “AI SecOps”):** *Permission for code and models — know what engineers and agents may use, what was tested, and what must be reconsidered.*  
 **Power layer (later):** *Securist Verify — authorized validation with a chain of custody.*
 
-**Related:** [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) · [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`RELEASE-PLAN.md`](./RELEASE-PLAN.md) · [`STRATEGIC-WEDGE-RESEARCH.md`](./STRATEGIC-WEDGE-RESEARCH.md)
+**Related:** [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) · [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`RELEASE-PLAN.md`](./RELEASE-PLAN.md) · [`STRATEGIC-WEDGE-RESEARCH.md`](./STRATEGIC-WEDGE-RESEARCH.md) · [`WO-010`](../ops/work-orders/WO-010-v1-start-a-decision.md)
 
-This is the **only** product surface worth building next. Not a strategy memo. Not Verify. Not MCP implementation. Not more research dashboards.
+This is the **only** product surface for WO-010. Not a strategy memo. Not Verify. Not MCP implementation. Not more research dashboards. **Founder-led intake is not the product**—Securist must provide **immediate automated value**.
 
 ---
 
 ## 1. Product in one paragraph
 
-A security or platform lead can **start an adoption decision** for a GitHub (or later HF) artifact under a named intended use and deployment boundary, see a **Decision Brief** (evidence + policy + validation plan), record a **human** decision bound to a version and scope, and understand that material change will force **re-review**. Public research remains supporting acquisition and evidence—not the product.
+A visitor pastes a **public GitHub repository URL**, states intended use / environment / deployment boundary, and receives an **immediate share-safe Decision Brief** built from deterministically collected public API facts. Observed facts, unknowns, evidence gaps, and SEED/LIVE state are labeled. No email is required for value. No customer-private persistence before R1. Copy/download of a local draft is allowed; “Save and monitor” is the future paid hinge. Catalog profiles remain Decision Briefs with a **Start a decision for this artifact** CTA. Public research remains supporting—not the hero product.
 
 **Aha moment (later, post-connect):**  
 *“Here are the dependencies in this repo that we are already trusting, but have never actually approved.”*  
-V1 below does **not** require GitHub App yet; it establishes the conversion path and Decision Brief framing first.
+V1 below does **not** require GitHub App yet; it establishes automated assess → Decision Brief first.
 
 ---
 
@@ -26,13 +26,13 @@ V1 below does **not** require GitHub App yet; it establishes the conversion path
 
 | Item | Requirement |
 |------|-------------|
-| Homepage rewrite | Decision-product story; primary CTA **Start a decision**; secondary **View a sample Decision Brief** |
-| `/assess` | Structured intake form |
-| Sample Decision Brief | One shareable path that demonstrates the product (existing artifact profile or dedicated sample) |
-| Profile CTA | On Artifact Profile: **Start a decision for this artifact** |
-| Navigation | Collapse Activity / Models / Packages / Links / Scout under **Research** (supporting) |
-| Pre-R1 / post-R1 behavior | Explicit honesty; no fake private workspace pre-R1 |
-| Future MCP contract | Spec only (read / draft / request validation — never approve or exploit) |
+| Homepage rewrite | Headline **Permission for code and models.**; primary **Assess a repository**; secondary **View a sample Decision Brief** |
+| `/assess` | Public GitHub URL + intended use + environment + boundary; immediate LIVE brief; no email |
+| Sample Decision Brief | Shareable seed profile (`art-scout-daemon`) |
+| Profile CTA | On Decision Brief: **Start a decision for this artifact** |
+| Navigation | Primary Assess / Decision Briefs; Research groups Activity, Models, Packages, Scout, Links; Services secondary |
+| Pre-R1 honesty | Ephemeral only; no private durable store; no vuln claims from narrative; not a pentest |
+| System graph | Register assess paths; one owner; Decision Graph remains canonical; Postgres not production-active |
 
 ---
 
@@ -66,51 +66,56 @@ V1 below does **not** require GitHub App yet; it establishes the conversion path
 
 - **Headline:** Permission for code and models.  
 - **Subhead:** Know what your engineers and agents may use, what was tested, and what must be reconsidered when artifacts change.  
-- **Primary button:** Start a decision → `/assess`  
-- **Secondary button:** View a sample Decision Brief → chosen sample artifact URL  
+- **Primary button:** Assess a repository → `/assess`  
+- **Secondary button:** View a sample Decision Brief → seed artifact profile  
 
 ### Supporting (short)
 
-1. Define artifact + boundary  
-2. Capture evidence and policy  
-3. Human decides (approve / conditional / pause)  
-4. Drift forces re-review  
+1. Assess (public repo URL + intended boundary)  
+2. Evidence (observed public facts · explicit gaps)  
+3. Human decision (approve / conditional / pause — durable post-R1)  
+4. Re-review (material change forces re-open)  
 
 ### Explicit demotion
 
+- Research is supporting evidence, not the hero product  
 - No “Catalog console” framing  
-- No pulse/ops theater as the first thing buyers see  
-- Research link: “Explore public research” (not the primary path)
+- No pulse/ops theater as the first conversion path  
 
 ---
 
-## 6. `/assess` intake
+## 6. `/assess` (automated public assess)
 
-### Fields
+### Fields (no email)
 
 | Field | Type | Notes |
 |-------|------|--------|
-| Artifact URL | string | GitHub repo preferred; HF model URL accepted and labeled “same graph later” if needed |
+| Public GitHub repository URL | string | Required; reject private, secrets, local paths, non-GitHub |
 | Intended use | short text | Required |
-| Deployment boundary | enum | `local_only` \| `controlled_cloud` \| `external_service` (match Decision Graph) |
 | Environment | enum | research \| development \| staging \| production |
-| Contact email | string | For pre-R1 founder-led path |
-| Optional notes | text | |
+| Deployment boundary | enum | `local_only` \| `controlled_cloud` \| `external_service` |
 
-### Pre-R1 behavior (mandatory honesty)
+### Immediate result (mandatory)
 
-- Submit **does not** create a private durable tenant decision.  
-- UI copy: *“Pre-R1: this is a founder-led intake. We will not store customer-private decisions in demo memory. You will be contacted at the email you provide.”*  
-- Server action: validate input, reject secrets/paths (same redaction posture as ingest), email or ledger contact to `ops@secur.ist` / existing ops path—**no** pretend workspace.  
-- Optional: if URL maps to a **public** catalog artifact, deep-link “View public Decision Brief” without implying org approval.
+- Deterministically collect **public** repository facts (GitHub API).  
+- Produce a share-safe **Decision Brief** immediately.  
+- Label observed facts, unknowns, evidence gaps, and LIVE state.  
+- Never claim a vulnerability merely from model narrative.  
+- Never imply a pentest occurred.  
+- **No customer-private persistence** before R1 (`durable: false`, `persistence: ephemeral_client_only`).  
+- Allow copy/download of a local decision draft JSON.  
+- “Save and monitor” may be shown **disabled** as the future paid persistence hinge.
+
+### Rejection rules
+
+- Private URLs / private GitHub repos  
+- Secrets, local paths, unsupported providers (GitLab, Bitbucket, HF, npm as repo URL)  
 
 ### Post-R1 behavior (specify now, implement when R1 live)
 
-- Same form creates `decision draft` in tenant workspace.  
-- Assign human reviewer.  
-- Attach evidence / validation later.  
-- Decision binds to version + policy + scope.  
-- Material change → `review_required`.
+- “Save and monitor” creates a durable tenant decision draft.  
+- Assign human reviewer; bind version + policy + scope.  
+- Material change → `review_required`.  
 
 ---
 
@@ -118,19 +123,19 @@ V1 below does **not** require GitHub App yet; it establishes the conversion path
 
 ### CTA
 
-**Start a decision for this artifact** → `/assess?artifact=<id>` (pre-fill URL from canonical URL).
+**Start a decision for this artifact** → `/assess?artifact=<id>&url=<canonicalUrl>`.
 
-### Content framing (copy only where needed)
+### Content framing
 
-- Lead with decision status, boundary, policy, evidence gaps, what changed.  
+- Frame page as **Decision Brief**.  
+- Lead with status, intended boundary, version/policy binding, evidence gaps, what would trigger re-review.  
 - Public research signals are **evidence inputs**, not the product title.  
 - Keep LIVE / SEED honesty.
 
 ### Sample Decision Brief
 
-- Pick one well-known **public** security-relevant package already in seed/catalog.  
-- Homepage secondary CTA links to it.  
-- Must read as a **decision** document, not a package directory card.
+- Seed profile: `art-scout-daemon`.  
+- Homepage secondary CTA links to it.
 
 ---
 
@@ -138,24 +143,16 @@ V1 below does **not** require GitHub App yet; it establishes the conversion path
 
 ### Primary (product)
 
-- Start a decision (→ `/assess` or home CTA)  
-- Decision Briefs / Profiles (→ `/artifacts`)  
+- Assess (→ `/assess`)  
+- Decision Briefs (→ `/artifacts`)  
 
-### Supporting: single group **Research**
+### Supporting: **Research**
 
-- Activity / Sources  
-- Scout / Operator  
-- Models  
-- Packages  
-- Links  
-- Cases / Security as needed  
+- Activity · Models · Packages · Scout · Links  
 
-### Not primary
+### Secondary
 
-- Services (secondary: help completing a decision)  
-- Ops board / pulse as conversion UI  
-
-Exact IA implementation: one Research dropdown or secondary nav row—minimize Discover/Build/Field theater for buyers.
+- Services · Security · Cases  
 
 ---
 
@@ -164,12 +161,12 @@ Exact IA implementation: one Research dropdown or secondary nav row—minimize D
 | Capability | Pre-R1 | Post-R1 |
 |------------|--------|---------|
 | Homepage + CTAs | Ship | Ship |
-| `/assess` form | Ship (founder-led) | Ship (durable draft) |
+| `/assess` automated public brief | Ship (ephemeral) | Ship + durable save |
 | Private decision record | **No** | Yes |
 | Customer-private evidence in memory/SEED | **Forbidden** | N/A (use Postgres tenant) |
 | Sample public Decision Brief | Ship | Ship |
 | GitHub connect / lockfile import | No | Later WO |
-| MCP | Contract only | Later WO |
+| MCP | Not in WO-010 | WO-012 local `assess .` |
 | Verify / agent runs | No | Later WO |
 
 ---

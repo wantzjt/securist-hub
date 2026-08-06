@@ -66,21 +66,38 @@ function ArtifactProfilePage() {
     .filter(Boolean)
     .join('\n')
 
+  const assessSearch = {
+    url: a.canonicalUrl || '',
+    artifact: a.id,
+  }
+
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="ops-label">Artifact Profile</div>
+          <div className="ops-label">Decision Brief</div>
           <h1 className="mt-1 text-xl font-semibold tracking-[0.06em] text-white">
             {a.name}
           </h1>
           <p className="mt-1 text-[11px] text-[var(--securist-muted)]">
+            Status:{' '}
+            <span className="ops-accent">
+              {STATUS_LABEL[a.status] || a.status}
+            </span>
+            {' · '}
             {a.kind} · {a.provider} ·{' '}
-            {a.isSeed ? <span className="ops-accent">SEED</span> : 'tracked'}
+            {a.isSeed ? <span className="ops-chip">SEED</span> : 'tracked'}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <CopyPage title={`Artifact · ${a.name}`} body={copyBody} />
+          <Link
+            to="/assess"
+            search={assessSearch}
+            className="ops-btn ops-btn-primary no-underline"
+          >
+            Start a decision for this artifact
+          </Link>
+          <CopyPage title={`Decision Brief · ${a.name}`} body={copyBody} />
           <Link
             to="/artifacts/$artifactId/activity"
             params={{ artifactId: a.id }}
@@ -110,13 +127,22 @@ function ArtifactProfilePage() {
               Policy: {VERDICT_LABEL[ev.verdict] || ev.verdict}
             </span>
           ) : null}
+          {a.isSeed ? <span className="ops-chip">SEED demo</span> : null}
         </div>
         <p className="text-[13px] leading-relaxed text-white">{a.purpose}</p>
         <dl className="grid gap-2 text-[12px] sm:grid-cols-2">
           <div>
-            <dt className="ops-label">Recommended use boundary</dt>
+            <dt className="ops-label">Intended / recommended boundary</dt>
             <dd className="mt-0.5 text-[var(--securist-muted)]">
               {a.recommendedBoundary}
+            </dd>
+          </div>
+          <div>
+            <dt className="ops-label">Version / policy binding</dt>
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
+              {ev
+                ? `${ev.policyId} v${ev.policyVersion}`
+                : 'No bound evaluation yet'}
             </dd>
           </div>
           <div>
@@ -137,12 +163,20 @@ function ArtifactProfilePage() {
               {a.nextReviewAt || '—'}
             </dd>
           </div>
+          <div>
+            <dt className="ops-label">What would trigger re-review</dt>
+            <dd className="mt-0.5 text-[var(--securist-muted)]">
+              Material version, license, boundary, or policy change forces
+              re-open. Seed profiles are not durable org approvals.
+            </dd>
+          </div>
         </dl>
         <div>
-          <div className="ops-label mb-1">Evidence coverage</div>
+          <div className="ops-label mb-1">Evidence coverage & gaps</div>
           <p className="mb-2 text-[10px] text-[var(--securist-muted)]">
             Coverage chips show presence of domain evidence. Seed evidence does
-            not imply compliance or verified production approval.
+            not imply compliance or verified production approval. Gaps are
+            explicit.
           </p>
           <div className="flex flex-wrap gap-2">
             {Object.entries(profile.evidenceCoverage).map(([k, covered]) => (

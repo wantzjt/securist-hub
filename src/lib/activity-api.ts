@@ -30,6 +30,8 @@ import type {
   ContributionProposalV1,
   SignedValidationSummaryV1,
 } from './eve-gateway/types'
+import { assessPublicGithubRepo } from './public-repo-assess'
+import type { PublicRepoAssessInput } from './public-repo-assess'
 
 function serverToken(): string | undefined {
   return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined
@@ -229,6 +231,14 @@ export const hitShortLink = createServerFn({ method: 'POST' })
     )
     recordLedger('access_event', `/${link.token}`, 'field proof tick')
     return { ok: true as const, target: link.target, token: link.token }
+  })
+
+/* —— Public assess (ephemeral Decision Brief; no private persistence) —— */
+
+export const assessPublicRepository = createServerFn({ method: 'POST' })
+  .validator((data: PublicRepoAssessInput) => data)
+  .handler(async ({ data }) => {
+    return assessPublicGithubRepo(data, serverToken())
   })
 
 /* —— Decision Graph —— */

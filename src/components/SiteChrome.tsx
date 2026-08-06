@@ -6,29 +6,28 @@ type NavItem = { to: string; label: string; exact?: boolean }
 
 const NAV: { group: string; items: NavItem[] }[] = [
   {
-    group: 'Discover',
+    group: 'Product',
     items: [
-      { to: '/', label: 'Activity', exact: true },
-      { to: '/daemon', label: 'Scout' },
-      { to: '/models', label: 'Models' },
-      { to: '/artifacts', label: 'Profiles' },
+      { to: '/assess', label: 'Assess' },
+      { to: '/artifacts', label: 'Decision Briefs' },
     ],
   },
   {
-    group: 'Build',
+    group: 'Research',
     items: [
+      { to: '/activity', label: 'Activity' },
+      { to: '/models', label: 'Models' },
       { to: '/tools', label: 'Packages' },
-      { to: '/use-cases', label: 'Cases' },
+      { to: '/daemon', label: 'Scout' },
+      { to: '/links', label: 'Links' },
+    ],
+  },
+  {
+    group: 'Secondary',
+    items: [
       { to: '/services', label: 'Services' },
       { to: '/security', label: 'Security' },
-    ],
-  },
-  {
-    group: 'Field',
-    items: [
-      { to: '/activity', label: 'Sources' },
-      { to: '/links', label: 'Links' },
-      { to: '/daemon', label: 'Operator' },
+      { to: '/use-cases', label: 'Cases' },
     ],
   },
 ]

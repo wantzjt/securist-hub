@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ActivityRouteImport } from './routes/activity'
+import { Route as AssessRouteImport } from './routes/assess'
 import { Route as DaemonRouteImport } from './routes/daemon'
 import { Route as HwihfRouteImport } from './routes/hwihf'
 import { Route as LegalRouteImport } from './routes/legal'
@@ -40,6 +41,11 @@ const AboutRoute = AboutRouteImport.update({
 const ActivityRoute = ActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssessRoute = AssessRouteImport.update({
+  id: '/assess',
+  path: '/assess',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DaemonRoute = DaemonRouteImport.update({
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/activity': typeof ActivityRoute
+  '/assess': typeof AssessRoute
   '/daemon': typeof DaemonRoute
   '/hwihf': typeof HwihfRoute
   '/legal': typeof LegalRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/activity': typeof ActivityRoute
+  '/assess': typeof AssessRoute
   '/daemon': typeof DaemonRoute
   '/hwihf': typeof HwihfRoute
   '/legal': typeof LegalRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/activity': typeof ActivityRoute
+  '/assess': typeof AssessRoute
   '/daemon': typeof DaemonRoute
   '/hwihf': typeof HwihfRoute
   '/legal': typeof LegalRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/activity'
+    | '/assess'
     | '/daemon'
     | '/hwihf'
     | '/legal'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/activity'
+    | '/assess'
     | '/daemon'
     | '/hwihf'
     | '/legal'
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/activity'
+    | '/assess'
     | '/daemon'
     | '/hwihf'
     | '/legal'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ActivityRoute: typeof ActivityRoute
+  AssessRoute: typeof AssessRoute
   DaemonRoute: typeof DaemonRoute
   HwihfRoute: typeof HwihfRoute
   LegalRoute: typeof LegalRoute
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       path: '/activity'
       fullPath: '/activity'
       preLoaderRoute: typeof ActivityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assess': {
+      id: '/assess'
+      path: '/assess'
+      fullPath: '/assess'
+      preLoaderRoute: typeof AssessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/daemon': {
@@ -392,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ActivityRoute: ActivityRoute,
+  AssessRoute: AssessRoute,
   DaemonRoute: DaemonRoute,
   HwihfRoute: HwihfRoute,
   LegalRoute: LegalRoute,
