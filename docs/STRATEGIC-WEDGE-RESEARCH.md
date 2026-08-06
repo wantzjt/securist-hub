@@ -318,4 +318,5 @@ Full facilitator kit: [`DESIGN-PARTNER-INTERVIEW-KIT.md`](./DESIGN-PARTNER-INTER
 
 - **Does not** replace [`V1-LAUNCH-ROADMAP.md`](./V1-LAUNCH-ROADMAP.md) launch history.  
 - **Does not** authorize product scope expansion, Eve enablement, or autonomous external writes.  
+- Founder-level company thesis (category, moat, 90-day plan): [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md).  
 - Next proof: design-partner interviews ([`DESIGN-PARTNER-INTERVIEW-KIT.md`](./DESIGN-PARTNER-INTERVIEW-KIT.md)); update this file or append [`DECISIONS.md`](./DECISIONS.md) only when a human accepts or rejects the ICP/wedge.

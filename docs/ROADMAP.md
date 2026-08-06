@@ -49,7 +49,7 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 | **Owner** | grok (research docs) · human (interviews) |
 | **Status** | `now` |
 | **Depends on** | RM-001 (done) |
-| **Work orders** | [`WO-003`](../ops/work-orders/WO-003-strategic-wedge-research.md) (docs) · [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) (interviews) |
+| **Work orders** | [`WO-003`](../ops/work-orders/WO-003-strategic-wedge-research.md) (done) · [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) (interviews) |
 
 **Acceptance**
 
@@ -61,6 +61,25 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 **Non-goals**
 
 - Product code · deploy · inventing market stats · closing enterprise deals as research success  
+
+### RM-011 — Founder thesis (category-defining company)
+
+| | |
+|--|--|
+| **Owner** | grok (draft) · human (accept/reject after interviews) |
+| **Status** | `now` |
+| **Depends on** | RM-010 research draft (WO-003 done) |
+| **Work order** | [`WO-006`](../ops/work-orders/WO-006-founder-thesis.md) |
+| **Artifact** | [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md) |
+
+**Acceptance**
+
+- [x] Explicit choices: contrarian insight, enduring product, wedge path, moat, business model, risks, 90-day plan  
+- [ ] Human records accept/revise/kill after design partners (WO-004)  
+
+**Non-goals**
+
+- Product code · provision · inventing ARR/TAM · autonomous agents  
 
 ---
 
