@@ -218,8 +218,7 @@ function checkPrBodyWorkOrder() {
   const body = readPrBody()
   const requirePr =
     process.env.REQUIRE_PR_WORK_ORDER === '1' ||
-    process.env.GITHUB_EVENT_NAME === 'pull_request' ||
-    process.env.GITHUB_ACTIONS === 'true'
+    process.env.GITHUB_EVENT_NAME === 'pull_request'
 
   if (!body) {
     if (requirePr) {

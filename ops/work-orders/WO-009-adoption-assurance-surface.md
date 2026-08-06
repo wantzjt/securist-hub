@@ -1,7 +1,7 @@
 ---
 id: WO-009
 title: Adoption Assurance public surface
-status: in_review
+status: complete
 owner: codex
 branch: feat/adoption-assurance-surface
 depends_on: []
@@ -52,7 +52,8 @@ consultancy.
 - 2026-08-06: Local lint, typecheck, lifecycle, graph, and production build pass.
 - 2026-08-06: Browser smoke test passed for `/services` and `/`; fixed an
   unrelated duplicate React key discovered on the catalog table.
+- 2026-08-06: Merged as PR #11 (`6d2ed0a`); live at `https://secur.ist/services`.
 
 ## Blockers
 
-- None. Public deployment follows normal PR review and TARX production release.
+- None.
