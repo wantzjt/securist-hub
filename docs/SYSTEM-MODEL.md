@@ -5,13 +5,13 @@
 
 ## Authority sentence
 
-| Role | Authority |
-|------|-----------|
-| **Decision Graph + policy engine** | Source of truth for trust, evidence, decisions |
-| **Activity** | Read projection of durable facts — never an independent mutable ledger |
-| **Eve** | Proposes candidate evidence and workflows only |
-| **Local operator / TARX** | Signed minimized field evidence only |
-| **Humans** | Approvals, overrides, external-write authorization |
+| Role                               | Authority                                                              |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| **Decision Graph + policy engine** | Source of truth for trust, evidence, decisions                         |
+| **Activity**                       | Read projection of durable facts — never an independent mutable ledger |
+| **Eve**                            | Proposes candidate evidence and workflows only                         |
+| **Local operator / TARX**          | Signed minimized field evidence only                                   |
+| **Humans**                         | Approvals, overrides, external-write authorization                     |
 
 ## Canonical graph (relational, versioned edges first)
 
@@ -31,15 +31,17 @@ No graph database until scale/query needs prove it necessary. See `migrations/00
 
 ## Non-negotiable invariants
 
-1. An approval always points to **one** artifact version, policy version, scope, and evidence set.
-2. A later version **never** silently inherits an earlier approval.
-3. Every automated claim has provenance and a verification state.
-4. Every sensitive event is **tenant-scoped** before persistence.
-5. Activity is a **read projection** of durable facts.
-6. **LIVE** = current live source returned data; **SEED** = curated fallback; never conflate.
-7. AI output is a **proposal or extracted candidate fact**, never an authoritative decision.
-8. External writes require explicit policy permission **and** human approval.
-9. Public profiles never expose private evidence, local paths, secrets, prompts, or customer data.
+1. **INV-001 — Version-bound approval.** An approval always points to **one** artifact version, policy version, scope, and evidence set.
+2. **INV-002 — No silent inheritance.** A later version **never** silently inherits an earlier approval.
+3. **INV-003 — Provenance.** Every automated claim has provenance and a verification state.
+4. **INV-004 — Tenant before persistence.** Every sensitive event is **tenant-scoped** before persistence.
+5. **INV-005 — Projection, not ledger.** Activity is a **read projection** of durable facts.
+6. **INV-006 — Honest data mode.** **LIVE** = current live source returned data; **SEED** = curated fallback; never conflate.
+7. **INV-007 — AI proposes only.** AI output is a **proposal or extracted candidate fact**, never an authoritative decision.
+8. **INV-008 — Authorized external writes.** External writes require explicit policy permission **and** human approval.
+9. **INV-009 — Share-safe public profiles.** Public profiles never expose private evidence, local paths, secrets, prompts, or customer data.
+
+Repository ownership and regression coverage for these invariants are mapped in [`ops/system-graph.json`](../ops/system-graph.json) and checked by `npm run verify:system-graph`.
 
 ## Decision state machine (central)
 
@@ -56,23 +58,23 @@ Enforced in `src/lib/decision-graph/state-machine.ts`.
 
 ## Authority map (who may write what)
 
-| Component | May write |
-|-----------|-----------|
-| Public Scout / Eve Scout | Observed public-source evidence and change **candidates** |
-| Hugging Face Scout | Observed model metadata and change **candidates** |
-| Local operator | Signed local validation evidence and **proposed** contributions |
-| Policy engine | Deterministic **evaluations** only |
-| Human reviewer | Decisions, approvals, overrides, external-write authorization |
-| Activity projector | **No** source facts; read-only projection / outbox consumer |
-| LLM / Eve planners | Structured **proposals** only; no direct durable decision writes |
-| Eve gateway | Candidate evidence (`observed`), review tasks, draft proposals |
+| Component                | May write                                                        |
+| ------------------------ | ---------------------------------------------------------------- |
+| Public Scout / Eve Scout | Observed public-source evidence and change **candidates**        |
+| Hugging Face Scout       | Observed model metadata and change **candidates**                |
+| Local operator           | Signed local validation evidence and **proposed** contributions  |
+| Policy engine            | Deterministic **evaluations** only                               |
+| Human reviewer           | Decisions, approvals, overrides, external-write authorization    |
+| Activity projector       | **No** source facts; read-only projection / outbox consumer      |
+| LLM / Eve planners       | Structured **proposals** only; no direct durable decision writes |
+| Eve gateway              | Candidate evidence (`observed`), review tasks, draft proposals   |
 
 ## Persistence
 
-| Env | Store |
-|-----|--------|
-| Dev / demo (default) | Memory + seed fixtures (`SECURIST_GRAPH_STORE=memory\|seed`) |
-| Prod (after RM-003) | Postgres (`SECURIST_GRAPH_STORE=postgres` + `DATABASE_URL`) via `migrations/001_decision_graph.sql` |
+| Env                  | Store                                                                                               |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| Dev / demo (default) | Memory + seed fixtures (`SECURIST_GRAPH_STORE=memory\|seed`)                                        |
+| Prod (after RM-003)  | Postgres (`SECURIST_GRAPH_STORE=postgres` + `DATABASE_URL`) via `migrations/001_decision_graph.sql` |
 
 Factory: `src/lib/decision-graph/store.ts`.  
 Postgres seam: `postgres-store.ts` (tenant-scoped R/W; transactional outbox).  
