@@ -24,7 +24,9 @@ export const BRAND = {
   hfOrg:
     (import.meta.env.VITE_PUBLIC_HF_ORG as string | undefined) || 'securist',
   hfUrl: 'https://huggingface.co/securist',
-  logoPath: '/securist-logo.png',
+  /** Cache-bust so CDN/immutable asset deploys pick up brand mark changes */
+  logoPath: '/securist-logo.png?v=20260806',
+  faviconPath: '/favicon.png?v=20260806',
   tagline:
     'Dual-forge sovereign tooling. Code on GitHub. Weights on Hugging Face.',
   posture:
