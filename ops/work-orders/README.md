@@ -69,7 +69,7 @@ After front matter, document:
 
 1. Ensure `status` is `ready` and dependencies are `complete`.  
 2. Set `owner`, `branch`, `status: in_progress`.  
-3. Open PR from that branch; PR body must include `Work-Order: WO-NNN`.  
+3. Open PR from that branch; PR body must include `Work-Order: WO-NNN` (Dependabot-only exception: GitHub author login `dependabot[bot]` — see WO-014).  
 4. On PR open for review: `status: in_review`.  
 5. On merge: `status: complete`.
 
