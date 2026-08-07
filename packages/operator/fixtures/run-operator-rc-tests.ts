@@ -37,17 +37,13 @@ function main() {
     pre.status === 0,
     pre.stderr || pre.stdout || `status ${pre.status}`,
   )
-  assert(
-    'preflight report written',
-    existsSync(join(root, 'docs/evidence/wo-018/preflight-report.json')),
+  const preflightReport = join(
+    root,
+    '.operator-rc/evidence/preflight-report.json',
   )
-  if (existsSync(join(root, 'docs/evidence/wo-018/preflight-report.json'))) {
-    const rep = JSON.parse(
-      readFileSync(
-        join(root, 'docs/evidence/wo-018/preflight-report.json'),
-        'utf8',
-      ),
-    )
+  assert('preflight report written', existsSync(preflightReport))
+  if (existsSync(preflightReport)) {
+    const rep = JSON.parse(readFileSync(preflightReport, 'utf8'))
     assert('preflight report ok true', rep.ok === true)
     assert(
       'preflight nonClaims mention no npm publish',
@@ -78,7 +74,7 @@ function main() {
     assert('latest RC denies public npx claim', latest.publicNpxClaim === false)
     assert(
       'clean verify report written',
-      existsSync(join(root, 'docs/evidence/wo-018/clean-verify-report.json')),
+      existsSync(join(root, '.operator-rc/evidence/clean-verify-report.json')),
     )
   }
 

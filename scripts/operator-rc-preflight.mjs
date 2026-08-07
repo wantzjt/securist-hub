@@ -240,7 +240,8 @@ async function main() {
     ],
   }
 
-  const outDir = join(ROOT, 'docs/evidence/wo-018')
+  // Generated reports live under gitignored .operator-rc/ (CI clean-worktree safe)
+  const outDir = join(ROOT, '.operator-rc', 'evidence')
   mkdirSync(outDir, { recursive: true })
   writeFileSync(
     join(outDir, 'preflight-report.json'),
@@ -260,7 +261,7 @@ async function main() {
     return
   }
   console.log('\noperator:rc:preflight ok')
-  console.log('evidence: docs/evidence/wo-018/preflight-report.json')
+  console.log('evidence: .operator-rc/evidence/preflight-report.json')
   console.log('next: SECURIST_OPERATOR_SIGNING_KEY=… npm run operator:rc')
 }
 

@@ -290,9 +290,9 @@ function finish(rcDir) {
     errors,
   }
 
-  // Write evidence when run from monorepo
+  // Write evidence under gitignored .operator-rc/ (CI clean-worktree safe)
   try {
-    const evidenceDir = join(ROOT, 'docs/evidence/wo-018')
+    const evidenceDir = join(ROOT, '.operator-rc', 'evidence')
     mkdirSync(evidenceDir, { recursive: true })
     writeFileSync(
       join(evidenceDir, 'clean-verify-report.json'),

@@ -229,15 +229,15 @@ node scripts/operator-rc-verify-clean.mjs --rc-dir /path/to/securist-operator-${
 
   writeFileSync(join(OUT, 'latest-rc.json'), JSON.stringify(summary, null, 2) + '\n')
 
-  // Evidence without secrets
-  const evidenceDir = join(ROOT, 'docs/evidence/wo-018')
+  // Evidence summary under gitignored .operator-rc/
+  const evidenceDir = join(OUT, 'evidence')
   mkdirSync(evidenceDir, { recursive: true })
   writeFileSync(
     join(evidenceDir, 'rc-summary.json'),
     JSON.stringify(
       {
         ...summary,
-        note: 'Tarball path is local (.operator-rc, gitignored). Checksums only in evidence.',
+        note: 'Tarball path is local (.operator-rc, gitignored).',
       },
       null,
       2,

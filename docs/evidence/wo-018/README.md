@@ -1,22 +1,25 @@
 # WO-018 evidence — Local Operator release-candidate proof
 
-## What is automated (no secrets)
+Generated machine reports are written under **gitignored** `.operator-rc/evidence/`
+so CI `verify:clean-worktree` stays green. This directory documents the procedure.
 
-| Artifact | Producer |
-|----------|----------|
-| `preflight-report.json` | `npm run operator:rc:preflight` |
-| `clean-verify-report.json` | `npm run operator:rc:verify-clean` (via dogfood) |
+## Reproduce locally
 
-## Human-only (not in git)
+```bash
+npm run operator:rc:preflight
+# → .operator-rc/evidence/preflight-report.json
 
-| Artifact | Producer |
-|----------|----------|
-| `.operator-rc/securist-operator-*-rc.tgz` | `SECURIST_OPERATOR_SIGNING_KEY=… npm run operator:rc` |
-| Production `runtime-identity.json` | human sign (gitignored) |
+npm run operator:rc:dogfood
+# → .operator-rc/evidence/clean-verify-report.json
+# → .operator-rc/securist-operator-*-rc-dogfood/
+```
 
-## Dogfood
+Human signed RC:
 
-`npm run operator:rc:dogfood` builds an **ephemeral-key** RC under `.operator-rc/` (gitignored) and runs the clean-machine golden path. That proves the pipeline; it is **not** a production release signature.
+```bash
+SECURIST_OPERATOR_SIGNING_KEY=/path/to/private.pem npm run operator:rc
+npm run operator:rc:verify-clean -- --rc-dir .operator-rc/securist-operator-0.1.0-rc
+```
 
 ## Non-claims
 
