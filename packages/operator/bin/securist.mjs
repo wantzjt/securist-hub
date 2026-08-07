@@ -1,19 +1,27 @@
 #!/usr/bin/env node
 /**
- * securist CLI entry — delegates to TypeScript via tsx when available,
- * or node --experimental-strip-types if present.
+ * Product entry: run built JS only. No npx, no tsx, no network.
+ * Monorepo: npm run operator:build
  */
+import { existsSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
-import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const cli = join(root, 'src', 'cli.ts')
-const args = process.argv.slice(2)
+const distCli = join(root, 'dist', 'cli.js')
 
-const tsx = spawnSync(
-  process.platform === 'win32' ? 'npx.cmd' : 'npx',
-  ['tsx', cli, ...args],
-  { stdio: 'inherit', cwd: process.cwd(), env: process.env },
-)
-process.exit(tsx.status ?? 1)
+if (!existsSync(distCli)) {
+  console.error(
+    'securist: built CLI missing (packages/operator/dist/cli.js).\n' +
+      'From the securist-hub monorepo run: npm run operator:build\n' +
+      'This package is private and not published to npm.',
+  )
+  process.exit(1)
+}
+
+const result = spawnSync(process.execPath, [distCli, ...process.argv.slice(2)], {
+  stdio: 'inherit',
+  env: process.env,
+})
+process.exit(result.status ?? 1)

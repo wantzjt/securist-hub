@@ -93,13 +93,15 @@ export type LocalRunDigestsV1 = never
 
 /**
  * Doctor / capability gate (precise synthesis state).
- * - runtime_verified: assess may run (deterministic baseline ok)
+ * - runtime_verified: trusted signed operator/runtime identity ok; assess may run
+ * - runtime_unavailable: no trustworthy runtime identity; assess blocked
  * - synthesis_verified: signed TARX pack may synthesize
- * - synthesis_unavailable: deterministic assessment still succeeds
- * - signature_invalid: model synthesis blocked; never fallback to unsigned/cloud
+ * - synthesis_unavailable: runtime ok but model synthesis not available; deterministic assess may run
+ * - signature_invalid: integrity signature failed; synthesis and assess blocked
  */
 export type LocalCapabilityStateV1 =
   | 'runtime_verified'
+  | 'runtime_unavailable'
   | 'synthesis_verified'
   | 'synthesis_unavailable'
   | 'signature_invalid'

@@ -1,5 +1,5 @@
 /**
- * securist doctor — capability gate without model theater.
+ * securist doctor — capability gate without verification theater.
  */
 import type { LocalCapabilityStateV1 } from '../../contracts/src/local-assess'
 import { isTarxModelPackPresent, verifyOperatorRuntime } from './runtime-identity'
@@ -20,55 +20,39 @@ export function runDoctor(): DoctorReport {
   const stateRoot = ensureOperatorState()
   const runtime = verifyOperatorRuntime()
   const modelPackPresent = isTarxModelPackPresent()
+  const runtimeOk = runtime.ok
+  const synthesisAvailable = false // until real signed TARX pack verification
 
   let capability: LocalCapabilityStateV1
-  if (!runtime.ok) {
+  if (!runtimeOk) {
     capability =
       runtime.code === 'signature_invalid'
         ? 'signature_invalid'
-        : 'runtime_verified' // still allow messaging; assess will fail if not ok
-    // If identity missing, treat as synthesis_unavailable path after fix —
-    // assess requires runtime ok. Doctor reports honestly.
-    if (runtime.code === 'signature_invalid') {
-      capability = 'signature_invalid'
-    } else {
-      // runtime not verified — still not synthesis
-      capability = 'synthesis_unavailable'
-    }
-  } else if (modelPackPresent) {
-    // Pack path present but we do not claim verified without full TARX verify
-    // Until real pack verification exists, never claim synthesis_verified.
-    capability = 'synthesis_unavailable'
+        : 'runtime_unavailable'
   } else {
+    // Runtime trust ok; model synthesis still unavailable in WO-012
     capability = 'synthesis_unavailable'
   }
-
-  // If runtime verified, upgrade note: runtime ok, synthesis unavailable
-  const runtimeOk = runtime.ok
-  if (runtimeOk && capability !== 'signature_invalid') {
-    capability = 'synthesis_unavailable'
-  }
-
-  const synthesisAvailable = false // WO-012: never until real signed TARX pack verify lands
 
   const lines: string[] = []
   if (runtimeOk) {
-    lines.push('Runtime verified (securist-operator package integrity)')
+    lines.push(
+      'Runtime verified (release-signed operator identity against public trust root)',
+    )
+    lines.push('Synthesis unavailable — deterministic assess ready')
   } else {
-    lines.push(`Runtime not verified: ${runtime.error}`)
+    lines.push(`Runtime unavailable: ${runtime.error}`)
+    lines.push('Deterministic assess blocked until a release-signed identity is present')
+    if (runtime.code === 'signature_invalid') {
+      lines.push('Signature invalid — do not treat this build as verified')
+    }
   }
-  lines.push('Synthesis unavailable — deterministic assess ready')
   lines.push(`Local state: ${operatorStateRoot()}`)
   lines.push('Model pack: not installed / not verified (no pretend synthesis)')
-  lines.push(
-    'Capability: ' +
-      (runtimeOk
-        ? 'runtime integrity ok · synthesis_unavailable'
-        : capability),
-  )
+  lines.push(`Capability: ${capability}`)
 
   return {
-    capability: runtimeOk ? 'synthesis_unavailable' : capability,
+    capability,
     runtimeOk,
     synthesisAvailable,
     modelPackPresent,

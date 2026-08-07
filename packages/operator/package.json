@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Securist free private Local Operator — deterministic assess, local state, stdio MCP. Not the paid Decision Graph.",
+  "description": "Securist free private Local Operator — monorepo package (not published). Deterministic assess, local state, stdio MCP.",
   "bin": {
     "securist": "./bin/securist.mjs"
   },
-  "exports": {
-    ".": "./src/index.ts"
-  },
   "files": [
     "bin",
-    "src",
-    "keys/fixture-public.pem",
+    "dist",
+    "keys/trust-root.pem",
     "keys/README.md",
-    "runtime-identity.json"
-  ]
+    "package.json"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
 }

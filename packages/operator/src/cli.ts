@@ -1,14 +1,13 @@
 /**
- * securist CLI — free private Local Operator
+ * securist CLI — free private Local Operator (monorepo / built dist)
  */
 import { assessLocalRepository, formatBriefSummary } from './assess'
 import { formatDoctorReport, runDoctor } from './doctor'
 import { runMcpStdio } from './mcp-stdio'
-import { writeRuntimeIdentity } from './runtime-identity'
 import type { LocalAssessScopeV1 } from '../../contracts/src/local-assess'
 
 function printHelp() {
-  console.log(`securist — free private Local Operator
+  console.log(`securist — free private Local Operator (WO-012)
 
 Usage:
   securist doctor
@@ -22,9 +21,11 @@ Options for assess:
   --json                  Print full LocalDecisionBriefV1 JSON
 
 Notes:
-  · Local state under ~/.securist/operator (or $SECURIST_HOME/operator)
-  · No source upload · no hub sync · synthesis_unavailable until signed TARX pack
-  · MCP is stdio-only (local_only / never_automatic)
+  · Local state under ~/.securist/operator (or $SECURIST_HOME/operator), mode 0700/0600
+  · Assess requires a release-signed runtime identity + public trust root (no private keys in package)
+  · synthesis_unavailable until a real signed TARX model pack exists
+  · Monorepo: npm run operator:build && npm run securist -- …
+  · Package is private; not published. No network at runtime.
 `)
 }
 
@@ -54,10 +55,10 @@ function main() {
   }
 
   if (cmd === 'sign-identity') {
-    const id = writeRuntimeIdentity()
-    console.log('Wrote runtime-identity.json')
-    console.log(`  digest: ${id.contentDigest.hex.slice(0, 16)}…`)
-    return
+    console.error(
+      'sign-identity is not a product command. Human release signing uses scripts/sign-operator-identity.mjs with SECURIST_OPERATOR_SIGNING_KEY outside git.',
+    )
+    process.exit(2)
   }
 
   if (cmd === 'doctor') {
@@ -73,9 +74,7 @@ function main() {
         ? flags['intended-use']
         : 'Local engineering / security adoption review'
     const environment = (
-      typeof flags.environment === 'string'
-        ? flags.environment
-        : 'development'
+      typeof flags.environment === 'string' ? flags.environment : 'development'
     ) as LocalAssessScopeV1['environment']
     const deploymentBoundary = (
       typeof flags.boundary === 'string'
@@ -100,7 +99,9 @@ function main() {
     } else {
       console.log(formatBriefSummary(result.brief))
       console.log('')
-      console.log(`  Fingerprint: ${result.brief.repository.manifestFingerprint?.slice(0, 12)}…`)
+      console.log(
+        `  Fingerprint: ${result.brief.repository.manifestFingerprint?.slice(0, 12)}…`,
+      )
       console.log(`  Gaps: ${result.brief.evidenceGaps.join(', ')}`)
     }
     return

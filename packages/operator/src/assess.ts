@@ -1,5 +1,6 @@
 /**
  * securist assess . — deterministic LocalDecisionBriefV1
+ * Requires release-signed operator runtime; blocks on runtime_unavailable.
  */
 import type {
   LocalAssessScopeV1,
@@ -12,7 +13,7 @@ import {
 } from '../../contracts/src/local-assess'
 import { collectManifests } from './collect-manifests'
 import { runDoctor } from './doctor'
-import { saveLocalBrief, stateIsOutsideTarget, operatorStateRoot } from './local-state'
+import { assertStateOutsideTarget, saveLocalBrief } from './local-state'
 import { verifyOperatorRuntime } from './runtime-identity'
 
 export type AssessOptions = {
@@ -20,7 +21,6 @@ export type AssessOptions = {
   intendedUse: string
   environment: LocalAssessScopeV1['environment']
   deploymentBoundary: LocalAssessScopeV1['deploymentBoundary']
-  /** When true, skip writing local state (tests) */
   dryRun?: boolean
 }
 
@@ -33,6 +33,19 @@ export function assessLocalRepository(
   }
 
   const doctor = runDoctor()
+  if (!doctor.runtimeOk) {
+    return {
+      ok: false,
+      code:
+        doctor.capability === 'signature_invalid'
+          ? 'signature_invalid'
+          : 'runtime_unavailable',
+      error: doctor.runtime.ok
+        ? 'Runtime not verified'
+        : doctor.runtime.error,
+    }
+  }
+
   const runtime = verifyOperatorRuntime()
   if (!runtime.ok) {
     return {
@@ -42,9 +55,7 @@ export function assessLocalRepository(
     }
   }
 
-  // Always deterministic until real TARX pack verification exists
-  const capability = doctor.capability
-  if (capability === 'signature_invalid') {
+  if (doctor.capability === 'signature_invalid') {
     return {
       ok: false,
       code: 'signature_invalid',
@@ -64,13 +75,9 @@ export function assessLocalRepository(
     }
   }
 
-  if (!stateIsOutsideTarget(operatorStateRoot(), collected.sandbox.rootReal)) {
-    return {
-      ok: false,
-      code: 'state_path',
-      error:
-        'Operator state must not live inside the assessed repository; set SECURIST_HOME outside the target',
-    }
+  const stateCheck = assertStateOutsideTarget(collected.sandbox.rootReal)
+  if (!stateCheck.ok) {
+    return { ok: false, code: stateCheck.code, error: stateCheck.error }
   }
 
   const synthesis = 'deterministic_only' as const
