@@ -115,8 +115,24 @@ Private local evidence from manifests/config via `securist assess .` (WO-012).
 | Hub persist | **Never** in WO-012 |
 | Default body | No raw source, secrets, or **absolute** local paths |
 | `repository` | Minimized identity (`rootLabel: '.'`, fingerprints, package meta) |
-| `digests` | runtime / base / adapter / tactic / policy recorded locally |
+| `provenance` | `LocalRunProvenanceV1` — **content digests**, not product labels |
 | `synthesis` | `deterministic_only` or `tarx_model_pack` after `securist doctor` — never silent cloud/unsigned fallback |
+
+#### Provenance rules (six-item lock)
+
+Mutable labels such as `gpt-oss-20b` or `tarx-runtime-v1` are **not** content digests and do **not** prove a model or pack was used.
+
+| # | Rule |
+|---|------|
+| 1 | **Label ≠ digest.** Each component has `label` (display only) and optional `contentDigest` (`sha256` hex of bytes). |
+| 2 | **`used=true` requires proof.** `verification: content_verified` and non-null `contentDigest`. |
+| 3 | **`deterministic_only` forbids model-use claims.** `baseModel` and `adapter` must be `used: false`, `contentDigest: null`, `verification: not_used`. |
+| 4 | **`tarx_model_pack` requires verified model bytes.** `baseModel` and `adapter` must be used + `content_verified`. |
+| 5 | **MCP `modelUsed`** is true only under rule 4; always false for `deterministic_only`. |
+| 6 | **MCP `get_run_metadata`** returns `LocalMcpRunMetadataV1` (synthesis + provenance + `modelUsed`) — never a map of label strings pretending to be digests. |
+
+Helpers: `assertLocalProvenanceHonesty`, `toLocalMcpRunMetadata`, `componentNotUsed`, `componentContentVerified`.  
+Default **labels** only: `LOCAL_DEFAULT_COMPONENT_LABELS_V1` (deprecated alias `LOCAL_DEFAULT_DIGESTS_V1` — do not treat as digests).
 
 #### Local Operator + MCP rules
 
@@ -126,11 +142,12 @@ Private local evidence from manifests/config via `securist assess .` (WO-012).
 | Baseline | Deterministic manifest collection without LLM |
 | Synthesis | Signed TARX Model Pack only after doctor; explicit failure if insufficient |
 | MCP allowlist | `get_brief`, `list_gaps`, `get_run_metadata` only |
+| MCP `get_run_metadata` | `LocalMcpRunMetadataV1` with honest provenance (rules 1–6) |
 | MCP forbidden | raw source/paths, approve, exploit, execute, install, build, shell, external writes |
 | Hostile input | No installs/builds/shell; no symlink traversal outside target root |
 | Sharing | Explicit future export/redaction only — not WO-012 |
 
-Constants: `LOCAL_MCP_TOOLS_V1`, `LOCAL_MCP_FORBIDDEN_V1`, `LOCAL_DEFAULT_DIGESTS_V1`.
+Constants: `LOCAL_MCP_TOOLS_V1`, `LOCAL_MCP_FORBIDDEN_V1`, `LOCAL_DEFAULT_COMPONENT_LABELS_V1`.
 
 ## API / event semantics (versioned)
 

@@ -34,8 +34,12 @@ export type {
 export type {
   LocalDecisionBriefV1,
   LocalRepoAssessResultV1,
+  LocalRunProvenanceV1,
   LocalRunDigestsV1,
   LocalMcpToolV1,
+  LocalMcpRunMetadataV1,
+  ComponentProvenanceV1,
+  ContentDigestV1,
 } from '../../../packages/contracts/src/local-assess'
 
 export {
@@ -47,7 +51,12 @@ export {
 export {
   LOCAL_MCP_TOOLS_V1,
   LOCAL_MCP_FORBIDDEN_V1,
+  LOCAL_DEFAULT_COMPONENT_LABELS_V1,
   LOCAL_DEFAULT_DIGESTS_V1,
+  componentNotUsed,
+  componentContentVerified,
+  assertLocalProvenanceHonesty,
+  toLocalMcpRunMetadata,
 } from '../../../packages/contracts/src/local-assess'
 
 export type VisibilityLevel = 'public' | 'organization' | 'operator'

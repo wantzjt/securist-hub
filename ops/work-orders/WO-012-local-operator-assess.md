@@ -24,12 +24,18 @@ acceptance:
   - Local inference backends (Ollama/llama.cpp/vLLM) are adapters only
   - MCP tools limited to get_brief, list_gaps, get_run_metadata — no source/path/approve/execute/external-write
   - Local input untrusted: no installs, builds, shell evaluation, or symlink traversal outside target root
-  - Runtime/model/tactic/policy digests recorded locally per run; no customer-private hub sync
+  - Provenance is LocalRunProvenanceV1 (label + contentDigest + used + verification) — not string labels-as-digests
+  - deterministic_only never claims model use (baseModel/adapter not_used, no contentDigest)
+  - tarx_model_pack requires used+content_verified digests for baseModel and adapter
+  - MCP get_run_metadata returns LocalMcpRunMetadataV1 with modelUsed only when model digests verified
+  - No customer-private hub sync
   - System graph registers operator/runtime paths with one owner each when code lands
-  - Fixtures prove: local vs public kind separation; zero absolute paths in default local draft; MCP allowlist; doctor/synthesis failure is explicit; hostile input does not execute
+  - Fixtures prove: local vs public separation; path privacy; provenance honesty; MCP allowlist; doctor/synthesis explicit
   - Full verification green; no deploy/production mutation
 non_goals:
   - Reusing PublicDecisionBriefV1 as the local assess contract
+  - Recording mutable product labels (gpt-oss-20b, tarx-runtime-v1, …) as if they were content digests
+  - Claiming model use on deterministic_only runs
   - Automatic shareable/public export of local evidence
   - Hub persistence of customer-private local briefs
   - GitHub App / remote workspace signup
@@ -46,7 +52,7 @@ verification:
   - npm run test:lifecycle
   - npm run test:graph
   - npm run test:public-assess
-  - npm run test:local-assess-contracts (or equivalent fixture when implemented)
+  - npm run test:decision-brief-contracts
   - npm run build
   - npm run verify:coordination
   - npm run verify:release-readiness
@@ -106,9 +112,40 @@ Package: `packages/contracts/src/local-assess.ts`
 **Allowed:** `get_brief`, `list_gaps`, `get_run_metadata`  
 **Forbidden:** raw content/path retrieval, approve, exploit, execute, install, build, shell, external issue/PR writes
 
+| Tool | Returns |
+|------|---------|
+| `get_brief` | Minimized `LocalDecisionBriefV1` |
+| `list_gaps` | Evidence gaps / unknowns only |
+| `get_run_metadata` | `LocalMcpRunMetadataV1`: synthesis, `modelUsed`, full `provenance` |
+
 Constants: `LOCAL_MCP_TOOLS_V1` / `LOCAL_MCP_FORBIDDEN_V1`.
 
-### 5. TARX Runtime + synthesis
+### 5. Provenance amendment (six-item lock) — **not labels-as-digests**
+
+`LocalRunProvenanceV1` replaces string maps like `{ baseModel: "gpt-oss-20b" }`.
+
+| # | Rule |
+|---|------|
+| 1 | **Label ≠ content digest.** `label` is display-only; `contentDigest` is `{ algorithm: 'sha256', hex }` of loaded bytes or `null`. |
+| 2 | **`used=true` requires proof.** `verification: content_verified` + non-null `contentDigest`. |
+| 3 | **`deterministic_only` forbids model-use claims.** `baseModel` and `adapter` must be `not_used` with `contentDigest: null` — even if default product labels exist. |
+| 4 | **`tarx_model_pack` requires verified model digests.** `baseModel` and `adapter` must be `used` + `content_verified`. |
+| 5 | **MCP `modelUsed`** is true only under rule 4; always false for `deterministic_only`. |
+| 6 | **MCP metadata honesty.** `get_run_metadata` exposes `LocalMcpRunMetadataV1` via `toLocalMcpRunMetadata` — never a label-string digest map. |
+
+Runtime helper: `assertLocalProvenanceHonesty(synthesis, provenance)`.
+
+Default **product labels** (docs/packaging only — not digests):
+
+```text
+Runtime label: tarx-runtime-v1
+Base model label: openai/gpt-oss-20b
+Adapter label: tarx-securist-operator-v1
+Tactic pack label: securist-core-v1
+Policy pack label: securist-default-v1
+```
+
+### 6. TARX Runtime + synthesis
 
 ```text
 Securist Operator
@@ -117,25 +154,15 @@ Securist Operator
         ├── Ollama / llama.cpp / vLLM adapter layer (adapters only)
         ├── sandbox + tool permissions
         ├── tactic packs + policy packs
-        ├── LocalDecisionBriefV1 (local_only)
+        ├── LocalDecisionBriefV1 (local_only + provenance)
         └── no customer-private hub sync in WO-012
 ```
 
-- **Baseline:** deterministic local manifest collection **without** an LLM.  
-- **Additive:** signed TARX Model Pack synthesis **after** `securist doctor` passes.  
+- **Baseline:** deterministic local manifest collection **without** an LLM → `synthesis: deterministic_only`, model components `not_used`.  
+- **Additive:** signed TARX Model Pack synthesis **after** `securist doctor` → content-verified digests for used model components.  
 - **Insufficient local capability:** explicit error/status — **no** silent cloud or unsigned model fallback.
 
-Default digests (record every local run):
-
-```text
-Base: openai/gpt-oss-20b
-Adapter: tarx-securist-operator-v1
-Tactic pack: securist-core-v1
-Policy pack: securist-default-v1
-Runtime: tarx-runtime-v1
-```
-
-### 6. Hostile local input
+### 7. Hostile local input
 
 Treat the target repository as untrusted input:
 
@@ -144,9 +171,9 @@ Treat the target repository as untrusted input:
 - No symlink traversal outside the requested repository root  
 - Read-only manifest/config collection inside root only  
 
-### 7. Digests & privacy
+### 8. Privacy
 
-- Record runtime/model/tactic/policy digests **locally** per run  
+- Provenance and briefs stay **local**  
 - No customer-private hub sync in this WO  
 
 ## Product surface (implementation phase)
@@ -176,13 +203,15 @@ securist assess .
 
 1. **Contract separation** — `LocalDecisionBriefV1.kind` ≠ public; persistence `local_only`; sample default draft has no absolute paths / secrets.  
 2. **Honesty envelope** — observed facts require source + verification; policyHints marked non-authoritative in fixtures.  
-3. **Public regression** — existing `test:public-assess` remains green; public path still never uses privileged GH token.  
-4. **Hostile input** — fixture repo with symlink-out-of-root / malicious scripts is not executed; assess does not install or shell.  
-5. **Synthesis gate** — without doctor/signed pack → `synthesis: deterministic_only` or explicit failure; never unsigned/cloud fallback.  
-6. **MCP allowlist** — only get_brief / list_gaps / get_run_metadata registered; forbidden tools absent.  
-7. **No hub persist** — assess path does not call Decision Graph store / Postgres / tenant APIs.
+3. **Provenance honesty** — `assertLocalProvenanceHonesty`: deterministic_only rejects used model; tarx_model_pack requires content digests; labels-as-only-proof rejected.  
+4. **MCP metadata** — `toLocalMcpRunMetadata` sets `modelUsed: false` for deterministic_only; true only with verified model digests.  
+5. **Public regression** — `test:public-assess` remains green.  
+6. **Hostile input** — no install/shell/out-of-root traversal.  
+7. **Synthesis gate** — doctor/pack failure is explicit; no silent cloud/unsigned fallback.  
+8. **MCP allowlist** — only the three tools; forbidden tools absent.  
+9. **No hub persist** — no Decision Graph store / Postgres / tenant APIs on assess path.
 
-Contract-shape fixture for this filing: `npm run test:decision-brief-contracts` (honesty + local/public separation without operator runtime).
+Filing fixture: `npm run test:decision-brief-contracts` (public/local split + provenance/MCP rules without operator runtime).
 
 ## Plan (when claimed — not this filing)
 
@@ -197,7 +226,8 @@ Contract-shape fixture for this filing: `npm run test:decision-brief-contracts` 
 ## Progress
 
 - 2026-08-07: Opened as `ready` after WO-010 merge (PR #14).  
-- 2026-08-07: **Contract correction** filed — LocalDecisionBriefV1 / honesty envelope; PublicDecisionBriefV1 not reused for local evidence. Implementation not started.
+- 2026-08-07: **Contract correction** filed — LocalDecisionBriefV1 / honesty envelope; PublicDecisionBriefV1 not reused for local evidence.  
+- 2026-08-07: **Provenance/MCP amendment** — LocalRunProvenanceV1 with content digests; deterministic_only cannot claim model use; MCP LocalMcpRunMetadataV1. Implementation not started.
 
 ## Blockers
 

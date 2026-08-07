@@ -1,13 +1,17 @@
 /**
- * Contract-shape fixtures for Decision Brief honesty + public vs local separation.
- * Spec/filing support for WO-012 — not operator runtime implementation.
+ * Contract-shape fixtures: Decision Brief honesty, public vs local separation,
+ * and provenance/MCP rules (labels ≠ digests; deterministic_only model honesty).
  */
 import type { LocalDecisionBriefV1 } from '../../../../packages/contracts/src/local-assess'
 import type { PublicDecisionBriefV1 } from '../../../../packages/contracts/src/public-assess'
 import {
-  LOCAL_DEFAULT_DIGESTS_V1,
+  LOCAL_DEFAULT_COMPONENT_LABELS_V1,
   LOCAL_MCP_FORBIDDEN_V1,
   LOCAL_MCP_TOOLS_V1,
+  assertLocalProvenanceHonesty,
+  componentContentVerified,
+  componentNotUsed,
+  toLocalMcpRunMetadata,
 } from '../../../../packages/contracts/src/local-assess'
 
 let passed = 0
@@ -27,6 +31,13 @@ function assert(name: string, condition: boolean, detail = 'assertion failed') {
   if (condition) ok(name)
   else fail(name, detail)
 }
+
+const FAKE_SHA =
+  'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+const FAKE_SHA_B =
+  'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+const FAKE_SHA_C =
+  'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc'
 
 function samplePublic(): PublicDecisionBriefV1 {
   const core = {
@@ -81,7 +92,16 @@ function samplePublic(): PublicDecisionBriefV1 {
   return { ...core, draftJson: JSON.stringify(core) }
 }
 
-function sampleLocal(): LocalDecisionBriefV1 {
+/** deterministic_only: model components must be not_used (labels alone are not digests). */
+function sampleLocalDeterministic(): LocalDecisionBriefV1 {
+  const labels = LOCAL_DEFAULT_COMPONENT_LABELS_V1
+  const provenance = {
+    runtime: componentContentVerified(labels.runtime, FAKE_SHA),
+    baseModel: componentNotUsed(labels.baseModel),
+    adapter: componentNotUsed(labels.adapter),
+    tacticPack: componentNotUsed(labels.tacticPack),
+    policyPack: componentNotUsed(labels.policyPack),
+  }
   const core = {
     contractVersion: '1' as const,
     kind: 'local_decision_brief' as const,
@@ -118,9 +138,9 @@ function sampleLocal(): LocalDecisionBriefV1 {
     reReviewTriggers: ['Manifest fingerprint change'],
     policyHints: ['Non-authoritative; not an approval'],
     disclaimers: ['Local only; never automatically shareable'],
-    digests: { ...LOCAL_DEFAULT_DIGESTS_V1 },
+    provenance,
     synthesis: 'deterministic_only' as const,
-    synthesisNote: 'Doctor not run in contract fixture',
+    synthesisNote: 'Manifest collection only; model pack not used',
     assessedAt: new Date().toISOString(),
   }
   return { ...core, draftJson: JSON.stringify(core) }
@@ -146,7 +166,7 @@ function main() {
     evidenceGaps: string[]
     policyHints: string[]
   }
-  const loc = sampleLocal() as {
+  const loc = sampleLocalDeterministic() as {
     kind: string
     persistence: string
     shareability: string
@@ -158,13 +178,20 @@ function main() {
     unknowns: string[]
     evidenceGaps: string[]
     policyHints: string[]
-    digests: { runtime: string; adapter: string; tacticPack: string }
+    synthesis: string
+    provenance: LocalDecisionBriefV1['provenance']
   }
   assert('public kind', pub.kind === 'public_decision_brief')
-  assert('public persistence ephemeral_client_only', pub.persistence === 'ephemeral_client_only')
+  assert(
+    'public persistence ephemeral_client_only',
+    pub.persistence === 'ephemeral_client_only',
+  )
   assert('local kind', loc.kind === 'local_decision_brief')
   assert('local persistence local_only', loc.persistence === 'local_only')
-  assert('local shareability never_automatic', loc.shareability === 'never_automatic')
+  assert(
+    'local shareability never_automatic',
+    loc.shareability === 'never_automatic',
+  )
   assert('local visibility local_only', loc.visibility === 'local_only')
   assert('kinds differ', pub.kind !== loc.kind)
   assert('persistences differ', pub.persistence !== loc.persistence)
@@ -179,7 +206,10 @@ function main() {
     ['local', loc],
   ] as const) {
     assert(`${name} durable false`, brief.durable === false)
-    assert(`${name} has observed source`, brief.observed.every((o) => Boolean(o.source)))
+    assert(
+      `${name} has observed source`,
+      brief.observed.every((o) => Boolean(o.source)),
+    )
     assert(
       `${name} has observed verification`,
       brief.observed.every((o) => Boolean(o.verification)),
@@ -190,22 +220,112 @@ function main() {
   }
 
   console.log('\n[local default output privacy]')
-  const localJson = loc.draftJson
   assert('local rootLabel is .', loc.repository.rootLabel === '.')
   assert(
     'local draft has no absolute path strings',
-    !hasAbsolutePath(localJson) && !hasAbsolutePath(loc.repository.displayName),
+    !hasAbsolutePath(loc.draftJson) &&
+      !hasAbsolutePath(loc.repository.displayName),
   )
   assert(
     'local observed sources are not absolute paths',
     loc.observed.every((o) => !hasAbsolutePath(o.source || '')),
   )
+
+  console.log('\n[provenance — labels are not digests]')
+  const labels = LOCAL_DEFAULT_COMPONENT_LABELS_V1
   assert(
-    'local digests recorded',
-    Boolean(loc.digests.runtime && loc.digests.adapter && loc.digests.tacticPack),
+    'default labels include gpt-oss product name (label only)',
+    labels.baseModel.includes('gpt-oss'),
+  )
+  const detCheck = assertLocalProvenanceHonesty(
+    'deterministic_only',
+    loc.provenance,
+  )
+  assert(
+    'deterministic_only sample provenance ok',
+    detCheck.ok === true,
+    detCheck.ok ? '' : detCheck.error,
+  )
+  if (detCheck.ok) {
+    assert('deterministic_only modelUsed false', detCheck.modelUsed === false)
+  }
+  assert(
+    'deterministic baseModel not_used',
+    loc.provenance.baseModel.used === false &&
+      loc.provenance.baseModel.contentDigest === null &&
+      loc.provenance.baseModel.verification === 'not_used',
+  )
+  assert(
+    'deterministic adapter not_used',
+    loc.provenance.adapter.used === false &&
+      loc.provenance.adapter.contentDigest === null,
+  )
+  assert(
+    'deterministic may still show product labels without proving use',
+    loc.provenance.baseModel.label === labels.baseModel &&
+      !loc.provenance.baseModel.used,
+  )
+  assert(
+    'runtime used has real contentDigest hex',
+    loc.provenance.runtime.used === true &&
+      loc.provenance.runtime.contentDigest?.hex === FAKE_SHA,
   )
 
-  console.log('\n[MCP allowlist constants]')
+  // Reject label-as-digest / false model claim on deterministic_only
+  const badDet = assertLocalProvenanceHonesty('deterministic_only', {
+    runtime: componentContentVerified(labels.runtime, FAKE_SHA),
+    baseModel: componentContentVerified(labels.baseModel, FAKE_SHA_B),
+    adapter: componentContentVerified(labels.adapter, FAKE_SHA_C),
+    tacticPack: componentNotUsed(labels.tacticPack),
+    policyPack: componentNotUsed(labels.policyPack),
+  })
+  assert(
+    'deterministic_only rejects used model components',
+    badDet.ok === false,
+  )
+
+  const usedWithoutDigest = assertLocalProvenanceHonesty('deterministic_only', {
+    runtime: {
+      label: labels.runtime,
+      contentDigest: null,
+      used: true,
+      verification: 'content_verified',
+    },
+    baseModel: componentNotUsed(labels.baseModel),
+    adapter: componentNotUsed(labels.adapter),
+    tacticPack: componentNotUsed(labels.tacticPack),
+    policyPack: componentNotUsed(labels.policyPack),
+  })
+  assert(
+    'used=true without contentDigest rejected',
+    usedWithoutDigest.ok === false,
+  )
+
+  const packOk = assertLocalProvenanceHonesty('tarx_model_pack', {
+    runtime: componentContentVerified(labels.runtime, FAKE_SHA),
+    baseModel: componentContentVerified(labels.baseModel, FAKE_SHA_B),
+    adapter: componentContentVerified(labels.adapter, FAKE_SHA_C),
+    tacticPack: componentContentVerified(labels.tacticPack, FAKE_SHA),
+    policyPack: componentContentVerified(labels.policyPack, FAKE_SHA_B),
+  })
+  assert(
+    'tarx_model_pack with content digests ok',
+    packOk.ok === true && 'modelUsed' in packOk && packOk.modelUsed === true,
+  )
+
+  const packMissingModel = assertLocalProvenanceHonesty('tarx_model_pack', {
+    runtime: componentContentVerified(labels.runtime, FAKE_SHA),
+    baseModel: componentNotUsed(labels.baseModel),
+    adapter: componentNotUsed(labels.adapter),
+    tacticPack: componentNotUsed(labels.tacticPack),
+    policyPack: componentNotUsed(labels.policyPack),
+  })
+  assert(
+    'tarx_model_pack without model digests rejected',
+    packMissingModel.ok === false,
+  )
+
+  console.log('\n[MCP allowlist + run metadata honesty]')
   assert(
     'allowed tools',
     LOCAL_MCP_TOOLS_V1.includes('get_brief') &&
@@ -226,6 +346,27 @@ function main() {
       (t) => !(LOCAL_MCP_FORBIDDEN_V1 as readonly string[]).includes(t),
     ),
   )
+
+  const meta = toLocalMcpRunMetadata(sampleLocalDeterministic())
+  const metaOk = !('ok' in meta)
+  assert('get_run_metadata succeeds for deterministic_only', metaOk)
+  if (metaOk) {
+    assert('metadata modelUsed false', meta.modelUsed === false)
+    assert(
+      'metadata synthesis deterministic_only',
+      meta.synthesis === 'deterministic_only',
+    )
+    assert(
+      'metadata baseModel unused',
+      meta.provenance.baseModel.used === false &&
+        meta.provenance.baseModel.contentDigest === null,
+    )
+    assert(
+      'metadata keeps labels separate from digests',
+      meta.provenance.baseModel.label === labels.baseModel &&
+        meta.provenance.runtime.contentDigest?.hex === FAKE_SHA,
+    )
+  }
 
   console.log(`\n${passed}/${passed + failed} passed`)
   if (failed > 0) process.exit(1)
