@@ -15,6 +15,12 @@ import type {
 } from './types'
 
 export type {
+  DecisionBriefHonestyV1,
+  DecisionBriefObservedFactV1,
+  DecisionBriefPersistenceV1,
+} from '../../../packages/contracts/src/decision-brief'
+
+export type {
   PublicAssessBoundaryV1,
   PublicAssessEnvironmentV1,
   PublicAssessScopeV1,
@@ -25,11 +31,40 @@ export type {
   PublicRepositoryFactsV1,
 } from '../../../packages/contracts/src/public-assess'
 
+export type {
+  LocalDecisionBriefV1,
+  LocalRepoAssessResultV1,
+  LocalRunProvenanceV1,
+  LocalMcpToolV1,
+  LocalMcpRunMetadataV1,
+  LocalMcpEnvelopeV1,
+  LocalCapabilityStateV1,
+  ComponentProvenanceV1,
+  ContentDigestV1,
+  SignatureStatusV1,
+  UseStatusV1,
+} from '../../../packages/contracts/src/local-assess'
+
 export {
   PUBLIC_ASSESS_BOUNDARIES_V1,
   PUBLIC_ASSESS_ENVIRONMENTS_V1,
   PUBLIC_ASSESS_LIMITS_V1,
 } from '../../../packages/contracts/src/public-assess'
+
+export {
+  LOCAL_MCP_TOOLS_V1,
+  LOCAL_MCP_FORBIDDEN_V1,
+  LOCAL_EXPECTED_COMPONENT_IDS_V1,
+  LOCAL_DEFAULT_COMPONENT_LABELS_V1,
+  LOCAL_MCP_EGRESS_WARNING_V1,
+  componentUsedVerified,
+  componentAvailableNotUsed,
+  assertLocalProvenanceHonesty,
+  toLocalMcpRunMetadata,
+  toLocalMcpBriefResponse,
+  wrapLocalMcpResponse,
+  validateLocalBriefTextInput,
+} from '../../../packages/contracts/src/local-assess'
 
 export type VisibilityLevel = 'public' | 'organization' | 'operator'
 
@@ -175,9 +210,7 @@ export function toArtifactCard(
   }
 }
 
-export function toPolicyResultView(
-  ev: PolicyEvaluation,
-): PolicyResultView {
+export function toPolicyResultView(ev: PolicyEvaluation): PolicyResultView {
   return {
     verdict: ev.verdict,
     policyId: ev.policyId,

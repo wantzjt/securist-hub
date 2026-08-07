@@ -5,7 +5,15 @@
  * Not a tenant Decision Graph write. Not an authoritative approval.
  *
  * Routes and adapters consume this shape; they do not invent competing types.
+ *
+ * Do NOT reuse PublicDecisionBriefV1 for local repository assessment (WO-012).
+ * Local private evidence uses LocalDecisionBriefV1 + DecisionBriefHonestyV1.
  */
+
+import type {
+  DecisionBriefHonestyV1,
+  DecisionBriefObservedFactV1,
+} from './decision-brief'
 
 export type PublicAssessEnvironmentV1 =
   | 'research'
@@ -34,12 +42,9 @@ export type PublicRepoAssessInputV1 = {
   deploymentBoundary: PublicAssessBoundaryV1
 }
 
-export type PublicObservedFactV1 = {
-  domain: string
-  assertion: string
-  /** Source verification — observed public API or labeled seed. */
+/** Public-path observed fact (LIVE API or seed). Honesty envelope compatible. */
+export type PublicObservedFactV1 = DecisionBriefObservedFactV1 & {
   verification: 'observed' | 'seed'
-  source: string
 }
 
 export type PublicRepositoryFactsV1 = {
@@ -66,29 +71,21 @@ export type PublicRepositoryFactsV1 = {
 }
 
 /**
- * Versioned public Decision Brief draft.
+ * Versioned public Decision Brief draft (share-safe web path).
  * Pre-persistence only — never a durable tenant decision.
+ * Honesty fields align with DecisionBriefHonestyV1.
  */
-export type PublicDecisionBriefV1 = {
-  contractVersion: '1'
+export type PublicDecisionBriefV1 = Omit<
+  DecisionBriefHonestyV1,
+  'observed'
+> & {
   kind: 'public_decision_brief'
-  /** Never a durable tenant decision */
-  durable: false
+  /** Public web only — never local_only private evidence */
   persistence: 'ephemeral_client_only'
-  label: 'LIVE' | 'HYBRID' | 'SEED'
-  decisionStatus: 'not_reviewed'
   repository: PublicRepositoryFactsV1
   /** Caller-stated scope (not observed fact) */
   scope: PublicAssessScopeV1
   observed: PublicObservedFactV1[]
-  unknowns: string[]
-  evidenceGaps: string[]
-  reReviewTriggers: string[]
-  /**
-   * Non-authoritative hints only — never an approval or Decision Graph write.
-   */
-  policyHints: string[]
-  disclaimers: string[]
   fetchedAt: string
   /** JSON serialization of the brief body for copy/download (no extra secrets). */
   draftJson: string

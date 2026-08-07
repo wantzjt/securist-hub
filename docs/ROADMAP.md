@@ -53,13 +53,13 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 | | |
 | -- | -- |
 | **Owner** | grok (implement) · codex (review) |
-| **Status** | `now` · **in progress** under D-010 |
-| **Spec** | [`SECURIST-V1-START-A-DECISION.md`](./SECURIST-V1-START-A-DECISION.md) |
-| **Work order** | [`WO-010`](../ops/work-orders/WO-010-v1-start-a-decision.md) |
-| **Scope** | Homepage, `/assess` public repo assess, Decision Brief, Research nav |
-| **Not in this build** | MCP server, GitHub App, Verify, Eve, accounts, private persistence |
+| **Status** | `now` · **WO-010 complete** · **WO-012 ready** |
+| **Live product** | Public `/assess` → ephemeral Decision Brief (PR #14) |
+| **Next work order** | [`WO-012`](../ops/work-orders/WO-012-local-operator-assess.md) |
+| **Scope (WO-012)** | Local `securist assess .` → `LocalDecisionBriefV1` (not public brief) · TARX Runtime · signed Model Pack · read-only MCP |
+| **Not in WO-012** | GitHub App · Verify · Eve · accounts · external writes · production deploy |
 
-Immediate pre-R1 value: paste public GitHub URL → share-safe Decision Brief (no private store).
+Architecture lock: TARX Runtime mandatory · TARX Model Pack default · Ollama/llama.cpp/vLLM as adapters only.
 
 ---
 
@@ -67,7 +67,7 @@ Immediate pre-R1 value: paste public GitHub URL → share-safe Decision Brief (n
 
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
-| WO-012 | Read-only local MCP `assess .` | After WO-010 |
+| WO-012 | Local Operator `assess .` + read-only MCP | **ready** — claim to implement |
 | RM-004 | Repo trust gap / lockfile import | After Start a Decision + R1 preferred |
 | RM-005 | Securist Verify / signed evidence | After adoption loop trusted |
 | RM-006 | Eve proposals (propose-only) | Feature-flag review + founder bar |
@@ -84,6 +84,7 @@ Immediate pre-R1 value: paste public GitHub URL → share-safe Decision Brief (n
 | RM-010–011 | Wedge + founder thesis | PR #5–#7 |
 | RM-012 | Strong release ops | PR #9 |
 | WO-011 | Internal system graph gates | PR #16 |
+| WO-010 | Public assess → ephemeral Decision Brief | PR #14 · **V1 public launch** |
 
 ---
 

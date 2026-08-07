@@ -55,35 +55,119 @@ Hub domain: `src/lib/decision-graph/types.ts`.
 ### ActivityEvent
 - **projection** of graph changes for UI — never the source of truth  
 
-### PublicDecisionBriefV1 (pre-persistence public assessment)
+### DecisionBriefHonestyV1 (shared envelope)
 
-Package: `packages/contracts/src/public-assess.ts` · re-export surface: `surface-contracts.ts`.
+Package: `packages/contracts/src/decision-brief.ts`.
 
-Ephemeral share-safe Decision Brief draft from **public** sources only.  
-**Not** a tenant Decision Graph write. Routes must not invent competing shapes.
+Common honesty fields for **every** Decision Brief draft (public or local):
 
 | Field | Rule |
 |-------|------|
 | `contractVersion` | `'1'` |
-| `kind` | `public_decision_brief` |
-| `durable` | always `false` |
-| `persistence` | always `ephemeral_client_only` |
+| `durable` | `false` for pre-R1 drafts (not a tenant Decision Graph write) |
 | `label` | LIVE \| HYBRID \| SEED |
-| `scope` | caller-**stated** intended use / environment / boundary |
-| `observed[]` | assertion + `verification` + `source` |
-| `unknowns` / `evidenceGaps` | explicit |
+| `decisionStatus` | Drafts start `not_reviewed` |
+| `observed[]` | assertion + `verification` + `source` (provenance required) |
+| `unknowns` / `evidenceGaps` / `reReviewTriggers` | explicit |
 | `policyHints` | **non-authoritative** only — never an approval |
+| `disclaimers` | honesty about scope |
+
+Surfaces must not invent competing honesty shapes. Visibility and shareability are **not** honesty fields—they differ by brief kind.
+
+### PublicDecisionBriefV1 (public assessment only)
+
+Package: `packages/contracts/src/public-assess.ts` · re-export: `surface-contracts.ts`.
+
+Ephemeral **share-safe** Decision Brief from **public** sources only (web `/assess`).  
+**Do not reuse for local repository evidence** (WO-012 → `LocalDecisionBriefV1`).
+
+| Field | Rule |
+|-------|------|
+| `kind` | `public_decision_brief` |
+| `persistence` | always `ephemeral_client_only` |
+| `repository` | Public GitHub facts only |
+| `scope` | caller-**stated** intended use / environment / boundary |
 | `draftJson` | client copy/download only |
 
 #### PublicRepoAssessInputV1
 
-Runtime-validated (not TypeScript-only): string fields, max lengths, environment/boundary enums, public `github.com/owner/repo` URL shape. Rejects local paths, secrets, non-root paths, unsupported hosts.
+Runtime-validated (not TypeScript-only): string fields, max lengths, environment/boundary enums, public `github.com/owner/repo` URL shape. Rejects local paths, secrets (including `intendedUse`), non-root paths, unsupported hosts.
 
 #### Anonymous public assess security
 
 - `POST` public assess **must not** attach `GITHUB_TOKEN` / `GH_TOKEN` / any privileged Authorization header.  
 - Privileged tokens remain for **first-party Scout** only.  
 - No Decision Graph / tenant / Postgres persistence on this path.
+
+### LocalDecisionBriefV1 (local Operator assessment)
+
+Package: `packages/contracts/src/local-assess.ts` · re-export: `surface-contracts.ts`.
+
+Private local evidence from manifests/config via `securist assess .` (WO-012).  
+**Not** public/share-safe. Reusing `PublicDecisionBriefV1` would create a false privacy promise.
+
+| Field | Rule |
+|-------|------|
+| `kind` | `local_decision_brief` |
+| `persistence` | always `local_only` |
+| `shareability` | `never_automatic` |
+| `visibility` | `local_only` |
+| Hub persist | **Never** in WO-012 |
+| Default body | No raw source, secrets, or **absolute** local paths |
+| `repository` | Minimized identity (`rootLabel: '.'`, fingerprints, package meta) |
+| `provenance` | `LocalRunProvenanceV1` — see provenance lock below |
+| `capability` | `runtime_verified` \| `synthesis_verified` \| `synthesis_unavailable` \| `signature_invalid` |
+| `synthesis` | `deterministic_only` or `tarx_model_pack` |
+
+#### Availability vs verification vs use
+
+| Term | Meaning |
+|------|---------|
+| **available** | Pack/runtime is installed (`useStatus: available_not_used` or `used`) |
+| **verified** | Signature checked (`signatureStatus: verified`) and `contentDigest` recorded |
+| **used** | This exact component participated in this run (`useStatus: used`) |
+
+Identifiers such as `tarx-runtime` / `gpt-oss-20b` are **component IDs** (see `LOCAL_EXPECTED_COMPONENT_IDS_V1`) — **never** cryptographic digests.
+
+#### Component provenance shape
+
+| Field | Rule |
+|-------|------|
+| `componentId` | Product identity (not a hash) |
+| `version` | Version string (not a hash) |
+| `contentDigest` | `{ algorithm: 'sha256', hex }` when verified/used; else null |
+| `signerKeyId` | Required when used |
+| `signatureStatus` | `verified` \| `unavailable` \| `invalid` \| `not_applicable` |
+| `useStatus` | `used` \| `available_not_used` \| `unavailable` |
+
+#### Provenance + synthesis rules (P1 lock)
+
+| # | Rule |
+|---|------|
+| 1 | **IDs ≠ digests.** Do not call `tarx-runtime-v1` / `gpt-oss-20b` “digests.” |
+| 2 | **`deterministic_only`:** `baseModel` and `adapter` must be **`null`** — not default IDs, not placeholders. |
+| 3 | **`tarx_model_pack`:** non-null model/adapter with `useStatus: used`, `signatureStatus: verified`, real `contentDigest`. |
+| 4 | **Version/IDs alone are insufficient** provenance for a used component. |
+| 5 | **Capability:** `runtime_verified` → assess may run; `synthesis_verified` → pack may synthesize; `synthesis_unavailable` → deterministic still succeeds; `signature_invalid` → synthesis blocked, **never** fallback. |
+| 6 | **MCP** is a data-egress boundary: **stdio/local only** in WO-012; every response includes `visibility: local_only`, `shareability: never_automatic`, `transport: stdio_local`; document that a user-selected client may transmit summaries externally. |
+
+#### Local input redaction
+
+Any `intendedUse` / config text included in `LocalDecisionBriefV1` or MCP output must pass `validateLocalBriefTextInput` (reject secrets/paths) before draft emission.
+
+#### Local Operator + MCP rules
+
+| Rule | Requirement |
+|------|-------------|
+| TARX Runtime | Mandatory embed; adapters (Ollama / llama.cpp / vLLM) only |
+| Baseline | Deterministic manifest collection without LLM |
+| MCP transport | `stdio_local` only — no HTTP/remote default |
+| MCP envelope | `LocalMcpEnvelopeV1` on every tool response |
+| MCP allowlist | `get_brief`, `list_gaps`, `get_run_metadata` |
+| MCP forbidden | raw source/paths, approve, exploit, execute, install, build, shell, external writes |
+| Hostile input | No installs/builds/shell; no symlink traversal outside target root |
+
+Helpers: `assertLocalProvenanceHonesty`, `toLocalMcpRunMetadata`, `toLocalMcpBriefResponse`, `wrapLocalMcpResponse`, `componentUsedVerified`, `validateLocalBriefTextInput`.
 
 ## API / event semantics (versioned)
 
@@ -95,6 +179,8 @@ Runtime-validated (not TypeScript-only): string fields, max lengths, environment
 | Local validation summary | Signed minimized field result |
 | `GET` artifact profile | Canonical read model for UI |
 | `POST` public assess | Anonymous public GitHub facts → `PublicDecisionBriefV1` (ephemeral; unauthenticated GH API) |
+| Local `securist assess .` | Local manifests → `LocalDecisionBriefV1` (`local_only`; no hub persist; no absolute paths in default output) |
+| Local MCP | Read-only `get_brief` / `list_gaps` / `get_run_metadata` on minimized local brief |
 
 ### Requirements at every write boundary
 
