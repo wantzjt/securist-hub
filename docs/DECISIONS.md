@@ -356,3 +356,33 @@ D-011 locked category and north-star. Free vs paid must not be “cloud vs local
 **Consequences**
 
 WO-012 must remain free-path honest (local-only, no hub persist). R1 activates paid path capability (durable shared graph), not “force cloud for individuals.” No billing UI, accounts product, or pricing page in current WOs—this decision constrains future commercial design only.
+
+### D-013 — Public assess resilience without privileged tokens
+
+|            |                                 |
+| ---------- | ------------------------------- |
+| **Date**   | 2026-08-07                      |
+| **Owner**  | grok / founder                   |
+| **Status** | accepted                        |
+
+**Context**
+
+Live `/assess` depends on unauthenticated GitHub REST. Flakiness and rate limits must not be papered over with tokens, fake success, or private-input logging.
+
+**Decision**
+
+1. Explicit per-call outbound timeout on public assess GitHub fetches.
+2. Bounded in-process cache of **public** `owner/repo` facts only (never `intendedUse` / secrets).
+3. Client-visible codes: `timeout`, `upstream_unavailable`, `rate_limited`, plus existing codes — no fake LIVE seed for public assess failures.
+4. Human production checklist in `docs/PUBLIC-ASSESS-RATE-CONTROL.md`; not an SLA.
+5. Still **no** `GITHUB_TOKEN` / Authorization on the anonymous path.
+
+**Alternatives considered**
+
+- Attach server token to raise rate limits — rejected (trust boundary for anonymous assess).  
+- Unbounded multi-instance shared cache claiming global QPS — rejected (false capacity claims).  
+- Silent seed fallback on GitHub failure for public assess — rejected (LIVE honesty).
+
+**Consequences**
+
+WO-016 implements timeout/cache/error map + fixtures. Ops must not advertise unlimited assess. Edge rate limits remain human-owned.

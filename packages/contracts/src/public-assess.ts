@@ -91,9 +91,24 @@ export type PublicDecisionBriefV1 = Omit<
   draftJson: string
 }
 
+/**
+ * Explicit public-assess failure codes (runtime).
+ * New codes are additive; clients should treat unknown codes as generic failure.
+ */
+export type PublicAssessErrorCodeV1 =
+  | 'schema'
+  | 'redaction'
+  | 'invalid_url'
+  | 'not_found'
+  | 'private_repo'
+  | 'rate_limited'
+  | 'timeout'
+  | 'upstream_unavailable'
+  | 'github_error'
+
 export type PublicRepoAssessResultV1 =
   | { ok: true; brief: PublicDecisionBriefV1 }
-  | { ok: false; code: string; error: string }
+  | { ok: false; code: PublicAssessErrorCodeV1 | string; error: string }
 
 export const PUBLIC_ASSESS_ENVIRONMENTS_V1: readonly PublicAssessEnvironmentV1[] =
   ['research', 'development', 'staging', 'production'] as const
@@ -108,4 +123,19 @@ export const PUBLIC_ASSESS_BOUNDARIES_V1: readonly PublicAssessBoundaryV1[] = [
 export const PUBLIC_ASSESS_LIMITS_V1 = {
   repositoryUrlMax: 500,
   intendedUseMax: 500,
+} as const
+
+/**
+ * Resilience bounds for anonymous public GitHub assess (WO-016).
+ * Not an SLA — documents intentional ceilings only.
+ */
+export const PUBLIC_ASSESS_RESILIENCE_V1 = {
+  /** Per GitHub HTTP call abort timeout (ms). */
+  githubTimeoutMs: 8_000,
+  /** In-process public-fact cache TTL (ms). */
+  factCacheTtlMs: 60_000,
+  /** Max distinct owner/repo entries retained. */
+  factCacheMaxEntries: 64,
+  /** Max GitHub API paths used per uncached assess. */
+  maxGithubCallsPerAssess: 4,
 } as const

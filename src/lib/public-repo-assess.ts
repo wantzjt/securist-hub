@@ -14,11 +14,13 @@ import type {
   PublicObservedFactV1,
   PublicRepoAssessInputV1,
   PublicRepoAssessResultV1,
+  PublicRepositoryFactsV1,
 } from '../../packages/contracts/src/public-assess'
 import {
   PUBLIC_ASSESS_BOUNDARIES_V1,
   PUBLIC_ASSESS_ENVIRONMENTS_V1,
   PUBLIC_ASSESS_LIMITS_V1,
+  PUBLIC_ASSESS_RESILIENCE_V1,
 } from '../../packages/contracts/src/public-assess'
 
 /** Re-export contract types for hub adapters (canonical source is packages/contracts). */
@@ -220,24 +222,190 @@ export function parsePublicGithubUrl(
   return { owner, repo }
 }
 
+type GhFetchFailureKind =
+  | 'http'
+  | 'timeout'
+  | 'network'
+  | 'upstream_unavailable'
+
+type GhFetchResult<T> =
+  | { ok: true; data: T; status: number; rateLimitRemaining: number | null }
+  | {
+      ok: false
+      status: number
+      kind: GhFetchFailureKind
+      rateLimitRemaining: number | null
+    }
+
+function parseRateLimitRemaining(res: Response): number | null {
+  const raw = res.headers.get('x-ratelimit-remaining')
+  if (raw == null || raw === '') return null
+  const n = Number(raw)
+  return Number.isFinite(n) ? n : null
+}
+
+function isAbortError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false
+  const name = (err as { name?: string }).name
+  return name === 'AbortError' || name === 'TimeoutError'
+}
+
 /**
  * Unauthenticated GitHub API GET — never attaches Authorization.
  * Privileged tokens remain for first-party Scout only.
+ * Always applies an explicit outbound timeout (WO-016).
  */
 async function ghJsonPublic<T>(
   path: string,
   fetchImpl: AssessFetch,
-): Promise<{ ok: true; data: T; status: number } | { ok: false; status: number }> {
+  timeoutMs: number,
+): Promise<GhFetchResult<T>> {
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
     'User-Agent': 'securist-public-assess',
     'X-GitHub-Api-Version': '2022-11-28',
   }
   // Intentionally no Authorization header — anonymous public assess only.
-  const res = await fetchImpl(`https://api.github.com${path}`, { headers })
-  if (!res.ok) return { ok: false, status: res.status }
-  const data = (await res.json()) as T
-  return { ok: true, data, status: res.status }
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const res = await fetchImpl(`https://api.github.com${path}`, {
+      headers,
+      signal: controller.signal,
+    })
+    const rateLimitRemaining = parseRateLimitRemaining(res)
+    if (!res.ok) {
+      if (res.status >= 500) {
+        return {
+          ok: false,
+          status: res.status,
+          kind: 'upstream_unavailable',
+          rateLimitRemaining,
+        }
+      }
+      return {
+        ok: false,
+        status: res.status,
+        kind: 'http',
+        rateLimitRemaining,
+      }
+    }
+    const data = (await res.json()) as T
+    return { ok: true, data, status: res.status, rateLimitRemaining }
+  } catch (err) {
+    if (isAbortError(err) || controller.signal.aborted) {
+      return {
+        ok: false,
+        status: 0,
+        kind: 'timeout',
+        rateLimitRemaining: null,
+      }
+    }
+    return {
+      ok: false,
+      status: 0,
+      kind: 'network',
+      rateLimitRemaining: null,
+    }
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/** Map primary-repo fetch failure to a client-visible assess error. */
+function mapPrimaryGithubFailure(
+  fail: Extract<GhFetchResult<unknown>, { ok: false }>,
+): PublicRepoAssessResultV1 {
+  if (fail.kind === 'timeout') {
+    return {
+      ok: false,
+      code: 'timeout',
+      error:
+        'GitHub did not respond within the assess timeout. Retry later; this is not a Decision Graph failure.',
+    }
+  }
+  if (fail.kind === 'network' || fail.kind === 'upstream_unavailable') {
+    return {
+      ok: false,
+      code: 'upstream_unavailable',
+      error:
+        'GitHub API is temporarily unavailable (network or upstream error). Retry later.',
+    }
+  }
+  if (fail.status === 404) {
+    return {
+      ok: false,
+      code: 'not_found',
+      error:
+        'Repository not found or not public. Only public GitHub repositories can be assessed anonymously.',
+    }
+  }
+  if (fail.status === 403) {
+    const remaining = fail.rateLimitRemaining
+    const rateLimited =
+      remaining === 0 ||
+      remaining === null /* GitHub often omits remaining on secondary limits */
+    if (rateLimited) {
+      return {
+        ok: false,
+        code: 'rate_limited',
+        error:
+          'GitHub API rate limit reached for anonymous public assess. Retry later. Securist does not attach privileged tokens to this path.',
+      }
+    }
+    return {
+      ok: false,
+      code: 'rate_limited',
+      error:
+        'GitHub denied the anonymous assess request (403). Often rate limit or abuse detection; retry later.',
+    }
+  }
+  return {
+    ok: false,
+    code: 'github_error',
+    error: `GitHub API error (${fail.status || 'unknown'})`,
+  }
+}
+
+/* —— Bounded public-fact cache (owner/repo only; never intendedUse) —— */
+
+type CachedPublicRepoFacts = {
+  fullName: string
+  repository: PublicRepositoryFactsV1
+  /** Wall time when facts were collected from GitHub (ms). */
+  collectedAtMs: number
+  expiresAtMs: number
+}
+
+const publicFactCache = new Map<string, CachedPublicRepoFacts>()
+
+function cacheKey(owner: string, repo: string): string {
+  return `${owner.toLowerCase()}/${repo.toLowerCase()}`
+}
+
+function pruneFactCache(nowMs: number): void {
+  for (const [k, v] of publicFactCache) {
+    if (v.expiresAtMs <= nowMs) publicFactCache.delete(k)
+  }
+  const max = PUBLIC_ASSESS_RESILIENCE_V1.factCacheMaxEntries
+  while (publicFactCache.size > max) {
+    const oldest = publicFactCache.keys().next().value
+    if (oldest === undefined) break
+    publicFactCache.delete(oldest)
+  }
+}
+
+/** Test / ops helper: drop all cached public facts. */
+export function clearPublicAssessFactCache(): void {
+  publicFactCache.clear()
+}
+
+/** Test helper: cache size and keys (no fact bodies). */
+export function getPublicAssessFactCacheStats(): {
+  size: number
+  keys: string[]
+} {
+  return { size: publicFactCache.size, keys: [...publicFactCache.keys()] }
 }
 
 type GhRepo = {
@@ -281,63 +449,42 @@ function decodeContent(c: GhContent): string | null {
 export type AssessPublicGithubOptions = {
   /** Injected fetch for tests. Must never receive Authorization from this module. */
   fetchImpl?: AssessFetch
+  /** Override per-call GitHub timeout (ms). Defaults to PUBLIC_ASSESS_RESILIENCE_V1. */
+  githubTimeoutMs?: number
+  /** Skip reading/writing the public-fact cache (tests). */
+  skipCache?: boolean
+  /** Clock for cache TTL tests. */
+  nowMs?: () => number
 }
 
-/**
- * Collect public GitHub facts and produce an ephemeral Decision Brief draft.
- * Does not write to Decision Graph store, tenant workspace, or Postgres.
- * Does not use privileged GitHub tokens.
- */
-export async function assessPublicGithubRepo(
-  rawInput: unknown,
-  options?: AssessPublicGithubOptions,
-): Promise<PublicRepoAssessResultV1> {
-  const validated = validatePublicRepoAssessInput(rawInput)
-  if (!validated.ok) {
-    return { ok: false, code: validated.code, error: validated.error }
-  }
-  const input = validated.data
-  const fetchImpl = options?.fetchImpl ?? globalThis.fetch.bind(globalThis)
-
-  const parsed = parsePublicGithubUrl(input.repositoryUrl)
-  if ('error' in parsed) {
-    return { ok: false, code: 'invalid_url', error: parsed.error }
-  }
-
-  const { owner, repo } = parsed
+async function collectPublicRepositoryFacts(
+  owner: string,
+  repo: string,
+  fetchImpl: AssessFetch,
+  timeoutMs: number,
+): Promise<
+  | { ok: true; repository: PublicRepositoryFactsV1 }
+  | { ok: false; result: PublicRepoAssessResultV1 }
+> {
   const repoRes = await ghJsonPublic<GhRepo>(
     `/repos/${owner}/${repo}`,
     fetchImpl,
+    timeoutMs,
   )
   if (!repoRes.ok) {
-    if (repoRes.status === 404) {
-      return {
-        ok: false,
-        code: 'not_found',
-        error:
-          'Repository not found or not public. Only public GitHub repositories can be assessed anonymously.',
-      }
-    }
-    if (repoRes.status === 403) {
-      return {
-        ok: false,
-        code: 'rate_limited',
-        error: 'GitHub API rate limit or access denied. Retry later.',
-      }
-    }
-    return {
-      ok: false,
-      code: 'github_error',
-      error: `GitHub API error (${repoRes.status})`,
-    }
+    return { ok: false, result: mapPrimaryGithubFailure(repoRes) }
   }
 
   const r = repoRes.data
   if (r.private) {
     return {
       ok: false,
-      code: 'private_repo',
-      error: 'Private repositories are not accepted before R1 durable workspaces',
+      result: {
+        ok: false,
+        code: 'private_repo',
+        error:
+          'Private repositories are not accepted before R1 durable workspaces',
+      },
     }
   }
 
@@ -345,14 +492,17 @@ export async function assessPublicGithubRepo(
     ghJsonPublic<GhRelease>(
       `/repos/${owner}/${repo}/releases/latest`,
       fetchImpl,
+      timeoutMs,
     ),
     ghJsonPublic<GhCommit[]>(
       `/repos/${owner}/${repo}/commits?per_page=1&sha=${encodeURIComponent(r.default_branch)}`,
       fetchImpl,
+      timeoutMs,
     ),
     ghJsonPublic<GhContent>(
       `/repos/${owner}/${repo}/contents/package.json?ref=${encodeURIComponent(r.default_branch)}`,
       fetchImpl,
+      timeoutMs,
     ),
   ])
 
@@ -378,48 +528,82 @@ export async function assessPublicGithubRepo(
   const headSha =
     commitRes.ok && commitRes.data[0] ? commitRes.data[0].sha : null
 
+  const repository: PublicRepositoryFactsV1 = {
+    owner: r.owner.login,
+    name: r.name,
+    fullName: r.full_name,
+    htmlUrl: r.html_url,
+    description: r.description,
+    defaultBranch: r.default_branch,
+    visibility: 'public',
+    language: r.language,
+    licenseSpdx:
+      r.license?.spdx_id && r.license.spdx_id !== 'NOASSERTION'
+        ? r.license.spdx_id
+        : null,
+    licenseName: r.license?.name || null,
+    pushedAt: r.pushed_at,
+    updatedAt: r.updated_at,
+    archived: r.archived,
+    fork: r.fork,
+    topics: r.topics || [],
+    latestReleaseTag,
+    latestReleasePublishedAt,
+    headSha,
+    packageName,
+    packageVersion,
+  }
+
+  return { ok: true, repository }
+}
+
+function buildBriefFromPublicFacts(
+  input: PublicRepoAssessInputV1,
+  repository: PublicRepositoryFactsV1,
+  fetchedAt: string,
+): PublicDecisionBriefV1 {
   const observed: PublicObservedFactV1[] = [
     {
       domain: 'provenance',
-      assertion: `Public GitHub repository ${r.full_name} on default branch ${r.default_branch}${headSha ? ` (HEAD ${headSha.slice(0, 7)})` : ''}.`,
+      assertion: `Public GitHub repository ${repository.fullName} on default branch ${repository.defaultBranch}${repository.headSha ? ` (HEAD ${repository.headSha.slice(0, 7)})` : ''}.`,
       verification: 'observed',
-      source: `github:api:repos/${r.full_name}`,
+      source: `github:api:repos/${repository.fullName}`,
     },
   ]
 
-  if (r.license?.spdx_id && r.license.spdx_id !== 'NOASSERTION') {
+  if (repository.licenseSpdx) {
     observed.push({
       domain: 'license',
-      assertion: `License SPDX observed: ${r.license.spdx_id}${r.license.name ? ` (${r.license.name})` : ''}.`,
+      assertion: `License SPDX observed: ${repository.licenseSpdx}${repository.licenseName ? ` (${repository.licenseName})` : ''}.`,
       verification: 'observed',
-      source: `github:api:repos/${r.full_name}/license`,
+      source: `github:api:repos/${repository.fullName}/license`,
     })
   }
 
-  if (latestReleaseTag) {
+  if (repository.latestReleaseTag) {
     observed.push({
       domain: 'provenance',
-      assertion: `Latest GitHub release tag observed: ${latestReleaseTag}${latestReleasePublishedAt ? ` at ${latestReleasePublishedAt}` : ''}.`,
+      assertion: `Latest GitHub release tag observed: ${repository.latestReleaseTag}${repository.latestReleasePublishedAt ? ` at ${repository.latestReleasePublishedAt}` : ''}.`,
       verification: 'observed',
-      source: `github:api:repos/${r.full_name}/releases/latest`,
+      source: `github:api:repos/${repository.fullName}/releases/latest`,
     })
   }
 
-  if (packageName || packageVersion) {
+  if (repository.packageName || repository.packageVersion) {
     observed.push({
       domain: 'provenance',
-      assertion: `Root package.json observed${packageName ? `: name ${packageName}` : ''}${packageVersion ? ` @ ${packageVersion}` : ''}.`,
+      assertion: `Root package.json observed${repository.packageName ? `: name ${repository.packageName}` : ''}${repository.packageVersion ? ` @ ${repository.packageVersion}` : ''}.`,
       verification: 'observed',
-      source: `github:api:contents/package.json@${r.default_branch}`,
+      source: `github:api:contents/package.json@${repository.defaultBranch}`,
     })
   }
 
-  if (r.archived) {
+  if (repository.archived) {
     observed.push({
       domain: 'security',
       assertion: 'Repository is marked archived on GitHub (observed metadata).',
       verification: 'observed',
-      source: `github:api:repos/${r.full_name}`,
+      source: `github:api:repos/${repository.fullName}`,
     })
   }
 
@@ -435,7 +619,7 @@ export async function assessPublicGithubRepo(
     'model_governance',
     'crypto_agility',
   ]
-  if (!r.license?.spdx_id || r.license.spdx_id === 'NOASSERTION') {
+  if (!repository.licenseSpdx) {
     evidenceGaps.unshift('license')
   }
 
@@ -465,38 +649,12 @@ export async function assessPublicGithubRepo(
   }
 
   const disclaimers = [
-    'Public-source observation only. LIVE facts are those returned by GitHub on this fetch.',
+    'Public-source observation only. LIVE facts are those returned by GitHub on this fetch (or a short-lived public-fact cache of the same API fields).',
     'No vulnerability is asserted from model narrative or inference.',
     'Not a penetration test, SCA scan, or compliance certification.',
-    'No customer-private data is stored by this assess path (pre-R1).',
+    'No customer-private data is stored by this assess path (pre-R1). Public fact cache keys are owner/repo only.',
     'Save and monitor is not available until durable workspace (R1).',
   ]
-
-  const repository = {
-    owner: r.owner.login,
-    name: r.name,
-    fullName: r.full_name,
-    htmlUrl: r.html_url,
-    description: r.description,
-    defaultBranch: r.default_branch,
-    visibility: 'public' as const,
-    language: r.language,
-    licenseSpdx:
-      r.license?.spdx_id && r.license.spdx_id !== 'NOASSERTION'
-        ? r.license.spdx_id
-        : null,
-    licenseName: r.license?.name || null,
-    pushedAt: r.pushed_at,
-    updatedAt: r.updated_at,
-    archived: r.archived,
-    fork: r.fork,
-    topics: r.topics || [],
-    latestReleaseTag,
-    latestReleasePublishedAt,
-    headSha,
-    packageName,
-    packageVersion,
-  }
 
   const briefCore = {
     contractVersion: '1' as const,
@@ -517,13 +675,85 @@ export async function assessPublicGithubRepo(
     reReviewTriggers,
     policyHints,
     disclaimers,
-    fetchedAt: new Date().toISOString(),
+    fetchedAt,
   }
 
-  const brief: PublicDecisionBriefV1 = {
+  return {
     ...briefCore,
     draftJson: JSON.stringify(briefCore, null, 2),
   }
+}
 
+/**
+ * Collect public GitHub facts and produce an ephemeral Decision Brief draft.
+ * Does not write to Decision Graph store, tenant workspace, or Postgres.
+ * Does not use privileged GitHub tokens.
+ */
+export async function assessPublicGithubRepo(
+  rawInput: unknown,
+  options?: AssessPublicGithubOptions,
+): Promise<PublicRepoAssessResultV1> {
+  const validated = validatePublicRepoAssessInput(rawInput)
+  if (!validated.ok) {
+    return { ok: false, code: validated.code, error: validated.error }
+  }
+  const input = validated.data
+  const fetchImpl = options?.fetchImpl ?? globalThis.fetch.bind(globalThis)
+  const timeoutMs =
+    options?.githubTimeoutMs ?? PUBLIC_ASSESS_RESILIENCE_V1.githubTimeoutMs
+  const nowMs = options?.nowMs ?? Date.now
+  const skipCache = options?.skipCache === true
+
+  const parsed = parsePublicGithubUrl(input.repositoryUrl)
+  if ('error' in parsed) {
+    return { ok: false, code: 'invalid_url', error: parsed.error }
+  }
+
+  const { owner, repo } = parsed
+  const key = cacheKey(owner, repo)
+  const now = nowMs()
+
+  if (!skipCache) {
+    pruneFactCache(now)
+    const hit = publicFactCache.get(key)
+    if (hit && hit.expiresAtMs > now) {
+      // Re-order for simple LRU eviction (Map insertion order).
+      publicFactCache.delete(key)
+      publicFactCache.set(key, hit)
+      const brief = buildBriefFromPublicFacts(
+        input,
+        hit.repository,
+        new Date(hit.collectedAtMs).toISOString(),
+      )
+      return { ok: true, brief }
+    }
+  }
+
+  const collected = await collectPublicRepositoryFacts(
+    owner,
+    repo,
+    fetchImpl,
+    timeoutMs,
+  )
+  if (!collected.ok) return collected.result
+
+  const collectedAtMs = nowMs()
+  if (!skipCache) {
+    pruneFactCache(collectedAtMs)
+    publicFactCache.set(key, {
+      fullName: collected.repository.fullName,
+      repository: collected.repository,
+      collectedAtMs,
+      expiresAtMs:
+        collectedAtMs + PUBLIC_ASSESS_RESILIENCE_V1.factCacheTtlMs,
+    })
+    pruneFactCache(collectedAtMs)
+  }
+
+  const brief = buildBriefFromPublicFacts(
+    input,
+    collected.repository,
+    new Date(collectedAtMs).toISOString(),
+  )
   return { ok: true, brief }
 }
