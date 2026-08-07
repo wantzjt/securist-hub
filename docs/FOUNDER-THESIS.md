@@ -39,15 +39,40 @@ As coding agents make it trivial to pull in repos, packages, models, and tooling
 
 ### Company shape (free vs paid)
 
+**Refinement (D-012):** Free is **private and individual**. Paid is **shared, durable, and accountable**. Cloud is the normal paid delivery—not the value boundary. Air-gapped enterprise is still paid (team policy, durable decisions, re-review, audit).
+
+| Tier | Promise |
+|------|---------|
+| **Free Operator** | Assess locally · private local state · local MCP · no source upload · no usage credits |
+| **Team Graph** | Shared decisions · reviewers · policy · change detection · re-review alerts · CI enforcement |
+| **Enterprise** | SSO · private/air-gapped deploy · fleet controls · audit export · support · custom policy |
+
 | Layer | Free / acquisition | Paid control plane |
 |-------|--------------------|--------------------|
-| Public web | Assess a public repo | Proves the decision format |
-| Local Operator | Assess local manifests privately | Daily developer utility |
+| Public web | Assess a public repo (format proof) | — |
+| Local Operator | Private individual utility | (same binary; free path stays local) |
 | Team graph | — | Durable approvals, ownership, policies |
-| Drift | Local change signal | Re-review workflow, alerts, audit trail |
+| Drift | Local change signal only | Re-review workflow, alerts, audit trail |
 | Enforcement | Local recommendation | CI/GitHub gate for governed artifacts |
 
-The local CLI should be **generous and easy to adopt**. The paid product is **shared memory and enforcement**—so “we approved it six months ago” cannot become invisible risk.
+**Ethical line:** *Keep your code local for free. Pay when Securist becomes your team’s shared memory and control plane.*
+
+**Pricing unit:** **active governed artifacts** + team/reviewer capacity—not AI tokens, not scan counts. Exact dollars: design-partner validation (not locked).
+
+**Handoff UX:**
+
+```text
+Public Brief
+  → “Assess your local code — free”
+
+Local Brief
+  → “Keep local” or “Turn this into a team decision”
+
+Team Decision
+  → policy + owner + evidence + re-review trigger
+```
+
+Free adoption compounds through developers; paid value compounds through **organizational memory**.
 
 **TARX stays behind the curtain:** local, privacy-preserving agent execution and signed model supply chain. Buyers get “local assessment without shipping source code,” not infrastructure branding.
 

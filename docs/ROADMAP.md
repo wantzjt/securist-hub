@@ -18,7 +18,8 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 
 **Product sentence (locked):** *Securist tells teams what their humans and coding agents may bring into production—and reopens that permission when reality changes.*  
 **North-star metric:** time from material change to an accountable re-review.  
-**Not the product:** AI security chat, MCP-as-product, or scanner feed theater. TARX stays behind the curtain (local privacy-preserving execution + signed model pack).
+**Not the product:** AI security chat, MCP-as-product, or scanner feed theater. TARX stays behind the curtain (local privacy-preserving execution + signed model pack).  
+**Commercial (D-012):** Free = private individual Operator (local state, local MCP, no source upload, no credits). Paid = shared durable Decision Graph (policy, reviewers, re-review, CI). Enterprise = paid private/air-gapped team control plane. Price **active governed artifacts** + reviewer capacity—never tokens/scans. *Keep your code local for free. Pay when Securist becomes your team’s shared memory and control plane.*
 
 ### Strategic sequence (do not reorder lightly)
 
@@ -69,7 +70,7 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 | **Live product** | Public `/assess` → ephemeral `PublicDecisionBriefV1` (PR #14) |
 | **Next work order** | [`WO-012`](../ops/work-orders/WO-012-local-operator-assess.md) — claim for Operator implementation |
 | **Scope (WO-012)** | Local `securist assess .` → honest `LocalDecisionBriefV1` · available/verified/used provenance · stdio MCP · deterministic without theater |
-| **Not in WO-012** | GitHub App · Verify · Eve · accounts · external writes · durable team graph (R1) · production deploy |
+| **Not in WO-012** | GitHub App · Verify · Eve · accounts · billing · pricing UI · external writes · durable team graph (R1) · production deploy |
 
 TARX behind the curtain: Runtime mandatory · signed Model Pack when doctor allows · adapters only · no silent cloud/unsigned fallback.
 
