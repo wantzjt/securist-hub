@@ -24,19 +24,31 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 **Not the product:** AI security chat, MCP-as-product, or scanner feed theater. TARX stays behind the curtain (local privacy-preserving execution + signed model pack).  
 **Commercial (D-012):** Free = private individual Operator (local state, local MCP, no source upload, no credits). Paid = shared durable Decision Graph (policy, reviewers, re-review, CI). Enterprise = paid private/air-gapped team control plane. Price **active governed artifacts** + reviewer capacity—never tokens/scans. *Keep your code local for free. Pay when Securist becomes your team’s shared memory and control plane.*
 
-**Operator distribution honesty:** Internally shipped on `main` (monorepo). **Not** public `npx @securist/operator` until human-signed release ([`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md)).
+**Operator distribution honesty:** Internally shipped on `main` (monorepo). RC tooling on WO-018. **Not** public `npx @securist/operator` until human-signed release + publish gate ([`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md)).
 
 > Free Local Operator: available from the Securist monorepo today.  
 > Public install: forthcoming after signed distribution.
 
+### Golden path (judge the roadmap by this loop)
+
+```text
+Public repository
+  → honest Decision Brief              LIVE (/assess)
+  → private Local Operator             BUILT · RC proof (WO-018) · not npm-public
+  → shared decision + owner + policy   NOT LIVE (R1 / WO-008)
+  → material change reopens review     NOT LIVE
+```
+
+**Announcement is held** until this loop works brilliantly end-to-end—not when the website looks polished.
+
 ### Strategic sequence (do not reorder lightly)
 
 1. **WO-012** — free private Operator (`LocalDecisionBriefV1`) — **internally shipped** (PR #19).  
-2. **R1** — durable **paid Team Graph** (shared memory) — human WO-008 — **parallel now**.  
-3. **Operator distribution** — human-signed install artifact — human release lane.  
-4. **Change detection** — before autonomous action.  
-5. **CI/GitHub enforcement** — after teams trust decision/re-review.  
-6. **AI propose-only remediation** — only after the loop is trusted.
+2. **WO-018** — Local Operator **release-candidate proof** (preflight + signed pack + clean-machine verify) — **agent tooling**; human still signs.  
+3. **Human** — sign RC with offline key · clean-machine verify · then  
+4. **R1 / WO-008** — durable **paid Team Graph** (shared memory) — human provision only.  
+5. **Narrow Team Graph workflow** — owner + policy + evidence + re-review for one artifact.  
+6. **Change detection / CI enforcement / AI propose-only** — only after the loop is trusted.
 
 ---
 
@@ -72,12 +84,14 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 | **Work order** | [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) |
 | **Buyer language** | [`BUYER-MESSAGING.md`](./BUYER-MESSAGING.md) |
 
-### Track C — Free Operator (internally shipped)
+### Track C — Free Operator → distribution RC
 
 | | |
 | -- | -- |
-| **Owner** | human (distribution) · grok (monorepo maintenance) |
-| **Status** | **WO-012 complete on main** (PR #19) · **not distribution-shipped** |
+| **Owner** | grok (RC tooling WO-018) · **human** (sign, clean-machine, publish) |
+| **Status** | **WO-012 complete** · **WO-018 RC proof** · **not** public npm/npx |
+| **Work order** | [`WO-018`](../ops/work-orders/WO-018-operator-rc-proof.md) · [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
+| **Human next** | `SECURIST_OPERATOR_SIGNING_KEY=… npm run operator:rc` then clean verify |
 | **Live product** | Public `/assess` (PR #14) + monorepo `securist doctor` / `securist assess .` |
 | **Distribution** | [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) — human-signed install next |
 | **Not claimed publicly** | `npx @securist/operator` until release lane exit |

@@ -8,10 +8,21 @@ appear in git, npm packages, or CI artifacts.
 
 ## Release signing (humans only)
 
+One-command release candidate (preferred — WO-018):
+
+```bash
+SECURIST_OPERATOR_SIGNING_KEY=/path/to/private.pem \
+  npm run operator:rc
+```
+
+Sign only (after `npm run operator:build`):
+
 ```bash
 SECURIST_OPERATOR_SIGNING_KEY=/path/to/private.pem \
   node scripts/sign-operator-identity.mjs
 ```
+
+Non-secret preflight (no key): `npm run operator:rc:preflight`
 
 ## What is signed
 

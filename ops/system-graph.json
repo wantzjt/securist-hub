@@ -320,7 +320,15 @@
         "packages/operator/src/local-state.ts",
         "packages/operator/src/mcp-stdio.ts",
         "packages/operator/src/path-sandbox.ts",
-        "packages/operator/src/runtime-identity.ts"
+        "packages/operator/src/runtime-identity.ts",
+        "packages/operator/package-artifacts.mjs",
+        "scripts/build-operator.mjs",
+        "scripts/sign-operator-identity.mjs",
+        "scripts/operator-rc-preflight.mjs",
+        "scripts/operator-rc-release.mjs",
+        "scripts/operator-rc-dogfood.mjs",
+        "scripts/operator-rc-verify-clean.mjs",
+        "docs/OPERATOR-RELEASE-LANE.md"
       ],
       "dependsOn": ["contracts", "decision-graph"],
       "invariants": ["INV-003", "INV-006", "INV-007", "INV-009"],
