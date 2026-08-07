@@ -4,6 +4,7 @@
 Launch history: [`V1-LAUNCH-ROADMAP.md`](./V1-LAUNCH-ROADMAP.md).  
 GTM: [`STRATEGIC-WEDGE-RESEARCH.md`](./STRATEGIC-WEDGE-RESEARCH.md) · Company: [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md).  
 **Buyer language:** [`BUYER-MESSAGING.md`](./BUYER-MESSAGING.md) · Strategy: [`STRATEGY.md`](./STRATEGY.md).  
+**Building in public:** [`BUILDING-IN-PUBLIC.md`](./BUILDING-IN-PUBLIC.md) · GitHub About checklist: [`GITHUB-ABOUT-CHECKLIST.md`](./GITHUB-ABOUT-CHECKLIST.md).  
 Release train: [`RELEASE-PLAN.md`](./RELEASE-PLAN.md).  
 Operator distribution: [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md).  
 Product build: [`SECURIST-V1-START-A-DECISION.md`](./SECURIST-V1-START-A-DECISION.md).
@@ -110,6 +111,7 @@ TARX behind the curtain. Synthesis unavailable until real signed model pack.
 | WO-010 | Public assess → ephemeral Decision Brief | PR #14 · **V1 public launch** |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 |
 | WO-012 Operator | Free private Local Operator (monorepo) | PR #19 · **internally shipped** |
+| WO-013 | Open-build GitHub front door | README + community docs |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---
