@@ -115,24 +115,45 @@ Private local evidence from manifests/config via `securist assess .` (WO-012).
 | Hub persist | **Never** in WO-012 |
 | Default body | No raw source, secrets, or **absolute** local paths |
 | `repository` | Minimized identity (`rootLabel: '.'`, fingerprints, package meta) |
-| `provenance` | `LocalRunProvenanceV1` — **content digests**, not product labels |
-| `synthesis` | `deterministic_only` or `tarx_model_pack` after `securist doctor` — never silent cloud/unsigned fallback |
+| `provenance` | `LocalRunProvenanceV1` — see provenance lock below |
+| `capability` | `runtime_verified` \| `synthesis_verified` \| `synthesis_unavailable` \| `signature_invalid` |
+| `synthesis` | `deterministic_only` or `tarx_model_pack` |
 
-#### Provenance rules (six-item lock)
+#### Availability vs verification vs use
 
-Mutable labels such as `gpt-oss-20b` or `tarx-runtime-v1` are **not** content digests and do **not** prove a model or pack was used.
+| Term | Meaning |
+|------|---------|
+| **available** | Pack/runtime is installed (`useStatus: available_not_used` or `used`) |
+| **verified** | Signature checked (`signatureStatus: verified`) and `contentDigest` recorded |
+| **used** | This exact component participated in this run (`useStatus: used`) |
+
+Identifiers such as `tarx-runtime` / `gpt-oss-20b` are **component IDs** (see `LOCAL_EXPECTED_COMPONENT_IDS_V1`) — **never** cryptographic digests.
+
+#### Component provenance shape
+
+| Field | Rule |
+|-------|------|
+| `componentId` | Product identity (not a hash) |
+| `version` | Version string (not a hash) |
+| `contentDigest` | `{ algorithm: 'sha256', hex }` when verified/used; else null |
+| `signerKeyId` | Required when used |
+| `signatureStatus` | `verified` \| `unavailable` \| `invalid` \| `not_applicable` |
+| `useStatus` | `used` \| `available_not_used` \| `unavailable` |
+
+#### Provenance + synthesis rules (P1 lock)
 
 | # | Rule |
 |---|------|
-| 1 | **Label ≠ digest.** Each component has `label` (display only) and optional `contentDigest` (`sha256` hex of bytes). |
-| 2 | **`used=true` requires proof.** `verification: content_verified` and non-null `contentDigest`. |
-| 3 | **`deterministic_only` forbids model-use claims.** `baseModel` and `adapter` must be `used: false`, `contentDigest: null`, `verification: not_used`. |
-| 4 | **`tarx_model_pack` requires verified model bytes.** `baseModel` and `adapter` must be used + `content_verified`. |
-| 5 | **MCP `modelUsed`** is true only under rule 4; always false for `deterministic_only`. |
-| 6 | **MCP `get_run_metadata`** returns `LocalMcpRunMetadataV1` (synthesis + provenance + `modelUsed`) — never a map of label strings pretending to be digests. |
+| 1 | **IDs ≠ digests.** Do not call `tarx-runtime-v1` / `gpt-oss-20b` “digests.” |
+| 2 | **`deterministic_only`:** `baseModel` and `adapter` must be **`null`** — not default IDs, not placeholders. |
+| 3 | **`tarx_model_pack`:** non-null model/adapter with `useStatus: used`, `signatureStatus: verified`, real `contentDigest`. |
+| 4 | **Version/IDs alone are insufficient** provenance for a used component. |
+| 5 | **Capability:** `runtime_verified` → assess may run; `synthesis_verified` → pack may synthesize; `synthesis_unavailable` → deterministic still succeeds; `signature_invalid` → synthesis blocked, **never** fallback. |
+| 6 | **MCP** is a data-egress boundary: **stdio/local only** in WO-012; every response includes `visibility: local_only`, `shareability: never_automatic`, `transport: stdio_local`; document that a user-selected client may transmit summaries externally. |
 
-Helpers: `assertLocalProvenanceHonesty`, `toLocalMcpRunMetadata`, `componentNotUsed`, `componentContentVerified`.  
-Default **labels** only: `LOCAL_DEFAULT_COMPONENT_LABELS_V1` (deprecated alias `LOCAL_DEFAULT_DIGESTS_V1` — do not treat as digests).
+#### Local input redaction
+
+Any `intendedUse` / config text included in `LocalDecisionBriefV1` or MCP output must pass `validateLocalBriefTextInput` (reject secrets/paths) before draft emission.
 
 #### Local Operator + MCP rules
 
@@ -140,14 +161,13 @@ Default **labels** only: `LOCAL_DEFAULT_COMPONENT_LABELS_V1` (deprecated alias `
 |------|-------------|
 | TARX Runtime | Mandatory embed; adapters (Ollama / llama.cpp / vLLM) only |
 | Baseline | Deterministic manifest collection without LLM |
-| Synthesis | Signed TARX Model Pack only after doctor; explicit failure if insufficient |
-| MCP allowlist | `get_brief`, `list_gaps`, `get_run_metadata` only |
-| MCP `get_run_metadata` | `LocalMcpRunMetadataV1` with honest provenance (rules 1–6) |
+| MCP transport | `stdio_local` only — no HTTP/remote default |
+| MCP envelope | `LocalMcpEnvelopeV1` on every tool response |
+| MCP allowlist | `get_brief`, `list_gaps`, `get_run_metadata` |
 | MCP forbidden | raw source/paths, approve, exploit, execute, install, build, shell, external writes |
 | Hostile input | No installs/builds/shell; no symlink traversal outside target root |
-| Sharing | Explicit future export/redaction only — not WO-012 |
 
-Constants: `LOCAL_MCP_TOOLS_V1`, `LOCAL_MCP_FORBIDDEN_V1`, `LOCAL_DEFAULT_COMPONENT_LABELS_V1`.
+Helpers: `assertLocalProvenanceHonesty`, `toLocalMcpRunMetadata`, `toLocalMcpBriefResponse`, `wrapLocalMcpResponse`, `componentUsedVerified`, `validateLocalBriefTextInput`.
 
 ## API / event semantics (versioned)
 

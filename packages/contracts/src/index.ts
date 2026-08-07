@@ -15,4 +15,4 @@ export * from './decision-brief'
 export * from './public-assess'
 export * from './local-assess'
 
-export const CONTRACTS_VERSION = '0.1.4' as const
+export const CONTRACTS_VERSION = '0.1.5' as const

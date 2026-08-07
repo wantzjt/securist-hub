@@ -24,18 +24,20 @@ acceptance:
   - Local inference backends (Ollama/llama.cpp/vLLM) are adapters only
   - MCP tools limited to get_brief, list_gaps, get_run_metadata — no source/path/approve/execute/external-write
   - Local input untrusted: no installs, builds, shell evaluation, or symlink traversal outside target root
-  - Provenance is LocalRunProvenanceV1 (label + contentDigest + used + verification) — not string labels-as-digests
-  - deterministic_only never claims model use (baseModel/adapter not_used, no contentDigest)
-  - tarx_model_pack requires used+content_verified digests for baseModel and adapter
-  - MCP get_run_metadata returns LocalMcpRunMetadataV1 with modelUsed only when model digests verified
-  - No customer-private hub sync
-  - System graph registers operator/runtime paths with one owner each when code lands
-  - Fixtures prove: local vs public separation; path privacy; provenance honesty; MCP allowlist; doctor/synthesis explicit
+  - Provenance uses componentId/version + contentDigest + signerKeyId + signatureStatus + useStatus
+  - deterministic_only has baseModel/adapter null (not default component IDs)
+  - tarx_model_pack requires used + verified signature + real sha256 digests
+  - Capability states precise; signature_invalid never falls back
+  - Intended-use/config secret-redacted before brief/MCP
+  - MCP stdio_local only; every response visibility local_only + shareability never_automatic
+  - Fixtures prove deterministic null model, model-pack digest+sig, ID-alone insufficient, redaction, MCP envelope
   - Full verification green; no deploy/production mutation
 non_goals:
   - Reusing PublicDecisionBriefV1 as the local assess contract
-  - Recording mutable product labels (gpt-oss-20b, tarx-runtime-v1, …) as if they were content digests
-  - Claiming model use on deterministic_only runs
+  - Calling component IDs (tarx-runtime-v1, gpt-oss-20b) “digests”
+  - Embedding default model IDs on deterministic_only runs
+  - Claiming model use without used+verified+contentDigest
+  - HTTP/remote MCP transport as default
   - Automatic shareable/public export of local evidence
   - Hub persistence of customer-private local briefs
   - GitHub App / remote workspace signup
@@ -107,74 +109,78 @@ Package: `packages/contracts/src/local-assess.ts`
 | Identity | Relative/`rootLabel: '.'`, fingerprints, package metadata — not `/Users/...` |
 | Sharing | Explicit future export/redaction action only (out of scope here) |
 
-### 4. MCP (read-only interface, not the product)
+### 4. MCP (read-only **local** interface — data-egress boundary)
 
-**Allowed:** `get_brief`, `list_gaps`, `get_run_metadata`  
-**Forbidden:** raw content/path retrieval, approve, exploit, execute, install, build, shell, external issue/PR writes
+- **Transport (WO-012):** `stdio_local` only — no HTTP/remote default.  
+- **Every response:** `LocalMcpEnvelopeV1` with `visibility: local_only`, `shareability: never_automatic`, egress warning that a user-selected MCP client may transmit summaries externally.  
+- **Allowed tools:** `get_brief`, `list_gaps`, `get_run_metadata`  
+- **Forbidden:** raw content/paths, approve, exploit, execute, install, build, shell, external writes  
 
-| Tool | Returns |
-|------|---------|
-| `get_brief` | Minimized `LocalDecisionBriefV1` |
-| `list_gaps` | Evidence gaps / unknowns only |
-| `get_run_metadata` | `LocalMcpRunMetadataV1`: synthesis, `modelUsed`, full `provenance` |
+| Tool | Returns (inside envelope) |
+|------|---------------------------|
+| `get_brief` | Minimized brief + classification |
+| `list_gaps` | Gaps / unknowns only |
+| `get_run_metadata` | capability, synthesis, `modelUsed`, provenance |
 
-Constants: `LOCAL_MCP_TOOLS_V1` / `LOCAL_MCP_FORBIDDEN_V1`.
+### 5. Provenance amendment (P1 — anti–evidence-theater)
 
-### 5. Provenance amendment (six-item lock) — **not labels-as-digests**
+**available** = installed · **verified** = signature + content digest checked · **used** = participated in this run.
 
-`LocalRunProvenanceV1` replaces string maps like `{ baseModel: "gpt-oss-20b" }`.
+Identifiers (`tarx-runtime` / `gpt-oss-20b`) are **component IDs**, never digests (`LOCAL_EXPECTED_COMPONENT_IDS_V1`).
+
+| Component field | Meaning |
+|-----------------|---------|
+| `componentId` / `version` | Identifiers only |
+| `contentDigest` | Actual sha256 when verified/used |
+| `signerKeyId` | Required when used |
+| `signatureStatus` | verified \| unavailable \| invalid \| not_applicable |
+| `useStatus` | used \| available_not_used \| unavailable |
 
 | # | Rule |
 |---|------|
-| 1 | **Label ≠ content digest.** `label` is display-only; `contentDigest` is `{ algorithm: 'sha256', hex }` of loaded bytes or `null`. |
-| 2 | **`used=true` requires proof.** `verification: content_verified` + non-null `contentDigest`. |
-| 3 | **`deterministic_only` forbids model-use claims.** `baseModel` and `adapter` must be `not_used` with `contentDigest: null` — even if default product labels exist. |
-| 4 | **`tarx_model_pack` requires verified model digests.** `baseModel` and `adapter` must be `used` + `content_verified`. |
-| 5 | **MCP `modelUsed`** is true only under rule 4; always false for `deterministic_only`. |
-| 6 | **MCP metadata honesty.** `get_run_metadata` exposes `LocalMcpRunMetadataV1` via `toLocalMcpRunMetadata` — never a label-string digest map. |
+| 1 | Do not call mutable IDs “digests.” |
+| 2 | **`deterministic_only`:** `baseModel` and `adapter` are **`null`** (not default IDs). |
+| 3 | **`tarx_model_pack`:** used + verified signature + real contentDigest for model/adapter/packs. |
+| 4 | Version/ID alone is insufficient provenance. |
+| 5 | Capability: `runtime_verified` (assess may run) · `synthesis_verified` (may synthesize) · `synthesis_unavailable` (deterministic still ok) · `signature_invalid` (synthesis blocked, never fallback). |
+| 6 | MCP: **stdio/local only**; every response `LocalMcpEnvelopeV1` with `visibility: local_only`, `shareability: never_automatic`; document client egress risk. |
 
-Runtime helper: `assertLocalProvenanceHonesty(synthesis, provenance)`.
+### 6. Local input redaction
 
-Default **product labels** (docs/packaging only — not digests):
+`validateLocalBriefTextInput` on intended-use/config before draft or MCP output — reject secrets/paths.
 
-```text
-Runtime label: tarx-runtime-v1
-Base model label: openai/gpt-oss-20b
-Adapter label: tarx-securist-operator-v1
-Tactic pack label: securist-core-v1
-Policy pack label: securist-default-v1
-```
-
-### 6. TARX Runtime + synthesis
+### 7. TARX Runtime + synthesis
 
 ```text
 Securist Operator
   └── embedded TARX Runtime          (mandatory)
-        ├── signed TARX Securist Model Pack   (default when doctor ok)
-        ├── Ollama / llama.cpp / vLLM adapter layer (adapters only)
+        ├── signed TARX Securist Model Pack   (when synthesis_verified)
+        ├── Ollama / llama.cpp / vLLM adapters only
         ├── sandbox + tool permissions
-        ├── tactic packs + policy packs
-        ├── LocalDecisionBriefV1 (local_only + provenance)
+        ├── LocalDecisionBriefV1 (local_only + honest provenance)
         └── no customer-private hub sync in WO-012
 ```
 
-- **Baseline:** deterministic local manifest collection **without** an LLM → `synthesis: deterministic_only`, model components `not_used`.  
-- **Additive:** signed TARX Model Pack synthesis **after** `securist doctor` → content-verified digests for used model components.  
-- **Insufficient local capability:** explicit error/status — **no** silent cloud or unsigned model fallback.
+Product UX target:
 
-### 7. Hostile local input
+```text
+securist doctor
+→ Runtime verified · synthesis unavailable · deterministic assess ready
 
-Treat the target repository as untrusted input:
+securist assess .
+→ Local Decision Brief
+  N observed facts · M evidence gaps · not reviewed
+  Model synthesis: not used
+  Next: inspect gaps or connect local MCP
+```
 
-- No package installs, builds, or shell evaluation  
-- No shell interpolation of file contents  
-- No symlink traversal outside the requested repository root  
-- Read-only manifest/config collection inside root only  
+### 8. Hostile local input
 
-### 8. Privacy
+No package installs, builds, shell evaluation, symlink traversal outside root.
 
-- Provenance and briefs stay **local**  
-- No customer-private hub sync in this WO  
+### 9. Privacy
+
+Local only; no hub sync; MCP is a data-egress boundary (stdio default).
 
 ## Product surface (implementation phase)
 
@@ -227,7 +233,8 @@ Filing fixture: `npm run test:decision-brief-contracts` (public/local split + pr
 
 - 2026-08-07: Opened as `ready` after WO-010 merge (PR #14).  
 - 2026-08-07: **Contract correction** filed — LocalDecisionBriefV1 / honesty envelope; PublicDecisionBriefV1 not reused for local evidence.  
-- 2026-08-07: **Provenance/MCP amendment** — LocalRunProvenanceV1 with content digests; deterministic_only cannot claim model use; MCP LocalMcpRunMetadataV1. Implementation not started.
+- 2026-08-07: **Provenance/MCP amendment** — content digests vs IDs.  
+- 2026-08-07: **P1 deeper correction** — available/verified/used; deterministic_only null model/adapter; capability states; stdio MCP envelope; input redaction. Implementation not started.
 
 ## Blockers
 
