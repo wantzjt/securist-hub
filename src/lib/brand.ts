@@ -27,14 +27,15 @@ export const BRAND = {
   /** Cache-bust so CDN/immutable asset deploys pick up brand mark changes */
   logoPath: '/securist-logo.png?v=20260806',
   faviconPath: '/favicon.png?v=20260806',
+  /** Product sentence for meta/description (BUYER-MESSAGING). */
   tagline:
-    'Dual-forge sovereign tooling. Code on GitHub. Weights on Hugging Face.',
+    'Permission for code and models. Know what may enter production—and reopen the decision when it changes.',
   posture:
-    'Legal public-source only. Authorized use. MaxMind honesty. HF license respect.',
-  doctrine: 'Discover · Build · Field',
-  /** Public header sublabel — not classification theater */
-  classification: 'INFOSEC',
-  stack: 'INFOSEC · OSINT · CTI · GEOIP · MODELS · DECISION GRAPH',
+    'Public assess is free. Private code stays local. Shared team governance is next. Legal public-source only.',
+  doctrine: 'Assess · Decide · Re-review',
+  /** Public header sublabel — product, not classification theater */
+  classification: 'PERMISSION',
+  stack: 'PERMISSION · CODE · MODELS · DECISION BRIEF · RE-REVIEW',
 } as const
 
 /** @deprecated prefer REPOS from packages.ts */

@@ -114,6 +114,42 @@ a {
   background: var(--securist-accent-dim);
 }
 
+.ops-chip-local {
+  border-color: rgba(232, 232, 236, 0.22);
+  color: #c8c8d0;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.ops-chip-next {
+  border-color: rgba(138, 138, 147, 0.45);
+  color: var(--securist-muted);
+  background: transparent;
+}
+
+/* Alias used across routes — solid primary CTA */
+.ops-btn-primary {
+  background: var(--securist-accent);
+  color: #050506;
+  border-color: var(--securist-accent);
+  font-weight: 700;
+}
+
+.ops-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.ops-btn:focus-visible,
+.ops-btn-solid:focus-visible,
+.ops-btn-primary:focus-visible,
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--securist-accent);
+  outline-offset: 2px;
+}
+
 /* Mobile: prevent horizontal overflow */
 .ops-shell {
   overflow-x: hidden;

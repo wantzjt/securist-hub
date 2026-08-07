@@ -27,7 +27,6 @@ const NAV: { group: string; items: NavItem[] }[] = [
     items: [
       { to: '/services', label: 'Services' },
       { to: '/security', label: 'Security' },
-      { to: '/use-cases', label: 'Cases' },
     ],
   },
 ]
@@ -37,10 +36,8 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
     <div className="ops-shell min-h-screen bg-[var(--securist-void)] text-[#e8e8ec]">
       <div className="border-b border-[var(--securist-border)] bg-black/50">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[var(--securist-muted)] uppercase sm:px-4">
-          <span className="ops-accent">INFOSEC</span>
-          <span className="truncate">
-            OSINT · CTI · GEOIP · MODELS · DECISION GRAPH
-          </span>
+          <span className="ops-accent">Permission system</span>
+          <span className="truncate">{BRAND.stack}</span>
         </div>
       </div>
       <header className="sticky top-0 z-40 border-b border-[var(--securist-border)] bg-[rgba(5,5,6,0.92)] backdrop-blur">
@@ -60,10 +57,13 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
               <div className="truncate text-xs font-semibold tracking-[0.14em] text-white uppercase">
                 SECURIST
               </div>
-              <div className="ops-label truncate">INFOSEC</div>
+              <div className="ops-label truncate">Permission · code · models</div>
             </div>
           </Link>
-          <nav className="flex max-w-full flex-wrap items-start gap-x-4 gap-y-2">
+          <nav
+            className="flex max-w-full flex-wrap items-start gap-x-4 gap-y-2"
+            aria-label="Primary"
+          >
             {NAV.map((g) => (
               <div key={g.group} className="flex flex-col gap-0.5">
                 <span className="ops-label px-1">{g.group}</span>

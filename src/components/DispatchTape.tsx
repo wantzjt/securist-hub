@@ -1,12 +1,12 @@
 const DISPATCHES = [
-  'PUBLIC SOURCE · AUTHORITATIVE ARTIFACT RECORDS',
-  'DECISION GRAPH · VERSION-BOUND APPROVALS',
-  'SCOUT · GITHUB + HUGGING FACE',
-  'FIELD · LOCAL VALIDATION, SHARE-SAFE EVIDENCE',
-  'QUANTUM · INVENTORY BEFORE MIGRATION',
+  'PERMISSION FOR CODE AND MODELS',
+  'VERSION-BOUND DECISIONS · FORCED RE-REVIEW',
+  'PUBLIC ASSESS · LIVE',
+  'LOCAL OPERATOR · CODE STAYS LOCAL',
+  'TEAM GOVERNANCE · COMING NEXT',
 ]
 
-/** Factual editorial context, deliberately separate from Activity evidence. */
+/** Product-first editorial strip — separate from Activity evidence. */
 export function DispatchTape() {
   return (
     <div className="border-b border-[var(--securist-border)] bg-[var(--securist-contract-black)]">
@@ -14,7 +14,10 @@ export function DispatchTape() {
         <span className="ops-label shrink-0 text-[var(--securist-accent)]">
           Dispatch
         </span>
-        <div className="min-w-0 overflow-hidden whitespace-nowrap text-[10px] tracking-[0.1em] text-[var(--securistel)] uppercase">
+        <div
+          className="min-w-0 overflow-hidden whitespace-nowrap text-[10px] tracking-[0.1em] text-[var(--securistel)] uppercase"
+          aria-hidden="true"
+        >
           {DISPATCHES.join('  ·  ')}
         </div>
       </div>
