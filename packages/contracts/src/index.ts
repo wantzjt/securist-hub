@@ -11,6 +11,8 @@ export * from './evidence'
 export * from './proposals'
 export * from './agents'
 export * from './graph'
+export * from './decision-brief'
 export * from './public-assess'
+export * from './local-assess'
 
-export const CONTRACTS_VERSION = '0.1.2' as const
+export const CONTRACTS_VERSION = '0.1.3' as const

@@ -56,7 +56,7 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 | **Status** | `now` · **WO-010 complete** · **WO-012 ready** |
 | **Live product** | Public `/assess` → ephemeral Decision Brief (PR #14) |
 | **Next work order** | [`WO-012`](../ops/work-orders/WO-012-local-operator-assess.md) |
-| **Scope (WO-012)** | Local `securist assess .` · embedded TARX Runtime · signed Model Pack · same Decision Brief contract · read-only MCP |
+| **Scope (WO-012)** | Local `securist assess .` → `LocalDecisionBriefV1` (not public brief) · TARX Runtime · signed Model Pack · read-only MCP |
 | **Not in WO-012** | GitHub App · Verify · Eve · accounts · external writes · production deploy |
 
 Architecture lock: TARX Runtime mandatory · TARX Model Pack default · Ollama/llama.cpp/vLLM as adapters only.

@@ -165,6 +165,8 @@
         "packages/contracts/src/index.ts",
         "packages/contracts/src/proposals.ts",
         "packages/contracts/src/public-assess.ts",
+        "packages/contracts/src/decision-brief.ts",
+        "packages/contracts/src/local-assess.ts",
         "src/lib/decision-graph/outbox-types.ts",
         "src/lib/decision-graph/store-types.ts",
         "src/lib/decision-graph/types.ts",

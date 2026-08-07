@@ -13,6 +13,7 @@
     "test:lifecycle": "tsx src/lib/decision-graph/fixtures/run-e2e-lifecycle.ts",
     "test:graph": "tsx src/lib/decision-graph/fixtures/run-store-tests.ts",
     "test:public-assess": "tsx src/lib/decision-graph/fixtures/run-public-assess-tests.ts",
+    "test:decision-brief-contracts": "tsx src/lib/decision-graph/fixtures/run-decision-brief-contract-tests.ts",
     "verify:coordination": "node scripts/verify-coordination.mjs",
     "verify:release-readiness": "node scripts/verify-release-readiness.mjs",
     "verify:system-graph": "node scripts/verify-system-graph.mjs",

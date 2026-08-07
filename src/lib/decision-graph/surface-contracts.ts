@@ -15,6 +15,12 @@ import type {
 } from './types'
 
 export type {
+  DecisionBriefHonestyV1,
+  DecisionBriefObservedFactV1,
+  DecisionBriefPersistenceV1,
+} from '../../../packages/contracts/src/decision-brief'
+
+export type {
   PublicAssessBoundaryV1,
   PublicAssessEnvironmentV1,
   PublicAssessScopeV1,
@@ -25,11 +31,24 @@ export type {
   PublicRepositoryFactsV1,
 } from '../../../packages/contracts/src/public-assess'
 
+export type {
+  LocalDecisionBriefV1,
+  LocalRepoAssessResultV1,
+  LocalRunDigestsV1,
+  LocalMcpToolV1,
+} from '../../../packages/contracts/src/local-assess'
+
 export {
   PUBLIC_ASSESS_BOUNDARIES_V1,
   PUBLIC_ASSESS_ENVIRONMENTS_V1,
   PUBLIC_ASSESS_LIMITS_V1,
 } from '../../../packages/contracts/src/public-assess'
+
+export {
+  LOCAL_MCP_TOOLS_V1,
+  LOCAL_MCP_FORBIDDEN_V1,
+  LOCAL_DEFAULT_DIGESTS_V1,
+} from '../../../packages/contracts/src/local-assess'
 
 export type VisibilityLevel = 'public' | 'organization' | 'operator'
 

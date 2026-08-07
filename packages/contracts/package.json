@@ -9,7 +9,9 @@
     "./evidence": "./src/evidence.ts",
     "./proposals": "./src/proposals.ts",
     "./agents": "./src/agents.ts",
-    "./public-assess": "./src/public-assess.ts"
+    "./public-assess": "./src/public-assess.ts",
+    "./decision-brief": "./src/decision-brief.ts",
+    "./local-assess": "./src/local-assess.ts"
   },
   "files": ["src"]
 }
