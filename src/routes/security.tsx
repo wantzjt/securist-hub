@@ -14,8 +14,8 @@ function SecurityPage() {
           Security
         </h1>
         <p className="max-w-2xl text-sm text-[var(--securist-muted)]">
-          Dual-forge supply chain: GitHub for code, Hugging Face for models /
-          datasets / spaces. Legal public-source only.
+          Public assess, monorepo Operator, and open-source surfaces. Legal
+          public-source / authorized testing only.
         </p>
       </header>
 
@@ -26,11 +26,7 @@ function SecurityPage() {
           <a className="ops-accent" href={`mailto:${BRAND.securityEmail}`}>
             {BRAND.securityEmail}
           </a>{' '}
-          (ops:{' '}
-          <a className="ops-accent" href={`mailto:${BRAND.email}`}>
-            {BRAND.email}
-          </a>
-          ) with affected surface, impact, and legal reproduction steps. Do not
+          with affected surface, impact, and legal reproduction steps. Do not
           open public issues for unfixed security problems.
         </p>
       </section>

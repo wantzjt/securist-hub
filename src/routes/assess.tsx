@@ -292,29 +292,23 @@ function BriefResult({
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="border border-[var(--securist-border)] bg-black/20 p-3">
-            <div className="ops-label">Private code</div>
+            <div className="ops-label">Private code · local</div>
             <p className="mt-1 text-[11px] leading-relaxed text-[var(--securist-muted)]">
-              Run the Local Operator from source when the repository cannot be
-              submitted here. It keeps code local; public package install is not
-              available yet.
+              Keep private repos on your machine. Free Local Operator is a Node
+              CLI in the monorepo—not public npm, not Electron.
             </p>
-            <a
-              href="https://github.com/wantzjt/securist-hub"
-              className="ops-btn mt-3 inline-flex no-underline"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open Local Operator source
-            </a>
+            <Link to="/operator" className="ops-btn mt-3 inline-flex no-underline">
+              Local Operator guide
+            </Link>
           </div>
           <div className="border border-[var(--securist-border)] bg-black/20 p-3">
-            <div className="ops-label">Shared re-review</div>
+            <div className="ops-label">Shared re-review · coming next</div>
             <p className="mt-1 text-[11px] leading-relaxed text-[var(--securist-muted)]">
-              Need a team-owned decision when an artifact changes? Bring one real
-              decision; shared Team Graph workspaces are coming next.
+              Team Graph will retain owner, policy, evidence, and forced
+              re-review when artifacts change. Not a live workspace yet.
             </p>
-            <Link to="/services" className="ops-btn mt-3 inline-flex no-underline">
-              Bring one real decision
+            <Link to="/team" className="ops-btn mt-3 inline-flex no-underline">
+              Team Graph (coming next)
             </Link>
           </div>
         </div>

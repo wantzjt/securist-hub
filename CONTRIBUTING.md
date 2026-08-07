@@ -46,4 +46,4 @@ Product sentence: *Securist tells teams what their humans and coding agents may 
 
 - [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)  
 - [`SUPPORT.md`](SUPPORT.md)  
-- Security: [`SECURITY.md`](SECURITY.md) · ops@secur.ist  
+- Security: [`SECURITY.md`](SECURITY.md) · securist_info_sec@protonmail.com  

@@ -6,7 +6,7 @@
 |---------|---------|----------|
 | **[GitHub Issues](https://github.com/wantzjt/securist-hub/issues)** | Bugs, docs gaps, reproducible monorepo failures | Best-effort; maintainers triage |
 | **Public product** | [secur.ist/assess](https://secur.ist/assess) usage questions (public repos only) | Self-serve + issues |
-| **Security** | Vulnerabilities | [`SECURITY.md`](SECURITY.md) · ops@secur.ist |
+| **Security** | Vulnerabilities | [`SECURITY.md`](SECURITY.md) · securist_info_sec@protonmail.com |
 
 ## What we do **not** provide (yet)
 
@@ -21,7 +21,7 @@
 
 ## Design partners (Team Graph)
 
-Shared decisions, drift, and re-review: design-partner conversations only until R1. See [`docs/BUYER-MESSAGING.md`](docs/BUYER-MESSAGING.md) and [`docs/ROADMAP.md`](docs/ROADMAP.md). Contact ops@secur.ist with **design partner** in the subject—no unsolicited customer data.
+Shared decisions, drift, and re-review: design-partner conversations only until R1. See [`docs/BUYER-MESSAGING.md`](docs/BUYER-MESSAGING.md) and [`docs/ROADMAP.md`](docs/ROADMAP.md). Contact securist_info_sec@protonmail.com with **design partner** in the subject—no unsolicited customer data.
 
 ## Before opening an issue
 

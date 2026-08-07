@@ -89,25 +89,23 @@ function Home() {
               <p className="mt-2 flex-1 text-[12px] leading-relaxed text-[var(--securist-muted)]">
                 {step.body}
               </p>
-              {step.id === 'private' ? (
-                <a
-                  href={step.href}
-                  className="ops-btn mt-4 inline-flex no-underline"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {step.cta}
-                </a>
-              ) : step.id === 'public' ? (
+              {step.id === 'public' ? (
                 <Link
                   to="/assess"
                   className="ops-btn mt-4 inline-flex no-underline"
                 >
                   {step.cta}
                 </Link>
+              ) : step.id === 'private' ? (
+                <Link
+                  to="/operator"
+                  className="ops-btn mt-4 inline-flex no-underline"
+                >
+                  {step.cta}
+                </Link>
               ) : (
                 <Link
-                  to="/services"
+                  to="/team"
                   className="ops-btn mt-4 inline-flex no-underline"
                 >
                   {step.cta}
