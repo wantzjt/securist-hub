@@ -8,7 +8,7 @@ jobs:
   pulse:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Public GH + HF pulse snapshot
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,7 +24,7 @@ jobs:
             | head -c 50000 > pulse/hf-search-sample.json || true
           echo "Pulse snapshot written at $DATE"
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: scout-pulse
           path: pulse/
