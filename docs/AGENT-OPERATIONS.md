@@ -50,7 +50,7 @@ Format: [`ops/work-orders/README.md`](../ops/work-orders/README.md).
 - Read `docs/SYSTEM-MODEL.md`, `docs/CANONICAL-CONTRACTS.md`, and the active work order before coding.
 - Read `ops/system-graph.json`; update it when authority, dependencies, invariant ownership, or verification changes.
 - Run `npm run verify:clean-worktree` before claiming or switching work orders.
-- Reference **Work-Order: WO-XXX** in the PR body.
+- Reference **Work-Order: WO-XXX** in the PR body (required for human/agent PRs; Dependabot is exempt only via CI author login `dependabot[bot]`, never via branch/title/body).
 - Update the work order when status or blockers change.
 - Prefer Decision Graph contracts over route-local models.
 - Keep non-goals visible.
