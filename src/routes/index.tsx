@@ -39,6 +39,53 @@ function Home() {
         </p>
       </section>
 
+      <section className="ops-panel space-y-4 p-4 sm:p-5">
+        <div>
+          <div className="ops-label">Choose your boundary</div>
+          <h2 className="mt-1 text-sm font-semibold tracking-[0.1em] text-white uppercase">
+            Start where the code belongs
+          </h2>
+        </div>
+        <div className="grid gap-3 lg:grid-cols-3">
+          <div className="border border-[var(--securist-border)] bg-black/20 p-3">
+            <div className="ops-label">Public evaluation · live</div>
+            <p className="mt-2 text-[12px] leading-relaxed text-[var(--securist-muted)]">
+              Assess a public GitHub repository and get an immediate, share-safe
+              Decision Brief draft.
+            </p>
+            <Link to="/assess" className="ops-btn mt-3 inline-flex no-underline">
+              Assess a repository
+            </Link>
+          </div>
+          <div className="border border-[var(--securist-border)] bg-black/20 p-3">
+            <div className="ops-label">Private local evaluation</div>
+            <p className="mt-2 text-[12px] leading-relaxed text-[var(--securist-muted)]">
+              Keep private code local. Run the Local Operator from the Securist
+              monorepo; public package install is forthcoming after signed
+              distribution.
+            </p>
+            <a
+              href="https://github.com/wantzjt/securist-hub"
+              className="ops-btn mt-3 inline-flex no-underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open Local Operator source
+            </a>
+          </div>
+          <div className="border border-[var(--securist-border)] bg-black/20 p-3">
+            <div className="ops-label">Shared team control · next</div>
+            <p className="mt-2 text-[12px] leading-relaxed text-[var(--securist-muted)]">
+              Team Graph will retain shared decisions, reviewers, policy, drift,
+              and re-review. It is not a live workspace yet.
+            </p>
+            <Link to="/services" className="ops-btn mt-3 inline-flex no-underline">
+              Bring one real decision
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="ops-panel grid gap-4 p-4 sm:grid-cols-4">
         {[
           {
@@ -82,7 +129,7 @@ function Home() {
             </h2>
           </div>
           <p className="text-[11px] text-[var(--securist-muted)]">
-            {data.productHub} · dual-forge · not the primary product path
+            {data.productHub} · supporting intelligence · not the primary product path
           </p>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -94,7 +141,7 @@ function Home() {
             { to: '/daemon' as const, label: 'Scout', hint: 'Operator board' },
             { to: '/links' as const, label: 'Links', hint: 'Field ledger' },
             { to: '/security' as const, label: 'Security', hint: 'Policy posture' },
-            { to: '/services' as const, label: 'Services', hint: 'Concierge (secondary)' },
+            { to: '/services' as const, label: 'Services', hint: 'Fixed scope (secondary)' },
           ].map((item) => (
             <Link
               key={item.to + item.label}

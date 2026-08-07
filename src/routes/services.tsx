@@ -39,18 +39,18 @@ function ServicesPage() {
     <div className="space-y-8">
       <header className="grid gap-5 border-b border-[var(--securist-border)] pb-6 lg:grid-cols-[1.3fr_0.7fr]">
         <div>
-          <div className="ops-label">Founder-led engagements · fixed scope</div>
+          <div className="ops-label">Adoption assurance · fixed scope</div>
           <h1 className="mt-2 max-w-3xl text-3xl font-semibold tracking-[0.04em] text-white uppercase sm:text-4xl">
-            Adoption assurance
+            Re-review response
           </h1>
           <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--securist-muted)]">
-            Securist turns “should we allow this security artifact?” into a
-            version-bound decision your team owns—and keeps that decision
-            honest when the artifact changes.
+            When an approved artifact changes, Securist helps your team reopen
+            the decision against the new version, evidence, and policy. Your
+            team owns the decision and the record that keeps it honest.
           </p>
         </div>
         <aside className="ops-panel self-start p-4">
-          <div className="ops-label">Start with a real decision</div>
+          <div className="ops-label">Bring one real decision</div>
           <p className="mt-2 text-[12px] leading-relaxed text-[var(--securist-muted)]">
             Bring one package, one intended boundary, and the question that is
             currently stuck. We will determine whether the work is a fit before
