@@ -280,6 +280,44 @@ function BriefResult({
       </section>
 
       <section className="ops-panel space-y-3 p-4">
+        <div>
+          <div className="ops-label">What next?</div>
+          <p className="mt-1 text-[12px] leading-relaxed text-[var(--securist-muted)]">
+            This is an ephemeral public draft, not a production approval. Choose
+            the next boundary that matches the work.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="border border-[var(--securist-border)] bg-black/20 p-3">
+            <div className="ops-label">Private code</div>
+            <p className="mt-1 text-[11px] leading-relaxed text-[var(--securist-muted)]">
+              Run the Local Operator from source when the repository cannot be
+              submitted here. It keeps code local; public package install is not
+              available yet.
+            </p>
+            <a
+              href="https://github.com/wantzjt/securist-hub"
+              className="ops-btn mt-3 inline-flex no-underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open Local Operator source
+            </a>
+          </div>
+          <div className="border border-[var(--securist-border)] bg-black/20 p-3">
+            <div className="ops-label">Shared re-review</div>
+            <p className="mt-1 text-[11px] leading-relaxed text-[var(--securist-muted)]">
+              Need a team-owned decision when an artifact changes? Bring one real
+              decision; shared Team Graph workspaces are coming next.
+            </p>
+            <Link to="/services" className="ops-btn mt-3 inline-flex no-underline">
+              Bring one real decision
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="ops-panel space-y-3 p-4">
         <div className="ops-label">Repository (observed)</div>
         <dl className="grid gap-2 text-[12px] sm:grid-cols-2">
           <div>
