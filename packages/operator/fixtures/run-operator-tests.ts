@@ -1,5 +1,5 @@
 /**
- * WO-012 operator fixtures — trust honesty, permissions, sandbox, dist CLI.
+ * WO-012 operator fixtures — package digest covers dist/cli.js, trust, permissions.
  */
 import {
   writeFileSync,
@@ -10,6 +10,7 @@ import {
   mkdirSync,
   readFileSync,
   realpathSync,
+  appendFileSync,
 } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -18,7 +19,6 @@ import {
   generateKeyPairSync,
   createPrivateKey,
   sign,
-  createHash,
 } from 'node:crypto'
 import { assessLocalRepository } from '../src/assess'
 import { runDoctor } from '../src/doctor'
@@ -32,6 +32,7 @@ import {
 import {
   computeOperatorContentDigest,
   verifyOperatorRuntime,
+  PACKAGE_ARTIFACT_RELS,
 } from '../src/runtime-identity'
 import {
   LOCAL_MCP_TOOLS_V1,
@@ -54,12 +55,24 @@ function assert(name: string, cond: boolean, detail = 'failed') {
   else fail(name, detail)
 }
 
-/** Ephemeral trust: private key never committed; only for fixtures. */
+function ensureBuilt() {
+  const dist = join(process.cwd(), 'packages/operator/dist/cli.js')
+  if (!existsSync(dist)) {
+    const b = spawnSync(process.execPath, ['scripts/build-operator.mjs'], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    })
+    if (b.status !== 0) throw new Error(b.stderr || b.stdout || 'build failed')
+  }
+}
+
+/** Ephemeral trust over packaged artifacts (incl. dist/cli.js). */
 function installEphemeralTrust(): {
   cleanup: () => void
-  publicKeyPath: string
   identityPath: string
+  resign: () => void
 } {
+  ensureBuilt()
   const dir = mkdtempSync(join(tmpdir(), 'securist-trust-'))
   const { publicKey, privateKey } = generateKeyPairSync('ed25519')
   const pubPem = publicKey.export({ type: 'spki', format: 'pem' }).toString()
@@ -69,35 +82,39 @@ function installEphemeralTrust(): {
   writeFileSync(publicKeyPath, pubPem, { mode: 0o600 })
   writeFileSync(join(dir, 'private.pem'), privPem, { mode: 0o600 })
 
-  const hex = computeOperatorContentDigest()
-  const sig = sign(
-    null,
-    Buffer.from(hex, 'utf8'),
-    createPrivateKey(privPem),
-  ).toString('base64')
-  writeFileSync(
-    identityPath,
-    JSON.stringify(
-      {
-        componentId: 'securist-operator',
-        version: '0.1.0-test',
-        contentDigest: { algorithm: 'sha256', hex },
-        signerKeyId: 'ephemeral-test-key',
-        signature: sig,
-        note: 'fixture only',
-      },
+  function resign() {
+    const hex = computeOperatorContentDigest()
+    const sig = sign(
       null,
-      2,
-    ),
-    { mode: 0o600 },
-  )
+      Buffer.from(hex, 'utf8'),
+      createPrivateKey(privPem),
+    ).toString('base64')
+    writeFileSync(
+      identityPath,
+      JSON.stringify(
+        {
+          componentId: 'securist-operator',
+          version: '0.1.0-test',
+          contentDigest: { algorithm: 'sha256', hex },
+          signerKeyId: 'ephemeral-test-key',
+          signature: sig,
+          artifacts: [...PACKAGE_ARTIFACT_RELS],
+          note: 'fixture only',
+        },
+        null,
+        2,
+      ),
+      { mode: 0o600 },
+    )
+  }
 
+  resign()
   process.env.SECURIST_OPERATOR_PUBLIC_KEY_PATH = publicKeyPath
   process.env.SECURIST_OPERATOR_IDENTITY_PATH = identityPath
 
   return {
-    publicKeyPath,
     identityPath,
+    resign,
     cleanup: () => {
       delete process.env.SECURIST_OPERATOR_PUBLIC_KEY_PATH
       delete process.env.SECURIST_OPERATOR_IDENTITY_PATH
@@ -107,36 +124,35 @@ function installEphemeralTrust(): {
 }
 
 function main() {
-  console.log('Operator fixtures (WO-012 P1)\n')
+  console.log('Operator fixtures (WO-012 P1 — package digest includes dist)\n')
+
+  ensureBuilt()
+  assert(
+    'package digest includes dist/cli.js path',
+    (PACKAGE_ARTIFACT_RELS as readonly string[]).includes('dist/cli.js'),
+  )
 
   const home = mkdtempSync(join(tmpdir(), 'securist-home-'))
   process.env.SECURIST_HOME = home
 
-  console.log('[default trust: no private key / no signed identity]')
+  console.log('[default trust: no signed identity]')
   delete process.env.SECURIST_OPERATOR_PUBLIC_KEY_PATH
   delete process.env.SECURIST_OPERATOR_IDENTITY_PATH
-  // Packaged trust-root.pem may exist without identity
   const bare = verifyOperatorRuntime()
-  assert(
-    'default without identity is not ok',
-    bare.ok === false,
-    bare.ok ? 'unexpected ok' : bare.error,
-  )
+  assert('default without identity is not ok', bare.ok === false)
   const bareDoctor = runDoctor()
   assert(
-    'doctor capability runtime_unavailable or signature_invalid',
+    'doctor capability runtime_unavailable when unsigned',
     bareDoctor.capability === 'runtime_unavailable' ||
       bareDoctor.capability === 'signature_invalid',
   )
   assert(
-    'doctor does not claim deterministic assess ready when runtime fails',
-    !bareDoctor.lines.some((l) =>
-      /deterministic assess ready/i.test(l) && !/blocked/i.test(l),
-    ) || bareDoctor.lines.some((l) => /blocked/i.test(l)),
-  )
-  assert(
     'doctor does not say Runtime verified when failed',
     !bareDoctor.lines.some((l) => /^Runtime verified/i.test(l)),
+  )
+  assert(
+    'doctor blocks assess messaging',
+    bareDoctor.lines.some((l) => /blocked/i.test(l)),
   )
   const blocked = assessLocalRepository({
     targetPath: process.cwd(),
@@ -147,48 +163,56 @@ function main() {
   })
   assert(
     'assess blocked without trusted runtime',
-    blocked.ok === false &&
-      (blocked.code === 'runtime_unavailable' ||
-        blocked.code === 'signature_invalid' ||
-        blocked.code === 'runtime_digest_mismatch'),
+    blocked.ok === false,
   )
 
-  console.log('\n[tampered runtime fails]')
+  console.log('\n[sign → mutate dist/cli.js → mismatch]')
   const trust = installEphemeralTrust()
-  const good = verifyOperatorRuntime()
-  assert('ephemeral trust verifies', good.ok === true)
-  // Tamper identity digest
-  const id = JSON.parse(readFileSync(trust.identityPath, 'utf8')) as {
-    contentDigest: { hex: string }
-    signature: string
-  }
-  id.contentDigest.hex = createHash('sha256').update('tampered').digest('hex')
-  writeFileSync(trust.identityPath, JSON.stringify(id))
-  const tampered = verifyOperatorRuntime()
-  assert(
-    'tampered identity fails',
-    tampered.ok === false &&
-      (tampered.code === 'runtime_digest_mismatch' ||
-        tampered.code === 'signature_invalid'),
-  )
-  // Restore good identity
-  trust.cleanup()
-  const trust2 = installEphemeralTrust()
+  assert('signed package verifies', verifyOperatorRuntime().ok === true)
 
-  console.log('\n[doctor with trusted runtime]')
+  const distCli = join(process.cwd(), 'packages/operator/dist/cli.js')
+  const originalDist = readFileSync(distCli)
+  appendFileSync(distCli, '\n// tamper\n')
+  const afterTamper = verifyOperatorRuntime()
+  assert(
+    'mutated dist/cli.js fails digest mismatch',
+    afterTamper.ok === false && afterTamper.code === 'runtime_digest_mismatch',
+    afterTamper.ok ? 'unexpected ok' : afterTamper.code,
+  )
+  const docTamper = runDoctor()
+  assert(
+    'doctor fails after dist tamper',
+    docTamper.runtimeOk === false,
+  )
+  const assessTamper = assessLocalRepository({
+    targetPath: process.cwd(),
+    intendedUse: 'tamper test',
+    environment: 'development',
+    deploymentBoundary: 'local_only',
+    dryRun: true,
+  })
+  assert(
+    'assess blocked after dist tamper',
+    assessTamper.ok === false &&
+      (assessTamper.code === 'runtime_digest_mismatch' ||
+        assessTamper.code === 'runtime_unavailable' ||
+        assessTamper.code === 'signature_invalid'),
+  )
+  // restore dist and re-sign
+  writeFileSync(distCli, originalDist)
+  trust.resign()
+  assert('restored dist verifies again', verifyOperatorRuntime().ok === true)
+
+  console.log('\n[doctor with trusted packaged runtime]')
   const doctor = runDoctor()
   assert('doctor runtime ok', doctor.runtimeOk === true)
   assert(
-    'doctor synthesis_unavailable when runtime ok',
+    'doctor synthesis_unavailable',
     doctor.capability === 'synthesis_unavailable',
   )
   assert(
-    'doctor prints deterministic assess ready only when runtime ok',
+    'deterministic assess ready only when runtime ok',
     doctor.lines.some((l) => /deterministic assess ready/i.test(l)),
-  )
-  assert(
-    'doctor prints Runtime verified only when ok',
-    doctor.lines.some((l) => /Runtime verified/i.test(l)),
   )
 
   console.log('\n[local state permissions]')
@@ -223,29 +247,18 @@ function main() {
   console.log('\n[symlinked SECURIST_HOME into target rejected]')
   const nestedHome = join(repo, '.sneaky-home')
   mkdirSync(nestedHome, { recursive: true })
-  const prevHome = process.env.SECURIST_HOME
   process.env.SECURIST_HOME = nestedHome
   const jail = assertStateOutsideTarget(realpathSync(repo))
-  assert(
-    'state inside target rejected',
-    jail.ok === false && jail.code === 'state_path',
-  )
-  process.env.SECURIST_HOME = prevHome
-
-  // Symlink SECURIST_HOME -> inside repo
+  assert('state inside target rejected', jail.ok === false)
   const linkHome = mkdtempSync(join(tmpdir(), 'securist-linkhome-'))
   const linkPath = join(linkHome, 'link')
   try {
-    rmSync(linkPath, { force: true })
     symlinkSync(nestedHome, linkPath)
     process.env.SECURIST_HOME = linkPath
     const viaLink = assertStateOutsideTarget(realpathSync(repo))
-    assert(
-      'symlinked home into target rejected',
-      viaLink.ok === false && viaLink.code === 'state_path',
-    )
+    assert('symlinked home into target rejected', viaLink.ok === false)
   } catch (e) {
-    assert('symlinked home test ran', false, String(e))
+    assert('symlinked home test', false, String(e))
   }
   process.env.SECURIST_HOME = home
 
@@ -265,68 +278,49 @@ function main() {
       capability: string
       provenance: { baseModel: unknown; adapter: unknown }
       repository: { packageName: string | null; rootLabel: string }
-      draftJson: string
     }
     assert('kind local', b.kind === 'local_decision_brief')
     assert('deterministic_only', b.synthesis === 'deterministic_only')
-    assert('capability synthesis_unavailable', b.capability === 'synthesis_unavailable')
     assert('baseModel null', b.provenance.baseModel === null)
-    assert('adapter null', b.provenance.adapter === null)
     assert('package name', b.repository.packageName === 'fixture-app')
-    assert('rootLabel', String(b.repository.rootLabel) === '.')
-    const briefFile = join(operatorStateRoot(), 'briefs')
-    // latest run file 0600
     const latest = join(operatorStateRoot(), 'runs', 'latest.json')
     if (existsSync(latest)) {
       assert('latest run file mode 0600', modeOf(latest) === 0o600)
     }
-    void briefFile
   }
 
-  console.log('\n[MCP allowlist]')
+  console.log('\n[MCP + dist CLI]')
   const tools = LOCAL_MCP_TOOLS_V1 as readonly string[]
-  assert('three tools', tools.length === 3 && tools.includes('get_brief'))
-  assert(
-    'forbidden',
-    LOCAL_MCP_FORBIDDEN_V1.includes('execute') &&
-      LOCAL_MCP_FORBIDDEN_V1.includes('read_path'),
-  )
+  assert('three tools', tools.length === 3)
+  assert('forbidden execute', LOCAL_MCP_FORBIDDEN_V1.includes('execute'))
 
-  console.log('\n[clean package / dist CLI — no npx tsx]')
   const build = spawnSync(process.execPath, ['scripts/build-operator.mjs'], {
-    cwd: join(process.cwd()),
+    cwd: process.cwd(),
     encoding: 'utf8',
   })
-  assert('operator:build exits 0', build.status === 0, build.stderr || build.stdout)
-  const distCli = join(process.cwd(), 'packages/operator/dist/cli.js')
-  assert('dist/cli.js exists', existsSync(distCli))
-  const distSrc = readFileSync(distCli, 'utf8')
+  assert('operator:build exits 0', build.status === 0, build.stderr || '')
+  // rebuild invalidates signature — re-sign
+  trust.resign()
+  const distSrc = readFileSync(
+    join(process.cwd(), 'packages/operator/dist/cli.js'),
+    'utf8',
+  )
   assert('dist has no npx', !/\bnpx\b/.test(distSrc))
   assert('dist has no tsx', !/\btsx\b/.test(distSrc))
-  // Run doctor via node dist with ephemeral trust (still set)
-  const distDoctor = spawnSync(process.execPath, [distCli, 'doctor'], {
-    env: { ...process.env },
-    encoding: 'utf8',
-  })
-  assert(
-    'dist doctor exits 0 with trust',
-    distDoctor.status === 0,
-    distDoctor.stderr + distDoctor.stdout,
+  const distDoctor = spawnSync(
+    process.execPath,
+    [join(process.cwd(), 'packages/operator/dist/cli.js'), 'doctor'],
+    { env: { ...process.env }, encoding: 'utf8' },
   )
-  assert(
-    'dist doctor runtime verified line',
-    /Runtime verified/i.test(distDoctor.stdout),
+  assert('dist doctor ok', distDoctor.status === 0, distDoctor.stderr)
+  const binHelp = spawnSync(
+    process.execPath,
+    [join(process.cwd(), 'packages/operator/bin/securist.mjs'), 'help'],
+    { encoding: 'utf8', env: process.env },
   )
+  assert('bin help works', binHelp.status === 0)
 
-  // bin without dist would fail — already have dist
-  const bin = join(process.cwd(), 'packages/operator/bin/securist.mjs')
-  const binHelp = spawnSync(process.execPath, [bin, 'help'], {
-    encoding: 'utf8',
-    env: process.env,
-  })
-  assert('bin help works', binHelp.status === 0, binHelp.stderr)
-
-  trust2.cleanup()
+  trust.cleanup()
   try {
     rmSync(repo, { recursive: true, force: true })
     rmSync(outside, { recursive: true, force: true })

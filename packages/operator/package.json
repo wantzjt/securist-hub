@@ -12,7 +12,9 @@
     "dist",
     "keys/trust-root.pem",
     "keys/README.md",
-    "package.json"
+    "package.json",
+    "package-artifacts.mjs",
+    "runtime-identity.json"
   ],
   "engines": {
     "node": ">=20"

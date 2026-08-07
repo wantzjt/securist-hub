@@ -1,21 +1,11 @@
 /**
- * Operator runtime trust check.
+ * Operator runtime trust check over packaged artifacts (incl. dist/cli.js).
  *
- * Public trust root only is packaged. Matching private release key is
- * human-controlled and MUST NOT live in git/npm.
- *
- * Without a valid signed identity over current operator bytes, capability is
- * runtime_unavailable — never call that "runtime verified."
- *
- * Not a TARX model pack.
+ * Digest set must match scripts/sign-operator-identity.mjs /
+ * packages/operator/package-artifacts.mjs exactly.
  */
 import { createHash, createPublicKey, verify } from 'node:crypto'
-import {
-  readFileSync,
-  existsSync,
-  readdirSync,
-  statSync,
-} from 'node:fs'
+import { readFileSync, existsSync } from 'node:fs'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { ComponentProvenanceV1 } from '../../contracts/src/local-assess'
@@ -23,7 +13,14 @@ import { componentUsedVerified } from '../../contracts/src/local-assess'
 
 const OPERATOR_DIR = join(dirname(fileURLToPath(import.meta.url)), '..')
 
-/** Override paths for tests (ephemeral trust root). Never a private key path. */
+/** Keep in sync with package-artifacts.mjs PACKAGE_ARTIFACT_RELS */
+export const PACKAGE_ARTIFACT_RELS = [
+  'dist/cli.js',
+  'bin/securist.mjs',
+  'package.json',
+  'keys/trust-root.pem',
+] as const
+
 function publicKeyPath(): string {
   return (
     process.env.SECURIST_OPERATOR_PUBLIC_KEY_PATH?.trim() ||
@@ -47,40 +44,40 @@ export type RuntimeIdentityFile = {
   signerKeyId: string
   signature: string
   note: string
+  artifacts?: string[]
 }
 
-function walkHashFiles(dir: string): string[] {
-  const out: string[] = []
-  for (const name of readdirSync(dir).sort()) {
-    if (
-      name === 'node_modules' ||
-      name === 'fixtures' ||
-      name === 'dist' ||
-      name.startsWith('.')
-    )
-      continue
-    if (name === 'runtime-identity.json') continue
-    // Never hash private keys if present
-    if (name.endsWith('-private.pem') || name === 'fixture-private.pem') continue
-    const p = join(dir, name)
-    const st = statSync(p)
-    if (st.isDirectory()) out.push(...walkHashFiles(p))
-    else if (st.isFile()) out.push(p)
+export function tryComputeOperatorContentDigest(
+  root = OPERATOR_DIR,
+): { ok: true; hex: string } | { ok: false; error: string } {
+  const parts: string[] = []
+  const missing: string[] = []
+  for (const rel of PACKAGE_ARTIFACT_RELS) {
+    const abs = join(root, rel)
+    if (!existsSync(abs)) missing.push(rel)
+    else parts.push(abs)
   }
-  return out
+  if (missing.length) {
+    return {
+      ok: false,
+      error: `Missing packaged artifacts (build first): ${missing.join(', ')}`,
+    }
+  }
+  const h = createHash('sha256')
+  for (const abs of parts) {
+    const rel = relative(root, abs).replace(/\\/g, '/')
+    h.update(rel)
+    h.update('\0')
+    h.update(readFileSync(abs))
+    h.update('\0')
+  }
+  return { ok: true, hex: h.digest('hex') }
 }
 
 export function computeOperatorContentDigest(root = OPERATOR_DIR): string {
-  const files = walkHashFiles(root)
-  const h = createHash('sha256')
-  for (const f of files) {
-    const rel = relative(root, f).replace(/\\/g, '/')
-    h.update(rel)
-    h.update('\0')
-    h.update(readFileSync(f))
-    h.update('\0')
-  }
-  return h.digest('hex')
+  const r = tryComputeOperatorContentDigest(root)
+  if (!r.ok) throw new Error(r.error)
+  return r.hex
 }
 
 export function readPackageVersion(): string {
@@ -103,11 +100,6 @@ export type RuntimeCheck =
     }
   | { ok: false; code: string; error: string }
 
-/**
- * Verify signed operator identity with packaged (or env) public trust root.
- * Does not claim TARX model-pack verification.
- * Does not use any private key.
- */
 export function verifyOperatorRuntime(): RuntimeCheck {
   const pubPath = publicKeyPath()
   const idPath = identityPath()
@@ -126,6 +118,15 @@ export function verifyOperatorRuntime(): RuntimeCheck {
       code: 'runtime_unavailable',
       error:
         'No signed runtime-identity.json. Human release signing required; assess blocked.',
+    }
+  }
+
+  const digestResult = tryComputeOperatorContentDigest()
+  if (!digestResult.ok) {
+    return {
+      ok: false,
+      code: 'runtime_unavailable',
+      error: digestResult.error,
     }
   }
 
@@ -154,13 +155,12 @@ export function verifyOperatorRuntime(): RuntimeCheck {
   }
   const identity = raw as unknown as RuntimeIdentityFile
 
-  const current = computeOperatorContentDigest()
-  if (current !== identity.contentDigest.hex) {
+  if (digestResult.hex !== identity.contentDigest.hex) {
     return {
       ok: false,
       code: 'runtime_digest_mismatch',
       error:
-        'Operator bytes do not match signed identity (tamper or unsigned local build).',
+        'Packaged artifacts (including dist/cli.js) do not match signed identity (tamper or stale build).',
     }
   }
 
@@ -202,7 +202,6 @@ export function verifyOperatorRuntime(): RuntimeCheck {
   }
 }
 
-/** True only if a real TARX model pack is installed and verified (not in WO-012). */
 export function isTarxModelPackPresent(): boolean {
   return false
 }
