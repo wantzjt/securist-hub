@@ -12,9 +12,85 @@ It does **not** invent ARR, TAM, or price points. Numbers that appear are **thre
 
 ## One-line answer
 
-**Securist becomes the system of record for whether a security-relevant package or model is allowed under a named policy and boundary—and stays allowed as versions, digests, and cards drift—while scanners, GitHub, and Hugging Face remain evidence producers, not the decision.**
+**Securist tells teams what their humans and coding agents may bring into production—and reopens that permission when reality changes.**
+
+Category (not a synonym set): the **permission system for AI-accelerated software adoption**.  
+Not “AI security,” not an MCP product, not a repo scanner.
+
+Operational SoR form (same job): whether a package or model is allowed under a named policy and boundary—and stays allowed as versions, digests, and cards drift—while GitHub, SCA, and agents remain **evidence or proposal producers**, not the decision.
 
 If we cannot own that sentence in the customer’s head, we are a feature.
+
+### The four questions every serious team gets
+
+As coding agents make it trivial to pull in repos, packages, models, and tooling:
+
+1. What entered our environment?  
+2. Was it permitted for this use?  
+3. What evidence supported that permission?  
+4. What changed that means we must reconsider it?
+
+| Layer | Answers |
+|-------|---------|
+| GitHub | What changed in code |
+| SCA | A vulnerability may exist |
+| AI agent | May propose a fix |
+| **Securist** | **Is this still allowed, and why?** |
+
+### Company shape (free vs paid)
+
+**Refinement (D-012):** Free is **private and individual**. Paid is **shared, durable, and accountable**. Cloud is the normal paid delivery—not the value boundary. Air-gapped enterprise is still paid (team policy, durable decisions, re-review, audit).
+
+| Tier | Promise |
+|------|---------|
+| **Free Operator** | Assess locally · private local state · local MCP · no source upload · no usage credits |
+| **Team Graph** | Shared decisions · reviewers · policy · change detection · re-review alerts · CI enforcement |
+| **Enterprise** | SSO · private/air-gapped deploy · fleet controls · audit export · support · custom policy |
+
+| Layer | Free / acquisition | Paid control plane |
+|-------|--------------------|--------------------|
+| Public web | Assess a public repo (format proof) | — |
+| Local Operator | Private individual utility | (same binary; free path stays local) |
+| Team graph | — | Durable approvals, ownership, policies |
+| Drift | Local change signal only | Re-review workflow, alerts, audit trail |
+| Enforcement | Local recommendation | CI/GitHub gate for governed artifacts |
+
+**Ethical line:** *Keep your code local for free. Pay when Securist becomes your team’s shared memory and control plane.*
+
+**Pricing unit:** **active governed artifacts** + team/reviewer capacity—not AI tokens, not scan counts. Exact dollars: design-partner validation (not locked).
+
+**Handoff UX:**
+
+```text
+Public Brief
+  → “Assess your local code — free”
+
+Local Brief
+  → “Keep local” or “Turn this into a team decision”
+
+Team Decision
+  → policy + owner + evidence + re-review trigger
+```
+
+Free adoption compounds through developers; paid value compounds through **organizational memory**.
+
+**TARX stays behind the curtain:** local, privacy-preserving agent execution and signed model supply chain. Buyers get “local assessment without shipping source code,” not infrastructure branding.
+
+### Pivotal UX (not chat)
+
+```text
+You assessed this repository for production use.
+3 evidence gaps remain.
+A dependency manifest changed since review.
+This permission is no longer current.
+```
+
+Conversation is useful **inside** that context (explain the gap, minimum evidence, what changed, draft a validation plan)—not as the product itself.
+
+### North-star metric
+
+**Time from material change to an accountable re-review.**  
+Not chat messages, scan counts, or feed traffic.
 
 ---
 
@@ -53,10 +129,12 @@ The failure mode is collective: **excellent detection + soft, unversioned memory
 
 ### Definition (one sentence)
 
-**Securist is the decision system of record for adopting, bounding, validating, and re-approving security-relevant code and models under change.**
+**Securist is the permission system for AI-accelerated software adoption**—adopting, bounding, validating, and re-approving security-relevant code and models under change.
 
-Not: a security news feed.  
-Not: a package/model catalog.  
+Not: “AI security” as a category label.  
+Not: an MCP server (MCP is an interface later).  
+Not: a repo scanner.  
+Not: a security news feed or package/model catalog.  
 Not: a generic AI agent.  
 Not: a thin UI over GitHub or Snyk.
 

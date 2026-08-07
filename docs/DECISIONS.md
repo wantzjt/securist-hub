@@ -287,3 +287,72 @@ D-009 correctly stopped process theater but was later applied as an absolute vet
 **Consequences**
 
 Product work may proceed through explicitly authorized work orders. CI validates the internal system graph before merge and checks repository cleanliness before install and after verification. R1 and external-write claims remain human-gated; this decision does not activate Postgres, private customer persistence, autonomous PRs, or deploy authority.
+
+---
+
+### D-011 — Product category: permission system (not AI security / MCP / scanner)
+
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-07              |
+| **Owner**  | human · founder         |
+| **Status** | accepted                |
+
+**Context**
+
+Public assess (WO-010) and local Operator contracts (WO-012 filing) need a durable product sentence so surfaces do not drift into chat, scanner, or infrastructure branding.
+
+**Decision**
+
+1. **Locked product sentence:** *Securist tells teams what their humans and coding agents may bring into production—and reopens that permission when reality changes.*
+2. **Category:** permission system for AI-accelerated software adoption. Not “AI security,” not MCP-as-product, not a repo scanner.
+3. **Four questions owned:** what entered · was it permitted · what evidence · what changed that forces reconsider.
+4. **Business shape:** free public assess + generous local Operator; paid shared Decision Graph, re-review, and later enforcement.
+5. **TARX:** behind the curtain (local privacy-preserving execution + signed model supply chain)—not customer-facing infrastructure brand.
+6. **Pivotal UX:** permission no longer current under gaps/drift—not chat.
+7. **North-star metric:** time from material change to an accountable re-review.
+8. **Sequence:** WO-012 local private assess → R1 durable graph → change detection → CI/GitHub enforcement → AI propose-only remediation. Do not skip ahead to autonomous action.
+
+**Consequences**
+
+Marketing and WO acceptance criteria must not reframe Securist as a scanner or chat agent. Local CLI remains adoption-generous; monetization centers on shared memory and enforcement after R1.
+
+---
+
+### D-012 — Commercial architecture: free private / paid shared & accountable
+
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-07              |
+| **Owner**  | human · founder         |
+| **Status** | accepted                |
+
+**Context**
+
+D-011 locked category and north-star. Free vs paid must not be “cloud vs local.” Value boundary is **private individual utility** vs **shared durable organizational memory and control**.
+
+**Decision**
+
+1. **Free = private and individual.** Free Operator: assess locally, private local state, local MCP, no source upload, no usage credits. Public web assess remains free acquisition (share-safe public repos only).
+2. **Paid = shared, durable, and accountable.** Team Graph: shared decisions, reviewers, policy, change detection, re-review alerts, CI enforcement. Cloud is the normal paid delivery path—not the definition of paid.
+3. **Enterprise = paid private/air-gapped deployment** still paid because it provides team policy, durable decisions, re-review workflow, fleet governance, auditability—not because compute is remote.
+4. **Pricing unit:** **active governed artifacts** plus team/reviewer capacity. **Never** AI token metering, scan counts, or model-call credits.
+5. **Product handoff:** public assess → free local assess → optional team decision (policy + owner + evidence + re-review trigger).
+6. **Ethical line:** *Keep your code local for free. Pay when Securist becomes your team’s shared memory and control plane.*
+7. **Exact dollar pricing** remains a design-partner validation question (WO-004)—not locked here.
+
+| Tier | Promise |
+|------|---------|
+| Free Operator | Assess locally · private local state · local MCP · no source upload · no credits |
+| Team Graph | Shared decisions · reviewers · policy · drift/re-review · CI enforcement |
+| Enterprise | SSO · private/air-gapped deploy · fleet controls · audit export · support · custom policy |
+
+**Alternatives considered**
+
+- Price local compute or model calls — rejected (penalizes adoption; wrong value unit).  
+- Free = anything local, paid = only cloud — rejected (air-gapped team graph is still paid).  
+- Free tier with credit meters for assess — rejected (friction and misaligned incentive).
+
+**Consequences**
+
+WO-012 must remain free-path honest (local-only, no hub persist). R1 activates paid path capability (durable shared graph), not “force cloud for individuals.” No billing UI, accounts product, or pricing page in current WOs—this decision constrains future commercial design only.

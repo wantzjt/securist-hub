@@ -16,6 +16,19 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 
 **Current scope law:** D-010 supersedes D-009's absolute freeze. Explicit founder-authorized work orders may proceed. One WO/branch/PR, full regression verification, and human gates for credentials, production mutation, and external writes remain mandatory.
 
+**Product sentence (locked):** *Securist tells teams what their humans and coding agents may bring into production—and reopens that permission when reality changes.*  
+**North-star metric:** time from material change to an accountable re-review.  
+**Not the product:** AI security chat, MCP-as-product, or scanner feed theater. TARX stays behind the curtain (local privacy-preserving execution + signed model pack).  
+**Commercial (D-012):** Free = private individual Operator (local state, local MCP, no source upload, no credits). Paid = shared durable Decision Graph (policy, reviewers, re-review, CI). Enterprise = paid private/air-gapped team control plane. Price **active governed artifacts** + reviewer capacity—never tokens/scans. *Keep your code local for free. Pay when Securist becomes your team’s shared memory and control plane.*
+
+### Strategic sequence (do not reorder lightly)
+
+1. **WO-012** — `securist assess .` genuinely useful offline and private (`LocalDecisionBriefV1`).  
+2. **R1** — durable team graph so a decision survives beyond one laptop.  
+3. **Change detection** — before autonomous action.  
+4. **CI/GitHub enforcement** — after teams trust decision/re-review.  
+5. **AI propose-only remediation** — only after the loop is trusted.
+
 ---
 
 ## EXECUTION LAW — strong delivery without process veto
@@ -53,13 +66,13 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 | | |
 | -- | -- |
 | **Owner** | grok (implement) · codex (review) |
-| **Status** | `now` · **WO-010 complete** · **WO-012 ready** |
-| **Live product** | Public `/assess` → ephemeral Decision Brief (PR #14) |
-| **Next work order** | [`WO-012`](../ops/work-orders/WO-012-local-operator-assess.md) |
-| **Scope (WO-012)** | Local `securist assess .` → `LocalDecisionBriefV1` (not public brief) · TARX Runtime · signed Model Pack · read-only MCP |
-| **Not in WO-012** | GitHub App · Verify · Eve · accounts · external writes · production deploy |
+| **Status** | `now` · **WO-010 complete** · **WO-012 contracts filed (PR #17)** · implementation **ready to claim** |
+| **Live product** | Public `/assess` → ephemeral `PublicDecisionBriefV1` (PR #14) |
+| **Next work order** | [`WO-012`](../ops/work-orders/WO-012-local-operator-assess.md) — claim for Operator implementation |
+| **Scope (WO-012)** | Local `securist assess .` → honest `LocalDecisionBriefV1` · available/verified/used provenance · stdio MCP · deterministic without theater |
+| **Not in WO-012** | GitHub App · Verify · Eve · accounts · billing · pricing UI · external writes · durable team graph (R1) · production deploy |
 
-Architecture lock: TARX Runtime mandatory · TARX Model Pack default · Ollama/llama.cpp/vLLM as adapters only.
+TARX behind the curtain: Runtime mandatory · signed Model Pack when doctor allows · adapters only · no silent cloud/unsigned fallback.
 
 ---
 
@@ -85,6 +98,7 @@ Architecture lock: TARX Runtime mandatory · TARX Model Pack default · Ollama/l
 | RM-012 | Strong release ops | PR #9 |
 | WO-011 | Internal system graph gates | PR #16 |
 | WO-010 | Public assess → ephemeral Decision Brief | PR #14 · **V1 public launch** |
+| WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---
 
