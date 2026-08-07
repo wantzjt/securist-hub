@@ -1,7 +1,7 @@
 ---
 id: WO-015
 title: Public Decision Brief funnel surface
-status: in_progress
+status: in_review
 owner: codex
 branch: feat/wo-015-public-funnel
 depends_on: []
@@ -53,6 +53,7 @@ ladder explicit at the point of value. The services surface also retains
 - 2026-08-07: Claimed from a clean worktree after founder-authorized funnel
   direction. System model, canonical contracts, surface contracts, lifecycle,
   decision records, and system graph read before implementation.
+- 2026-08-07: Full regression suite passed; branch is ready for PR review.
 
 ## Blockers
 
