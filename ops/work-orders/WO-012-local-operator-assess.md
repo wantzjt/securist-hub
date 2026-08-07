@@ -234,8 +234,9 @@ Filing fixture: `npm run test:decision-brief-contracts` (public/local split + pr
 - 2026-08-07: Opened as `ready` after WO-010 merge (PR #14).  
 - 2026-08-07: **Contract correction** filed — LocalDecisionBriefV1 / honesty envelope; PublicDecisionBriefV1 not reused for local evidence.  
 - 2026-08-07: **Provenance/MCP amendment** — content digests vs IDs.  
-- 2026-08-07: **P1 deeper correction** — available/verified/used; deterministic_only null model/adapter; capability states; stdio MCP envelope; input redaction. Implementation not started.
+- 2026-08-07: **P1 deeper correction** — available/verified/used; deterministic_only null model/adapter; capability states; stdio MCP envelope; input redaction.  
+- 2026-08-07: Contracts merged to `main` (PR #17 · `d3065f1`). Product category locked (D-011). **Implementation not started** — claim WO-012 to begin Operator code.
 
 ## Blockers
 
-- None for filing. Implementation needs TARX Runtime package availability; local/dev signed fixtures allowed for CI.
+- None for implementation claim. TARX Runtime package availability; local/dev signed fixtures allowed for CI. R1 durable graph is **out of scope** (next strategic step after local utility).

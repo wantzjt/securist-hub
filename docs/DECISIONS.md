@@ -287,3 +287,32 @@ D-009 correctly stopped process theater but was later applied as an absolute vet
 **Consequences**
 
 Product work may proceed through explicitly authorized work orders. CI validates the internal system graph before merge and checks repository cleanliness before install and after verification. R1 and external-write claims remain human-gated; this decision does not activate Postgres, private customer persistence, autonomous PRs, or deploy authority.
+
+---
+
+### D-011 — Product category: permission system (not AI security / MCP / scanner)
+
+|            |                         |
+| ---------- | ----------------------- |
+| **Date**   | 2026-08-07              |
+| **Owner**  | human · founder         |
+| **Status** | accepted                |
+
+**Context**
+
+Public assess (WO-010) and local Operator contracts (WO-012 filing) need a durable product sentence so surfaces do not drift into chat, scanner, or infrastructure branding.
+
+**Decision**
+
+1. **Locked product sentence:** *Securist tells teams what their humans and coding agents may bring into production—and reopens that permission when reality changes.*
+2. **Category:** permission system for AI-accelerated software adoption. Not “AI security,” not MCP-as-product, not a repo scanner.
+3. **Four questions owned:** what entered · was it permitted · what evidence · what changed that forces reconsider.
+4. **Business shape:** free public assess + generous local Operator; paid shared Decision Graph, re-review, and later enforcement.
+5. **TARX:** behind the curtain (local privacy-preserving execution + signed model supply chain)—not customer-facing infrastructure brand.
+6. **Pivotal UX:** permission no longer current under gaps/drift—not chat.
+7. **North-star metric:** time from material change to an accountable re-review.
+8. **Sequence:** WO-012 local private assess → R1 durable graph → change detection → CI/GitHub enforcement → AI propose-only remediation. Do not skip ahead to autonomous action.
+
+**Consequences**
+
+Marketing and WO acceptance criteria must not reframe Securist as a scanner or chat agent. Local CLI remains adoption-generous; monetization centers on shared memory and enforcement after R1.
