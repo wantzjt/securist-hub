@@ -41,6 +41,11 @@
       "path": "src/routes/assess.tsx",
       "extensions": [".tsx"],
       "excludePrefixes": []
+    },
+    {
+      "path": "packages/operator/src",
+      "extensions": [".ts"],
+      "excludePrefixes": []
     }
   ],
   "checks": [
@@ -296,6 +301,26 @@
       "verifiedBy": ["typecheck", "build", "system-graph"]
     },
     {
+      "id": "local-operator",
+      "kind": "acquisition-surface",
+      "authority": "private-local-evidence-compiler",
+      "status": "implemented",
+      "paths": [
+        "packages/operator/src/assess.ts",
+        "packages/operator/src/cli.ts",
+        "packages/operator/src/collect-manifests.ts",
+        "packages/operator/src/doctor.ts",
+        "packages/operator/src/index.ts",
+        "packages/operator/src/local-state.ts",
+        "packages/operator/src/mcp-stdio.ts",
+        "packages/operator/src/path-sandbox.ts",
+        "packages/operator/src/runtime-identity.ts"
+      ],
+      "dependsOn": ["contracts", "decision-graph"],
+      "invariants": ["INV-003", "INV-006", "INV-007", "INV-009"],
+      "verifiedBy": ["typecheck", "system-graph"]
+    },
+    {
       "id": "public-research",
       "kind": "acquisition-surface",
       "authority": "public-source-observation",
@@ -351,6 +376,11 @@
   ],
   "edges": [
     {
+      "from": "local-operator",
+      "to": "human-authority",
+      "type": "supplies-private-local-decision-brief"
+    },
+    {
       "from": "public-assess",
       "to": "artifact-profile",
       "type": "supplies-public-decision-brief-draft"
@@ -400,36 +430,42 @@
     },
     {
       "order": 2,
+      "stage": "assess-local-repository",
+      "node": "local-operator",
+      "status": "implemented"
+    },
+    {
+      "order": 3,
       "stage": "share-safe-decision-brief",
       "node": "artifact-profile",
       "status": "implemented-seed-plus-ephemeral-live"
     },
     {
-      "order": 3,
+      "order": 4,
       "stage": "supporting-public-research",
       "node": "public-research",
       "status": "implemented-hybrid"
     },
     {
-      "order": 4,
+      "order": 5,
       "stage": "record-scoped-human-decision",
       "node": "human-authority",
       "status": "contracted-not-self-serve"
     },
     {
-      "order": 5,
+      "order": 6,
       "stage": "retain-private-decision",
       "node": "r1-production-activation",
       "status": "blocked"
     },
     {
-      "order": 6,
+      "order": 7,
       "stage": "detect-material-change",
       "node": "decision-graph",
       "status": "fixture-proven-not-operated"
     },
     {
-      "order": 7,
+      "order": 8,
       "stage": "force-re-review",
       "node": "human-authority",
       "status": "fixture-proven-not-self-serve"

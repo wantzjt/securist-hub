@@ -1,0 +1,11 @@
+{
+  "componentId": "securist-operator",
+  "version": "0.1.0",
+  "contentDigest": {
+    "algorithm": "sha256",
+    "hex": "0943d3cc29636164ef7f8814be656673af45aa31dbfc1d8fb29450a447410a5f"
+  },
+  "signerKeyId": "securist-operator-fixture-key-1",
+  "signature": "ubPsXzn9n58DFL4E/D4K2/NU6V+VBrEO7/tA2Sx1zePCmssr17gIphazQHP7q8IHBOSQ23MBZI7H1z/SaeZdCQ==",
+  "note": "Operator package integrity only — not TARX model-pack synthesis."
+}
