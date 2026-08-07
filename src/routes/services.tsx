@@ -39,29 +39,38 @@ function ServicesPage() {
     <div className="space-y-8">
       <header className="grid gap-5 border-b border-[var(--securist-border)] pb-6 lg:grid-cols-[1.3fr_0.7fr]">
         <div>
-          <div className="ops-label">Adoption assurance · fixed scope</div>
-          <h1 className="mt-2 max-w-3xl text-3xl font-semibold tracking-[0.04em] text-white uppercase sm:text-4xl">
-            Re-review response
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="ops-label">Services · secondary</div>
+            <span className="ops-chip ops-chip-next">Fixed scope</span>
+          </div>
+          <h1 className="mt-2 max-w-3xl text-2xl font-semibold tracking-[0.04em] text-white sm:text-3xl">
+            Adoption Assurance
           </h1>
-          <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--securist-muted)]">
-            When an approved artifact changes, Securist helps your team reopen
-            the decision against the new version, evidence, and policy. Your
-            team owns the decision and the record that keeps it honest.
+          <p className="mt-1 text-[13px] font-medium tracking-[0.06em] text-white/90 uppercase">
+            Re-review Response
+          </p>
+          <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-[var(--securist-muted)]">
+            When an approved artifact changes, reopen the decision against the
+            new version, evidence, and policy. Your team owns the decision and
+            the record that keeps it honest—not a founder-led retainer.
           </p>
         </div>
         <aside className="ops-panel self-start p-4">
           <div className="ops-label">Bring one real decision</div>
           <p className="mt-2 text-[12px] leading-relaxed text-[var(--securist-muted)]">
-            Bring one package, one intended boundary, and the question that is
-            currently stuck. We will determine whether the work is a fit before
-            any engagement begins.
+            One package, one intended boundary, and the stuck question. Fit is
+            confirmed before any engagement. Primary product path remains
+            public assess.
           </p>
           <a
-            className="ops-btn mt-4 no-underline"
+            className="ops-btn ops-btn-solid mt-4 no-underline"
             href={`mailto:${BRAND.email}?subject=${encodeURIComponent('Securist Adoption Assurance')}`}
           >
             Start a conversation
           </a>
+          <Link to="/assess" className="ops-btn mt-2 inline-flex no-underline">
+            Or assess publicly first
+          </Link>
         </aside>
       </header>
 

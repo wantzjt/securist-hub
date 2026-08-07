@@ -75,7 +75,14 @@ function ArtifactProfilePage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="ops-label">Decision Brief</div>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="ops-label">Decision Brief</div>
+            {a.isSeed ? (
+              <span className="ops-chip">SEED · not an approval</span>
+            ) : (
+              <span className="ops-chip ops-chip-live">Profile</span>
+            )}
+          </div>
           <h1 className="mt-1 text-xl font-semibold tracking-[0.06em] text-white">
             {a.name}
           </h1>
@@ -85,17 +92,19 @@ function ArtifactProfilePage() {
               {STATUS_LABEL[a.status] || a.status}
             </span>
             {' · '}
-            {a.kind} · {a.provider} ·{' '}
-            {a.isSeed ? <span className="ops-chip">SEED</span> : 'tracked'}
+            {a.kind} · {a.provider}
+            {a.isSeed
+              ? ' · Illustrative format proof — not a production approval'
+              : ''}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
             to="/assess"
             search={assessSearch}
-            className="ops-btn ops-btn-primary no-underline"
+            className="ops-btn ops-btn-solid no-underline"
           >
-            Start a decision for this artifact
+            Assess a public repository
           </Link>
           <CopyPage title={`Decision Brief · ${a.name}`} body={copyBody} />
           <Link

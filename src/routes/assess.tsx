@@ -92,15 +92,18 @@ function AssessPage() {
   return (
     <div className="space-y-6">
       <header>
-        <div className="ops-label">Assess</div>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="ops-label">Product · Assess</div>
+          <span className="ops-chip ops-chip-live">Live</span>
+        </div>
         <h1 className="mt-1 text-xl font-semibold tracking-[0.06em] text-white sm:text-2xl">
           Assess a public repository
         </h1>
         <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-[var(--securist-muted)]">
           Paste a public GitHub URL. Securist collects public-source facts and
-          returns a share-safe Decision Brief draft immediately. No email
-          required. Nothing is saved to a private workspace before R1. Do not
-          enter private or sensitive information.
+          returns a share-safe Decision Brief draft immediately. No account. No
+          email. Nothing is saved to a private workspace before R1. Do not enter
+          private or sensitive information.
         </p>
       </header>
 
@@ -192,7 +195,7 @@ function AssessPage() {
         <button
           type="submit"
           disabled={busy}
-          className="ops-btn ops-btn-primary disabled:opacity-50"
+          className="ops-btn ops-btn-solid disabled:opacity-50"
         >
           {busy ? 'Assessing…' : 'Assess repository'}
         </button>
