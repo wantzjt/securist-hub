@@ -5,10 +5,13 @@
  */
 import {
   assessPublicGithubRepo,
+  clearPublicAssessFactCache,
+  getPublicAssessFactCacheStats,
   parsePublicGithubUrl,
   validatePublicRepoAssessInput,
 } from '../../public-repo-assess'
 import type { AssessFetch } from '../../public-repo-assess'
+import { PUBLIC_ASSESS_RESILIENCE_V1 } from '../../../../packages/contracts/src/public-assess'
 
 let passed = 0
 let failed = 0
@@ -385,6 +388,173 @@ async function main() {
     assert(
       'public-repo-assess never references GITHUB_TOKEN/GH_TOKEN',
       !/GITHUB_TOKEN|GH_TOKEN|serverToken/.test(src),
+    )
+  }
+
+  console.log('\n[WO-016 resilience — timeout / upstream / cache]')
+  {
+    clearPublicAssessFactCache()
+    assert(
+      'resilience constants present',
+      typeof PUBLIC_ASSESS_RESILIENCE_V1.githubTimeoutMs === 'number' &&
+        typeof PUBLIC_ASSESS_RESILIENCE_V1.factCacheMaxEntries === 'number' &&
+        typeof PUBLIC_ASSESS_RESILIENCE_V1.factCacheTtlMs === 'number' &&
+        typeof PUBLIC_ASSESS_RESILIENCE_V1.maxGithubCallsPerAssess === 'number',
+    )
+
+    // Timeout: hang until abort
+    const hangFetch: AssessFetch = async (_input, init) => {
+      const signal = init?.signal
+      return await new Promise<Response>((_resolve, reject) => {
+        if (!signal) {
+          reject(new Error('expected AbortSignal'))
+          return
+        }
+        if (signal.aborted) {
+          const err = new Error('Aborted')
+          err.name = 'AbortError'
+          reject(err)
+          return
+        }
+        signal.addEventListener('abort', () => {
+          const err = new Error('Aborted')
+          err.name = 'AbortError'
+          reject(err)
+        })
+      })
+    }
+    const timeoutResult = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'timeout probe',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+      },
+      { fetchImpl: hangFetch, githubTimeoutMs: 30, skipCache: true },
+    )
+    assert(
+      'timeout → code timeout',
+      timeoutResult.ok === false && timeoutResult.code === 'timeout',
+      timeoutResult.ok ? 'ok' : `${timeoutResult.code}: ${timeoutResult.error}`,
+    )
+
+    // Upstream 503
+    const upstreamFetch: AssessFetch = async () =>
+      new Response(JSON.stringify({ message: 'unavailable' }), {
+        status: 503,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    const upstreamResult = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'upstream probe',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+      },
+      { fetchImpl: upstreamFetch, skipCache: true },
+    )
+    assert(
+      '503 → upstream_unavailable',
+      upstreamResult.ok === false &&
+        upstreamResult.code === 'upstream_unavailable',
+      upstreamResult.ok
+        ? 'ok'
+        : `${upstreamResult.code}: ${upstreamResult.error}`,
+    )
+
+    // Rate limit 403 with remaining 0
+    const rateFetch: AssessFetch = async () =>
+      new Response(JSON.stringify({ message: 'API rate limit exceeded' }), {
+        status: 403,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-ratelimit-remaining': '0',
+        },
+      })
+    const rateResult = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'rate probe',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+      },
+      { fetchImpl: rateFetch, skipCache: true },
+    )
+    assert(
+      '403 remaining=0 → rate_limited',
+      rateResult.ok === false && rateResult.code === 'rate_limited',
+      rateResult.ok ? 'ok' : `${rateResult.code}: ${rateResult.error}`,
+    )
+
+    // Bounded public-fact cache: second call same owner/repo does not re-fetch
+    clearPublicAssessFactCache()
+    const { fetchImpl, urls, authHeaderSeen } = mockPublicGithubFetch()
+    const first = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'first intended use (must not enter cache key)',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+      },
+      { fetchImpl },
+    )
+    const callsAfterFirst = urls.length
+    const second = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'second different intended use',
+        environment: 'production',
+        deploymentBoundary: 'external_service',
+      },
+      { fetchImpl },
+    )
+    assert('cache first assess ok', first.ok === true)
+    assert('cache second assess ok', second.ok === true)
+    assert(
+      'cache hit does not re-call GitHub',
+      urls.length === callsAfterFirst,
+      `calls grew: ${callsAfterFirst} → ${urls.length}`,
+    )
+    assert(
+      'cache stats key is owner/repo only',
+      getPublicAssessFactCacheStats().keys.every(
+        (k) => k === 'public-owner/public-repo',
+      ),
+      getPublicAssessFactCacheStats().keys.join(','),
+    )
+    if (first.ok && second.ok) {
+      assert(
+        'cache preserves distinct intendedUse on brief (not stored in facts)',
+        first.brief.scope.intendedUse.includes('first') &&
+          second.brief.scope.intendedUse.includes('second'),
+      )
+      assert(
+        'cached facts exclude intendedUse string in repository object',
+        !JSON.stringify(first.brief.repository).includes('first intended'),
+      )
+    }
+    assert('cache path still no Authorization', authHeaderSeen.length === 0)
+
+    // Cache does not absorb private/redacted input into GitHub calls
+    clearPublicAssessFactCache()
+    const { fetchImpl: f2, urls: u2 } = mockPublicGithubFetch()
+    const redacted = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'password=should-not-fetch',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+      },
+      { fetchImpl: f2 },
+    )
+    assert(
+      'redaction still blocks before cache/fetch',
+      redacted.ok === false && redacted.code === 'redaction',
+    )
+    assert('redaction still zero GitHub calls', u2.length === 0)
+    assert(
+      'redaction does not create cache entry',
+      getPublicAssessFactCacheStats().size === 0,
     )
   }
 

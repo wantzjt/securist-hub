@@ -201,11 +201,18 @@ Helpers: `assertLocalProvenanceHonesty`, `toLocalMcpRunMetadata`, `toLocalMcpBri
 | `invalid_url` | Public assess URL rejected |
 | `not_found` | Unknown artifact / non-public repository |
 | `private_repo` | Private repository rejected for anonymous assess |
-| `rate_limited` | Upstream API rate limit |
+| `rate_limited` | Upstream API rate limit (anonymous public assess: unauthenticated GitHub) |
+| `timeout` | Upstream did not respond within configured abort timeout |
+| `upstream_unavailable` | Network failure or upstream 5xx |
+| `github_error` | Other non-success GitHub response on public assess |
 | `nonce_replay` | Duplicate ingest |
 | `redaction` | Private material detected |
 | `transition_denied` | Illegal decision state transition |
 | `auth_failed` | Secret/signature rejected |
+
+Public assess resilience bounds (timeout, fact-cache TTL/size) live in
+`PUBLIC_ASSESS_RESILIENCE_V1` — not an SLA. Human checklist:
+`docs/PUBLIC-ASSESS-RATE-CONTROL.md`.
 
 ## LIVE / SEED
 

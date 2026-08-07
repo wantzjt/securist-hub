@@ -1,9 +1,9 @@
 ---
 id: WO-016
 title: "Public Assess Resilience (timeout, cache, honest failure)"
-status: proposed
-owner: unassigned
-branch: ""
+status: in_review
+owner: grok
+branch: ops/wo-016-public-assess-resilience
 depends_on:
   - WO-010
   - WO-014
@@ -24,24 +24,37 @@ non_goals:
   - Private repo assessment
 verification:
   - npm run test:public-assess
-  - Full suite including verify:system-graph and clean-worktree
+  - npm run lint
+  - npm run typecheck
+  - npm run test:lifecycle
+  - npm run test:graph
+  - npm run test:decision-brief-contracts
+  - npm run operator:build
+  - npm run test:operator
+  - npm run build
+  - npm run verify:coordination
+  - npm run verify:release-readiness
+  - npm run verify:system-graph
+  - npm run verify:clean-worktree
 ---
 
-# WO-016 — Public Assess Resilience (queued)
-
-**Status: proposed — do not implement until claimed after WO-014.**
+# WO-016 — Public Assess Resilience
 
 ## Intent
 
 Harden live `secur.ist/assess` against GitHub API flakiness and load without weakening the public-assess trust boundary.
 
-## Scope (when claimed)
+## Scope
 
 1. Explicit outbound timeout on GitHub API calls  
-2. Bounded cache of **public** repo facts only  
+2. Bounded cache of **public** repo facts only (key = owner/repo; never intendedUse)  
 3. Honest error states for timeout / upstream 5xx / rate limit  
 4. Human production rate-control checklist  
 
 ## Non-goals
 
 Tokens for anonymous path · private input logging · accounts · Graph writes · pretend SLAs
+
+## Progress
+
+- 2026-08-07: Claimed after launch merges (#29 front door, #30 funnel) and WO-014 Dependabot exemption.
