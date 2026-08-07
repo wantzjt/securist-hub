@@ -99,7 +99,8 @@ function AssessPage() {
         <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-[var(--securist-muted)]">
           Paste a public GitHub URL. Securist collects public-source facts and
           returns a share-safe Decision Brief draft immediately. No email
-          required. Nothing is saved to a private workspace before R1.
+          required. Nothing is saved to a private workspace before R1. Do not
+          enter private or sensitive information.
         </p>
       </header>
 
@@ -182,8 +183,10 @@ function AssessPage() {
         </div>
 
         <p className="text-[11px] text-[var(--securist-muted)]">
-          Rejects private URLs, secrets, local paths, and non-GitHub providers.
-          Does not perform a pentest or invent vulnerabilities.
+          Rejects private repository URLs, secret-like strings (including in
+          intended use), local paths, and non-GitHub providers. Do not enter
+          private or sensitive information. Does not perform a pentest or invent
+          vulnerabilities.
         </p>
 
         <button

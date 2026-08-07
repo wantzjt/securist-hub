@@ -201,10 +201,50 @@ async function main() {
     assert('non-root GitHub URL → invalid_url', !r.ok && r.code === 'invalid_url')
   }
   {
+    const r = validatePublicRepoAssessInput({
+      repositoryUrl: 'https://github.com/public-owner/public-repo',
+      intendedUse: 'rotate ghp_abcdefghijklmnopqrstuvwxyz012345 and ship',
+      environment: 'development',
+      deploymentBoundary: 'local_only',
+    })
+    assert(
+      'secret-like intendedUse → redaction',
+      !r.ok && r.code === 'redaction',
+    )
+  }
+  {
     const r = parsePublicGithubUrl('https://github.com/owner/repo')
     assert(
       'valid URL parses',
       !('error' in r) && r.owner === 'owner' && r.repo === 'repo',
+    )
+  }
+
+  console.log('\n[secret-like intendedUse — zero GitHub calls]')
+  {
+    const { fetchImpl, authHeaderSeen, urls } = mockPublicGithubFetch()
+    const result = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'use password=supersecret for staging deploy',
+        environment: 'development',
+        deploymentBoundary: 'controlled_cloud',
+      },
+      { fetchImpl },
+    )
+    assert(
+      'secret intendedUse rejected with redaction code',
+      result.ok === false && result.code === 'redaction',
+      result.ok ? 'unexpected ok' : `${result.code}: ${result.error}`,
+    )
+    assert(
+      'mock GitHub fetch received zero calls',
+      urls.length === 0,
+      `calls: ${urls.join(',')}`,
+    )
+    assert(
+      'no Authorization on rejected secret intendedUse',
+      authHeaderSeen.length === 0,
     )
   }
 

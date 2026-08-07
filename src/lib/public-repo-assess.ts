@@ -143,6 +143,21 @@ export function validatePublicRepoAssessInput(
     return { ok: false, code: 'schema', error: 'Intended use is required' }
   }
 
+  const intendedPrivate = rejectPrivateMaterial(intended)
+  if (intendedPrivate) {
+    return {
+      ok: false,
+      code: 'redaction',
+      error:
+        'Intended use appears to contain private or sensitive material; do not enter secrets, keys, paths, or private data',
+    }
+  }
+
+  const urlPrivate = rejectPrivateMaterial(repositoryUrl.trim())
+  if (urlPrivate) {
+    return { ok: false, code: 'invalid_url', error: urlPrivate }
+  }
+
   const parsed = parsePublicGithubUrl(repositoryUrl)
   if ('error' in parsed) {
     return { ok: false, code: 'invalid_url', error: parsed.error }
