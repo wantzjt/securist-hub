@@ -3,7 +3,9 @@
 **Canonical operational roadmap** for the hub repository.  
 Launch history: [`V1-LAUNCH-ROADMAP.md`](./V1-LAUNCH-ROADMAP.md).  
 GTM: [`STRATEGIC-WEDGE-RESEARCH.md`](./STRATEGIC-WEDGE-RESEARCH.md) · Company: [`FOUNDER-THESIS.md`](./FOUNDER-THESIS.md).  
+**Buyer language:** [`BUYER-MESSAGING.md`](./BUYER-MESSAGING.md) · Strategy: [`STRATEGY.md`](./STRATEGY.md).  
 Release train: [`RELEASE-PLAN.md`](./RELEASE-PLAN.md).  
+Operator distribution: [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md).  
 Product build: [`SECURIST-V1-START-A-DECISION.md`](./SECURIST-V1-START-A-DECISION.md).
 
 | Field | Meaning |
@@ -21,13 +23,19 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 **Not the product:** AI security chat, MCP-as-product, or scanner feed theater. TARX stays behind the curtain (local privacy-preserving execution + signed model pack).  
 **Commercial (D-012):** Free = private individual Operator (local state, local MCP, no source upload, no credits). Paid = shared durable Decision Graph (policy, reviewers, re-review, CI). Enterprise = paid private/air-gapped team control plane. Price **active governed artifacts** + reviewer capacity—never tokens/scans. *Keep your code local for free. Pay when Securist becomes your team’s shared memory and control plane.*
 
+**Operator distribution honesty:** Internally shipped on `main` (monorepo). **Not** public `npx @securist/operator` until human-signed release ([`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md)).
+
+> Free Local Operator: available from the Securist monorepo today.  
+> Public install: forthcoming after signed distribution.
+
 ### Strategic sequence (do not reorder lightly)
 
-1. **WO-012** — `securist assess .` genuinely useful offline and private (`LocalDecisionBriefV1`).  
-2. **R1** — durable team graph so a decision survives beyond one laptop.  
-3. **Change detection** — before autonomous action.  
-4. **CI/GitHub enforcement** — after teams trust decision/re-review.  
-5. **AI propose-only remediation** — only after the loop is trusted.
+1. **WO-012** — free private Operator (`LocalDecisionBriefV1`) — **internally shipped** (PR #19).  
+2. **R1** — durable **paid Team Graph** (shared memory) — human WO-008 — **parallel now**.  
+3. **Operator distribution** — human-signed install artifact — human release lane.  
+4. **Change detection** — before autonomous action.  
+5. **CI/GitHub enforcement** — after teams trust decision/re-review.  
+6. **AI propose-only remediation** — only after the loop is trusted.
 
 ---
 
@@ -43,14 +51,15 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 
 ## NOW
 
-### Track A — Durable graph (R1)
+### Track A — Durable graph (R1) · **paid Team Graph**
 
 | | |
 | -- | -- |
 | **Owner** | **human** only |
-| **Status** | `now` · **blocked** on provision authority |
+| **Status** | `now` · **blocked** on provision authority · **parallel priority** |
 | **Work order** | [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) |
 
+**R1 is where paid company value starts:** shared decisions, policy, owner, drift, re-review.  
 **R1 is not active** until WO-008 exit is human-signed. No private durability claims before then.
 
 ### Track B — Wedge validation (R2 inputs)
@@ -60,19 +69,19 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 | **Owner** | **human** |
 | **Status** | `now` |
 | **Work order** | [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) |
+| **Buyer language** | [`BUYER-MESSAGING.md`](./BUYER-MESSAGING.md) |
 
-### Track C — Product V1 (founder-authorized)
+### Track C — Free Operator (internally shipped)
 
 | | |
 | -- | -- |
-| **Owner** | grok (implement) · codex (review) |
-| **Status** | `now` · **WO-010 complete** · **WO-012 contracts filed (PR #17)** · implementation **ready to claim** |
-| **Live product** | Public `/assess` → ephemeral `PublicDecisionBriefV1` (PR #14) |
-| **Next work order** | [`WO-012`](../ops/work-orders/WO-012-local-operator-assess.md) — claim for Operator implementation |
-| **Scope (WO-012)** | Local `securist assess .` → honest `LocalDecisionBriefV1` · available/verified/used provenance · stdio MCP · deterministic without theater |
-| **Not in WO-012** | GitHub App · Verify · Eve · accounts · billing · pricing UI · external writes · durable team graph (R1) · production deploy |
+| **Owner** | human (distribution) · grok (monorepo maintenance) |
+| **Status** | **WO-012 complete on main** (PR #19) · **not distribution-shipped** |
+| **Live product** | Public `/assess` (PR #14) + monorepo `securist doctor` / `securist assess .` |
+| **Distribution** | [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) — human-signed install next |
+| **Not claimed publicly** | `npx @securist/operator` until release lane exit |
 
-TARX behind the curtain: Runtime mandatory · signed Model Pack when doctor allows · adapters only · no silent cloud/unsigned fallback.
+TARX behind the curtain. Synthesis unavailable until real signed model pack.
 
 ---
 
@@ -80,8 +89,9 @@ TARX behind the curtain: Runtime mandatory · signed Model Pack when doctor allo
 
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
-| WO-012 | Local Operator `assess .` + read-only MCP | **ready** — claim to implement |
-| RM-004 | Repo trust gap / lockfile import | After Start a Decision + R1 preferred |
+| WO-008 / R1 | Paid Team Graph (durable shared memory) | Human provision + WO-008 exit |
+| Operator release | Signed package + clean-machine install | Human key + [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
+| RM-004 | Repo trust gap / lockfile import | After local Operator + R1 preferred |
 | RM-005 | Securist Verify / signed evidence | After adoption loop trusted |
 | RM-006 | Eve proposals (propose-only) | Feature-flag review + founder bar |
 
@@ -98,6 +108,8 @@ TARX behind the curtain: Runtime mandatory · signed Model Pack when doctor allo
 | RM-012 | Strong release ops | PR #9 |
 | WO-011 | Internal system graph gates | PR #16 |
 | WO-010 | Public assess → ephemeral Decision Brief | PR #14 · **V1 public launch** |
+| WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 |
+| WO-012 Operator | Free private Local Operator (monorepo) | PR #19 · **internally shipped** |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---

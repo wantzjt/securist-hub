@@ -1,7 +1,7 @@
 ---
 id: WO-012
 title: "Local Securist Operator: assess . on embedded TARX Runtime"
-status: in_progress
+status: complete
 owner: grok
 branch: feat/wo-012-local-operator
 depends_on:
@@ -238,9 +238,10 @@ Filing fixture: `npm run test:decision-brief-contracts` (public/local split + pr
 - 2026-08-07: **P1 deeper correction** — available/verified/used; deterministic_only null model/adapter; capability states; stdio MCP envelope; input redaction.  
 - 2026-08-07: Contracts merged to `main` (PR #17 · `d3065f1`). Product category locked (D-011).  
 - 2026-08-07: **Implementation claimed** on `feat/wo-012-local-operator` — deterministic doctor/assess/stdio MCP.  
-- 2026-08-07: **P1 trust boundary** — no fixture private key; public trust root only; `runtime_unavailable` blocks assess; state 0700/0600 + realpath SECURIST_HOME; dist CLI (no npx/tsx); monorepo-private package.
+- 2026-08-07: **P1 trust boundary** — no fixture private key; public trust root only; dist/cli.js in signed set; monorepo-private package.  
+- 2026-08-07: **Merged PR #19** (`89bf854`) — **internally shipped**. Not distribution-shipped (no public npx). Status `complete` for monorepo WO; human [`OPERATOR-RELEASE-LANE.md`](../../docs/OPERATOR-RELEASE-LANE.md) for public install.
 
-## Blockers
+## Blockers (post-WO, distribution)
 
-- Human release-signed `runtime-identity.json` (private key outside git) required before doctor reports “Runtime verified” on real installs.  
-- Real signed TARX model pack (synthesis remains unavailable). R1 durable graph out of scope.
+- Human release-signed `runtime-identity.json` + deliberate package publish for public install.  
+- Real signed TARX model pack (synthesis). R1 Team Graph is parallel paid track (WO-008).
