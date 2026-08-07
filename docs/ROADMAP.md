@@ -117,11 +117,14 @@ public Operator distribution.
 
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
+| **WO-019** | **Developer-native IA** (web assess → local Operator → CI → Team Graph) | Claimed after WO-018 · **not concurrent** with human sign/R1 provision · [`WO-019`](../ops/work-orders/WO-019-developer-native-ia.md) |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human provision + WO-008 exit |
 | Operator release | Signed package + clean-machine install | Human key + [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
 | RM-004 | Repo trust gap / lockfile import | After local Operator + R1 preferred |
 | RM-005 | Securist Verify / signed evidence | After adoption loop trusted |
 | RM-006 | Eve proposals (propose-only) | Feature-flag review + founder bar |
+
+**IA intent (WO-019, queued):** Product nav = Assess · Local Operator · Team Graph (coming next). Research collapsed. `/operator` onboarding. Artifact profiles as shareable Decision Briefs. Not an Electron product. Contact `securist_info_sec@protonmail.com` on footer/support/security only when claimed.
 
 ---
 
@@ -139,6 +142,11 @@ public Operator distribution.
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 |
 | WO-012 Operator | Free private Local Operator (monorepo) | PR #19 · **internally shipped** |
 | WO-013 | Open-build GitHub front door | README + community docs |
+| WO-014 | Dependabot Work-Order exemption | PR #31 |
+| WO-015 | Public Decision Brief funnel | PR #30 |
+| WO-016 | Public assess resilience | PR #32 |
+| WO-017 | Product-first launch surface | PR #33 |
+| WO-018 | Local Operator RC proof | PR #34 · **agent tooling done; human sign next** |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---
