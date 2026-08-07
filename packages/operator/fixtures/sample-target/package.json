@@ -1,0 +1,6 @@
+{
+  "name": "securist-operator-rc-fixture",
+  "version": "0.0.0-fixture",
+  "private": true,
+  "description": "Public dogfood fixture for Local Operator release-candidate verification (WO-018). Not a real product package."
+}

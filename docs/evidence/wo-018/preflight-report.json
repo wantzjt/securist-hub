@@ -1,0 +1,72 @@
+{
+  "kind": "operator_rc_preflight",
+  "ok": true,
+  "at": "2026-08-07T15:08:14.289Z",
+  "packageDigest": "7c788dd8856e372822ac00d7bf280fb4a3a8c9040cba4041e1db5c4a9c18e687",
+  "checks": [
+    {
+      "ok": true,
+      "msg": "package.json private: true"
+    },
+    {
+      "ok": true,
+      "msg": "package name @securist/operator"
+    },
+    {
+      "ok": true,
+      "msg": "bin.securist declared"
+    },
+    {
+      "ok": true,
+      "msg": "no private key material under packages/operator"
+    },
+    {
+      "ok": true,
+      "msg": "trust-root.pem is a loadable public key"
+    },
+    {
+      "ok": true,
+      "msg": "operator:build ok"
+    },
+    {
+      "ok": true,
+      "msg": "dist/cli.js free of npx/tsx"
+    },
+    {
+      "ok": true,
+      "msg": "package digest computable (7c788dd8856e…)"
+    },
+    {
+      "ok": true,
+      "msg": "signed set: dist/cli.js, bin/securist.mjs, package.json, keys/trust-root.pem"
+    },
+    {
+      "ok": true,
+      "msg": "unsigned doctor fails closed with precise message"
+    },
+    {
+      "ok": true,
+      "msg": "unsigned assess blocked"
+    },
+    {
+      "ok": true,
+      "msg": "test:operator passed"
+    },
+    {
+      "ok": true,
+      "msg": "release lane retains no-public-npx honesty"
+    },
+    {
+      "ok": true,
+      "msg": "preflight did not require signing key"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "nextHumanStep": "SECURIST_OPERATOR_SIGNING_KEY=/path/to/private.pem npm run operator:rc",
+  "nonClaims": [
+    "Does not publish to npm",
+    "Does not enable public npx @securist/operator",
+    "Does not store or require the private signing key"
+  ]
+}

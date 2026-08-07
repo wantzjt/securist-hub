@@ -26,3 +26,8 @@ dist/
 *.log
 docs/*.tgz
 docs/securist-hub-source.tgz
+# Operator release candidates (local build/sign/pack only; never commit keys)
+.operator-rc/
+packages/operator/runtime-identity.json
+*.pem
+!packages/operator/keys/trust-root.pem

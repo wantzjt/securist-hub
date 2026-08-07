@@ -54,6 +54,9 @@ jobs:
       - name: Operator fixtures
         run: npm run test:operator
 
+      - name: Operator release-candidate fixtures (WO-018)
+        run: npm run test:operator-rc
+
       - name: Build
         run: npm run build
 
