@@ -1,7 +1,7 @@
 ---
 id: WO-010
 title: "Securist V1: Start a Decision (public assess + Decision Brief)"
-status: in_progress
+status: complete
 owner: grok
 branch: docs/v1-start-a-decision-spec
 depends_on:
@@ -56,7 +56,7 @@ Depends on system graph / clean-tree gates from **WO-011** (merged).
 
 ## Status
 
-**In progress** on branch `docs/v1-start-a-decision-spec` under D-010.
+**Complete.** Merged as PR #14 (`b5a67a6` on `main`). V1 public launch: Assess a public repository → ephemeral Decision Brief.
 
 ## Plan
 
@@ -72,6 +72,8 @@ Depends on system graph / clean-tree gates from **WO-011** (merged).
 - 2026-08-06: D-010 + WO-011 unlocked; implementation on this branch.
 - 2026-08-06: Public assess lib, `/assess` route, homepage rewrite, nav, profile CTA, system graph.
 - 2026-08-06 fixup P1: (1) anonymous assess never uses privileged GH token; (2) `PublicDecisionBriefV1` in `@securist/contracts`; (3) runtime validation + fixtures (`test:public-assess`); (4) system-graph coverage roots.
+- 2026-08-07 final P1: CI requires `test:public-assess`; secret-like `intendedUse` → `redaction` before GitHub fetch.
+- 2026-08-07: Merged PR #14 · status `complete`. Next: WO-012.
 
 ## Public-data behavior (exact)
 
