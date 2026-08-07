@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   verify:
-    name: clean · lint · typecheck · lifecycle · graph · public-assess · brief-contracts · build · contracts
+    name: clean · lint · typecheck · lifecycle · graph · public-assess · brief-contracts · operator · build · contracts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,6 +47,12 @@ jobs:
 
       - name: Decision Brief contract fixtures
         run: npm run test:decision-brief-contracts
+
+      - name: Operator build (no runtime tsx)
+        run: npm run operator:build
+
+      - name: Operator fixtures
+        run: npm run test:operator
 
       - name: Build
         run: npm run build

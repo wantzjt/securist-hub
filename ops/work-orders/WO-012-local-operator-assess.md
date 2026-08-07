@@ -1,9 +1,9 @@
 ---
 id: WO-012
 title: "Local Securist Operator: assess . on embedded TARX Runtime"
-status: ready
-owner: unassigned
-branch: ""
+status: in_progress
+owner: grok
+branch: feat/wo-012-local-operator
 depends_on:
   - WO-010
 contracts:
@@ -55,6 +55,7 @@ verification:
   - npm run test:graph
   - npm run test:public-assess
   - npm run test:decision-brief-contracts
+  - npm run test:operator
   - npm run build
   - npm run verify:coordination
   - npm run verify:release-readiness
@@ -235,8 +236,11 @@ Filing fixture: `npm run test:decision-brief-contracts` (public/local split + pr
 - 2026-08-07: **Contract correction** filed — LocalDecisionBriefV1 / honesty envelope; PublicDecisionBriefV1 not reused for local evidence.  
 - 2026-08-07: **Provenance/MCP amendment** — content digests vs IDs.  
 - 2026-08-07: **P1 deeper correction** — available/verified/used; deterministic_only null model/adapter; capability states; stdio MCP envelope; input redaction.  
-- 2026-08-07: Contracts merged to `main` (PR #17 · `d3065f1`). Product category locked (D-011). **Implementation not started** — claim WO-012 to begin Operator code.
+- 2026-08-07: Contracts merged to `main` (PR #17 · `d3065f1`). Product category locked (D-011).  
+- 2026-08-07: **Implementation claimed** on `feat/wo-012-local-operator` — deterministic doctor/assess/stdio MCP.  
+- 2026-08-07: **P1 trust boundary** — no fixture private key; public trust root only; `runtime_unavailable` blocks assess; state 0700/0600 + realpath SECURIST_HOME; dist CLI (no npx/tsx); monorepo-private package.
 
 ## Blockers
 
-- None for implementation claim. TARX Runtime package availability; local/dev signed fixtures allowed for CI. R1 durable graph is **out of scope** (next strategic step after local utility).
+- Human release-signed `runtime-identity.json` (private key outside git) required before doctor reports “Runtime verified” on real installs.  
+- Real signed TARX model pack (synthesis remains unavailable). R1 durable graph out of scope.

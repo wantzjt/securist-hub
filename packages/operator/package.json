@@ -1,0 +1,22 @@
+{
+  "name": "@securist/operator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Securist free private Local Operator — monorepo package (not published). Deterministic assess, local state, stdio MCP.",
+  "bin": {
+    "securist": "./bin/securist.mjs"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "keys/trust-root.pem",
+    "keys/README.md",
+    "package.json",
+    "package-artifacts.mjs",
+    "runtime-identity.json"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}
