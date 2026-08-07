@@ -1,7 +1,7 @@
 # Acceptable Use Policy (AUP)
 
 **Product house:** Securist  
-**Contact:** ops@secur.ist  
+**Contact:** securist_info_sec@protonmail.com  
 **Ops:** ops.com  
 
 ## Allowed
@@ -26,4 +26,4 @@ appropriate authorities where required by law.
 
 ## Reporting
 
-ops@secur.ist
+securist_info_sec@protonmail.com

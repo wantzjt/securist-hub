@@ -1,9 +1,9 @@
 ---
 id: WO-019
 title: "Developer-native information architecture"
-status: proposed
-owner: unassigned
-branch: ""
+status: in_review
+owner: grok
+branch: feat/wo-019-developer-native-ia
 depends_on:
   - WO-017
   - WO-018
@@ -27,6 +27,7 @@ non_goals:
   - Claiming public npm, Team Graph live, or Electron desktop product
   - Concurrent work with human Operator sign or R1 provision
   - Conversation UI as the default experience
+  - Datadog or any vendor as product connector / website mention
 verification:
   - npm run test:product-surface
   - npm run lint
@@ -40,58 +41,18 @@ verification:
   - npm run verify:clean-worktree
 ---
 
-# WO-019 — Developer-native information architecture (queued)
+# WO-019 — Developer-native information architecture
 
-**Status: proposed — do not claim until human Operator RC sign-off path is clear and this WO is explicitly claimed. Not concurrent with R1 provision work.**
+**Claimed after Phase 3 human approval of release scorecard (HOLD announcement; claim WO-019 only).**
 
-## Problem
-
-The public site exposes repository-internal and research routes as equal product destinations. It reads like a strange app/catalog rather than a developer product.
-
-**Securist is not an Electron app.** It is a TanStack web app plus a local Node Operator. TARX may supply runtime substrate behind the curtain; Securist must not become a second desktop security app.
-
-## Winning adoption loop
+## Adoption loop
 
 ```text
 Web assess → local CLI → GitHub/CI check → shared Team Graph
 ```
 
-Not: “download another security desktop app.”
+Not an Electron app. Not a research catalog.
 
-## Product surfaces (when claimed)
+## Progress
 
-| Route | Role |
-|-------|------|
-| `/` | Focused category/product page — not a dashboard |
-| `/assess` | Immediate utility: paste public repo → Decision Brief |
-| `/operator` | Developer adoption: local-only promise, copyable monorepo commands, trust status, MCP notes; **exact** honesty (source today; public install only when released) |
-| `/artifacts/:id` | Shareable Decision Brief profile (GitHub/HF-profile shape) |
-| Team Graph | One clearly marked **coming next** destination |
-| Research | Collapsed: Activity, Models, Scout, Packages, Links — never compete with Assess |
-| Services | Secondary; never lead nav |
-
-## Four questions every brief/profile must answer
-
-1. What is this artifact?  
-2. What did Securist actually observe?  
-3. What remains unknown?  
-4. What should happen next—and who owns it?  
-
-No dashboard until the user has a decision. No conversation UI as default (assistant may later explain a brief).
-
-## Contact (scoped)
-
-Canonical public contact: **`securist_info_sec@protonmail.com`**  
-Replace placeholder contact in **footer / support / security contact surfaces only** in this WO (or a tightly scoped follow-up within it). Do not invent new product email products.
-
-## Scope when claimed
-
-Routes, nav, UI copy, onboarding, responsive/accessibility, product-surface tests.
-
-## Non-goals
-
-Graph contracts · auth · billing · persistence · Operator trust · deploy settings · public npm/Team Graph claims · Electron product · concurrent human signing or R1 provision work.
-
-## After WO-019
-
-Stickiness is browser + terminal + GitHub—not a new place to learn. Human tracks remain: Operator sign/clean-machine (WO-018 exit) → R1 (WO-008) → narrow Team Graph workflow.
+- 2026-08-07: Claimed; implementing nav, `/operator`, `/team`, contact, tests.

@@ -1,6 +1,6 @@
 # Security Policy
 
-Report vulnerabilities to **ops@secur.ist**.
+Report vulnerabilities to **securist_info_sec@protonmail.com**.
 
 Public posture page: https://secur.ist/security
 
@@ -21,7 +21,7 @@ Public posture page: https://secur.ist/security
 
 ## Coordinated disclosure
 
-1. Email **ops@secur.ist** with description, impact, and reproduction.  
+1. Email **securist_info_sec@protonmail.com** with description, impact, and reproduction.  
 2. Allow reasonable time before public disclosure.  
 3. Do not open a public issue for actively exploitable issues until coordinated.  
 

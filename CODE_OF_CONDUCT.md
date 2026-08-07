@@ -26,7 +26,7 @@ This applies to GitHub interactions, public community spaces representing Securi
 
 ## Enforcement
 
-Report to **ops@secur.ist**. Maintainers may warn, edit/remove content, block, or ban. Security vulnerabilities go to [`SECURITY.md`](SECURITY.md)—not public issues when disclosure would create risk.
+Report to **securist_info_sec@protonmail.com**. Maintainers may warn, edit/remove content, block, or ban. Security vulnerabilities go to [`SECURITY.md`](SECURITY.md)—not public issues when disclosure would create risk.
 
 ## Credit
 

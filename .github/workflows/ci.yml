@@ -48,6 +48,9 @@ jobs:
       - name: Decision Brief contract fixtures
         run: npm run test:decision-brief-contracts
 
+      - name: Product surface fixtures
+        run: npm run test:product-surface
+
       - name: Operator build (no runtime tsx)
         run: npm run operator:build
 

@@ -76,7 +76,7 @@ function ArtifactProfilePage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="ops-label">Decision Brief</div>
+            <div className="ops-label">Decision Brief · shareable profile</div>
             {a.isSeed ? (
               <span className="ops-chip">SEED · not an approval</span>
             ) : (
@@ -86,7 +86,7 @@ function ArtifactProfilePage() {
           <h1 className="mt-1 text-xl font-semibold tracking-[0.06em] text-white">
             {a.name}
           </h1>
-          <p className="mt-1 text-[11px] text-[var(--securist-muted)]">
+          <p className="mt-1 max-w-xl text-[12px] leading-relaxed text-[var(--securist-muted)]">
             Status:{' '}
             <span className="ops-accent">
               {STATUS_LABEL[a.status] || a.status}
@@ -94,8 +94,12 @@ function ArtifactProfilePage() {
             {' · '}
             {a.kind} · {a.provider}
             {a.isSeed
-              ? ' · Illustrative format proof — not a production approval'
+              ? ' · Illustrative format proof — not your org graph, not a production approval'
               : ''}
+          </p>
+          <p className="mt-2 max-w-xl text-[11px] text-[var(--securist-muted)]">
+            What is it · what was observed · what is unknown · what next (owner
+            durable after Team Graph).
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -108,13 +112,6 @@ function ArtifactProfilePage() {
           </Link>
           <CopyPage title={`Decision Brief · ${a.name}`} body={copyBody} />
           <Link
-            to="/artifacts/$artifactId/activity"
-            params={{ artifactId: a.id }}
-            className="ops-btn no-underline"
-          >
-            Activity
-          </Link>
-          <Link
             to="/artifacts/$artifactId/evidence"
             params={{ artifactId: a.id }}
             className="ops-btn no-underline"
@@ -126,7 +123,7 @@ function ArtifactProfilePage() {
 
       {/* 1. Decision at a glance */}
       <section className="ops-panel space-y-3 p-4">
-        <div className="ops-label">Decision at a glance</div>
+        <div className="ops-label">1 · What is this artifact?</div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="ops-chip ops-chip-live">
             {STATUS_LABEL[a.status] || a.status}
@@ -217,9 +214,9 @@ function ArtifactProfilePage() {
         ) : null}
       </section>
 
-      {/* 2. Technical evidence and action */}
+      {/* 2–4. Observed · unknown · next */}
       <section className="ops-panel space-y-3 p-4">
-        <div className="ops-label">Technical evidence & action</div>
+        <div className="ops-label">2 · What was observed · 3 · gaps · 4 · next</div>
         <dl className="grid gap-2 text-[12px] sm:grid-cols-2">
           <div>
             <dt className="ops-label">Canonical source</dt>
@@ -323,14 +320,14 @@ function ArtifactProfilePage() {
         ) : null}
 
         <div className="flex flex-wrap gap-2 text-[11px]">
-          <Link to="/tools" className="ops-btn no-underline">
-            Packages
+          <Link to="/operator" className="ops-btn no-underline">
+            Local Operator
           </Link>
-          <Link to="/daemon" className="ops-btn no-underline">
-            Scout / operator
+          <Link to="/team" className="ops-btn no-underline">
+            Team Graph (coming next)
           </Link>
           <Link to="/artifacts" className="ops-btn no-underline">
-            All profiles
+            All sample profiles
           </Link>
         </div>
         {evaluations.length > 1 ? (

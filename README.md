@@ -98,7 +98,8 @@ Roadmap: [`docs/ROADMAP.md`](docs/ROADMAP.md) · Strategy: [`docs/STRATEGY.md`](
 |--|--|
 | Contributing | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 | Building in public | [`docs/BUILDING-IN-PUBLIC.md`](docs/BUILDING-IN-PUBLIC.md) |
-| Security disclosure | [`SECURITY.md`](SECURITY.md) · ops@secur.ist |
+| Security disclosure | [`SECURITY.md`](SECURITY.md) · securist_info_sec@protonmail.com |
+| Local Operator guide | [secur.ist/operator](https://secur.ist/operator) · monorepo today |
 | Support boundaries | [`SUPPORT.md`](SUPPORT.md) |
 | Code of conduct | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) |
 | Changelog | [`CHANGELOG.md`](CHANGELOG.md) |
