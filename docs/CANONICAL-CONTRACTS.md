@@ -55,6 +55,36 @@ Hub domain: `src/lib/decision-graph/types.ts`.
 ### ActivityEvent
 - **projection** of graph changes for UI — never the source of truth  
 
+### PublicDecisionBriefV1 (pre-persistence public assessment)
+
+Package: `packages/contracts/src/public-assess.ts` · re-export surface: `surface-contracts.ts`.
+
+Ephemeral share-safe Decision Brief draft from **public** sources only.  
+**Not** a tenant Decision Graph write. Routes must not invent competing shapes.
+
+| Field | Rule |
+|-------|------|
+| `contractVersion` | `'1'` |
+| `kind` | `public_decision_brief` |
+| `durable` | always `false` |
+| `persistence` | always `ephemeral_client_only` |
+| `label` | LIVE \| HYBRID \| SEED |
+| `scope` | caller-**stated** intended use / environment / boundary |
+| `observed[]` | assertion + `verification` + `source` |
+| `unknowns` / `evidenceGaps` | explicit |
+| `policyHints` | **non-authoritative** only — never an approval |
+| `draftJson` | client copy/download only |
+
+#### PublicRepoAssessInputV1
+
+Runtime-validated (not TypeScript-only): string fields, max lengths, environment/boundary enums, public `github.com/owner/repo` URL shape. Rejects local paths, secrets, non-root paths, unsupported hosts.
+
+#### Anonymous public assess security
+
+- `POST` public assess **must not** attach `GITHUB_TOKEN` / `GH_TOKEN` / any privileged Authorization header.  
+- Privileged tokens remain for **first-party Scout** only.  
+- No Decision Graph / tenant / Postgres persistence on this path.
+
 ## API / event semantics (versioned)
 
 | Operation | Semantics |
@@ -64,6 +94,7 @@ Hub domain: `src/lib/decision-graph/types.ts`.
 | Eve validation / contribution proposals | Draft workflow state only |
 | Local validation summary | Signed minimized field result |
 | `GET` artifact profile | Canonical read model for UI |
+| `POST` public assess | Anonymous public GitHub facts → `PublicDecisionBriefV1` (ephemeral; unauthenticated GH API) |
 
 ### Requirements at every write boundary
 
@@ -80,7 +111,11 @@ Hub domain: `src/lib/decision-graph/types.ts`.
 | Code | Meaning |
 |------|---------|
 | `contract` | Invalid contract version/kind |
-| `not_found` | Unknown artifact |
+| `schema` | Malformed public assess (or similar) input |
+| `invalid_url` | Public assess URL rejected |
+| `not_found` | Unknown artifact / non-public repository |
+| `private_repo` | Private repository rejected for anonymous assess |
+| `rate_limited` | Upstream API rate limit |
 | `nonce_replay` | Duplicate ingest |
 | `redaction` | Private material detected |
 | `transition_denied` | Illegal decision state transition |

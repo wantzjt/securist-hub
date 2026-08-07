@@ -1,6 +1,9 @@
 /**
  * Canonical read models for UI surfaces.
  * Routes bind to these — not ad-hoc per-page shapes.
+ *
+ * Public assess pre-persistence types are re-exported from @securist/contracts
+ * so routes do not invent competing domain contracts.
  */
 import type {
   Artifact,
@@ -10,6 +13,23 @@ import type {
   PolicyEvaluation,
   PolicyVerdict,
 } from './types'
+
+export type {
+  PublicAssessBoundaryV1,
+  PublicAssessEnvironmentV1,
+  PublicAssessScopeV1,
+  PublicDecisionBriefV1,
+  PublicObservedFactV1,
+  PublicRepoAssessInputV1,
+  PublicRepoAssessResultV1,
+  PublicRepositoryFactsV1,
+} from '../../../packages/contracts/src/public-assess'
+
+export {
+  PUBLIC_ASSESS_BOUNDARIES_V1,
+  PUBLIC_ASSESS_ENVIRONMENTS_V1,
+  PUBLIC_ASSESS_LIMITS_V1,
+} from '../../../packages/contracts/src/public-assess'
 
 export type VisibilityLevel = 'public' | 'organization' | 'operator'
 

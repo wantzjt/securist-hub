@@ -31,6 +31,16 @@
       "path": "migrations",
       "extensions": [".sql"],
       "excludePrefixes": []
+    },
+    {
+      "path": "src/lib/public-repo-assess.ts",
+      "extensions": [".ts"],
+      "excludePrefixes": []
+    },
+    {
+      "path": "src/routes/assess.tsx",
+      "extensions": [".tsx"],
+      "excludePrefixes": []
     }
   ],
   "checks": [
@@ -154,6 +164,7 @@
         "packages/contracts/src/graph.ts",
         "packages/contracts/src/index.ts",
         "packages/contracts/src/proposals.ts",
+        "packages/contracts/src/public-assess.ts",
         "src/lib/decision-graph/outbox-types.ts",
         "src/lib/decision-graph/store-types.ts",
         "src/lib/decision-graph/types.ts",
@@ -269,6 +280,20 @@
       "verifiedBy": ["typecheck", "build", "human-decision"]
     },
     {
+      "id": "public-assess",
+      "kind": "acquisition-surface",
+      "authority": "public-source-observation",
+      "status": "implemented",
+      "paths": [
+        "src/lib/public-repo-assess.ts",
+        "src/routes/assess.tsx",
+        "src/components/SiteChrome.tsx"
+      ],
+      "dependsOn": ["decision-graph", "contracts", "read-projections"],
+      "invariants": ["INV-003", "INV-006", "INV-007", "INV-009"],
+      "verifiedBy": ["typecheck", "build", "system-graph"]
+    },
+    {
       "id": "public-research",
       "kind": "acquisition-surface",
       "authority": "public-source-observation",
@@ -324,6 +349,11 @@
   ],
   "edges": [
     {
+      "from": "public-assess",
+      "to": "artifact-profile",
+      "type": "supplies-public-decision-brief-draft"
+    },
+    {
       "from": "public-research",
       "to": "artifact-profile",
       "type": "supplies-public-evidence"
@@ -362,36 +392,42 @@
   "valueLoop": [
     {
       "order": 1,
-      "stage": "observe-public-artifact",
+      "stage": "assess-public-repository",
+      "node": "public-assess",
+      "status": "implemented"
+    },
+    {
+      "order": 2,
+      "stage": "share-safe-decision-brief",
+      "node": "artifact-profile",
+      "status": "implemented-seed-plus-ephemeral-live"
+    },
+    {
+      "order": 3,
+      "stage": "supporting-public-research",
       "node": "public-research",
       "status": "implemented-hybrid"
     },
     {
-      "order": 2,
-      "stage": "understand-evidence-and-policy",
-      "node": "artifact-profile",
-      "status": "implemented-seed"
-    },
-    {
-      "order": 3,
+      "order": 4,
       "stage": "record-scoped-human-decision",
       "node": "human-authority",
       "status": "contracted-not-self-serve"
     },
     {
-      "order": 4,
+      "order": 5,
       "stage": "retain-private-decision",
       "node": "r1-production-activation",
       "status": "blocked"
     },
     {
-      "order": 5,
+      "order": 6,
       "stage": "detect-material-change",
       "node": "decision-graph",
       "status": "fixture-proven-not-operated"
     },
     {
-      "order": 6,
+      "order": 7,
       "stage": "force-re-review",
       "node": "human-authority",
       "status": "fixture-proven-not-self-serve"
