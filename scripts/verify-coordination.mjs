@@ -219,22 +219,42 @@ function readPrBody() {
   return ''
 }
 
+/**
+ * Whether PR body must include Work-Order: WO-NNN.
+ *
+ * REQUIRE_PR_WORK_ORDER=1 → always required
+ * REQUIRE_PR_WORK_ORDER=0 → always skipped (CI sets this only for dependabot[bot]
+ *   via github.event.pull_request.user.login — never from branch/title/body)
+ * unset → required when GITHUB_EVENT_NAME is pull_request
+ */
+function workOrderCheckRequired() {
+  const flag = process.env.REQUIRE_PR_WORK_ORDER
+  if (flag === '0' || flag === 'false') return false
+  if (flag === '1' || flag === 'true') return true
+  return process.env.GITHUB_EVENT_NAME === 'pull_request'
+}
+
 function checkPrBodyWorkOrder() {
   const body = readPrBody()
-  const requirePr =
-    process.env.REQUIRE_PR_WORK_ORDER === '1' ||
-    process.env.GITHUB_EVENT_NAME === 'pull_request'
+  const requirePr = workOrderCheckRequired()
 
-  if (!body) {
-    if (requirePr) {
-      fail(
-        'PR body missing: include "Work-Order: WO-NNN" (set PR_BODY for local PR simulation)',
+  if (!requirePr) {
+    if (process.env.REQUIRE_PR_WORK_ORDER === '0' || process.env.REQUIRE_PR_WORK_ORDER === 'false') {
+      warn(
+        'Work-Order PR body check skipped (REQUIRE_PR_WORK_ORDER=0; Dependabot-only path in CI)',
       )
-    } else {
+    } else if (!body) {
       warn(
         'No PR body in environment — skipping Work-Order reference check (local ok)',
       )
     }
+    return
+  }
+
+  if (!body) {
+    fail(
+      'PR body missing: include "Work-Order: WO-NNN" (set PR_BODY for local PR simulation)',
+    )
     return
   }
 
