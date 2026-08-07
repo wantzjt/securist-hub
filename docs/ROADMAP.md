@@ -84,6 +84,19 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 
 TARX behind the curtain. Synthesis unavailable until real signed model pack.
 
+### Track D — Public Decision Brief funnel
+
+| | |
+| -- | -- |
+| **Owner** | codex |
+| **Status** | `now` · public-surface only |
+| **Work order** | [`WO-015`](../ops/work-orders/WO-015-public-funnel-surface.md) |
+
+Public assess remains the primary entry. This narrow surface lane makes the
+next boundary explicit: source-available Local Operator for private code and
+future Team Graph for shared decisions. It does not activate accounts, R1, or
+public Operator distribution.
+
 ---
 
 ## NEXT
