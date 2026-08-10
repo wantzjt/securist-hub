@@ -1,7 +1,7 @@
 ---
 id: WO-020
 title: "Production Operator trust-root (Gate 1 public key)"
-status: in_progress
+status: in_review
 owner: grok
 branch: chore/wo-020-production-trust-root
 depends_on:
