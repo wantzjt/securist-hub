@@ -123,10 +123,11 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
-| **WO-022** | Operator dual-path UX (monorepo + signed RC) | This PR · [`WO-022`](../ops/work-orders/WO-022-operator-signed-rc-ux.md) |
+| **WO-022** | Operator dual-path UX (monorepo + signed RC) | **complete** · PR #41 |
+| **WO-023** | Publish-gate plan + R1 readiness + session resume | [`SESSION-RESUME.md`](./SESSION-RESUME.md) · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
 | Human backup | Offline copy of release private key | Founder |
-| Operator publish | Public install channel (GitHub Release tarball or deliberate npm) | Publish gate E–F · human unlock only |
-| WO-008 / R1 | Paid Team Graph (durable shared memory) | Human provision authority |
+| Operator publish | GitHub Release tarball first (not npm) | Human · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
+| WO-008 / R1 | Paid Team Graph (durable shared memory) | Human authority · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
 | RM-004 | Repo trust gap / lockfile import | After local Operator + R1 preferred |
 | RM-005 | Securist Verify / signed evidence | After adoption loop trusted |
 | RM-006 | Eve proposals (propose-only) | Feature-flag review + founder bar |
@@ -157,6 +158,7 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 | WO-019 | Developer-native IA | PR #36 · **complete** |
 | WO-020 | Production Operator trust-root (Gate 1) | PR #37 · **complete** |
 | WO-021 | Automated dogfood / golden-path battery | PR #39 · **complete** |
+| WO-022 | Operator dual-path UX | PR #41 · **complete** |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---

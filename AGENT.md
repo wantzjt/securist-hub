@@ -16,6 +16,7 @@ You are a Securist fielding agent for **hub** (org **securist** / repo **wantzjt
 
 Before implementation work, read:
 
+0. [`docs/SESSION-RESUME.md`](docs/SESSION-RESUME.md) — cold-start handoff (if continuing after a break)
 1. [`docs/AGENT-OPERATIONS.md`](docs/AGENT-OPERATIONS.md) — Grok / Codex / human roles
 2. [`docs/ROADMAP.md`](docs/ROADMAP.md) — now / next / later
 3. Active file under [`ops/work-orders/`](ops/work-orders/) — **one work order per branch**

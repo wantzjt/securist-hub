@@ -110,6 +110,23 @@ function main() {
     )
   }
 
+  console.log('\n[publish-prep refuses dogfood RC]')
+  // latest-rc.json should still be dogfood from the previous section
+  const prep = spawnSync(
+    process.execPath,
+    ['scripts/operator-rc-publish-prep.mjs'],
+    { cwd: root, encoding: 'utf8' },
+  )
+  assert(
+    'publish-prep exits non-zero on dogfood latest RC',
+    prep.status !== 0,
+    'expected refuse dogfood',
+  )
+  assert(
+    'publish-prep names dogfood/ephemeral in error',
+    /dogfood|ephemeral/i.test(prep.stderr + prep.stdout),
+  )
+
   console.log('\n[dogfood MANIFEST + tarball re-verify]')
   const latestPath = join(root, '.operator-rc/latest-rc.json')
   if (existsSync(latestPath)) {

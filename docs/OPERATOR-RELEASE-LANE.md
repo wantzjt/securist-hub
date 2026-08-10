@@ -134,18 +134,24 @@ Fixture: `packages/operator/fixtures/sample-target` (public dogfood only).
 
 ### E. Package / install distribution
 
-- [ ] Decide channel (private registry, GitHub Release tarball, or deliberate npm publish)  
-- [ ] Artifact includes: `dist/`, `bin/`, `package.json`, `keys/trust-root.pem`, `runtime-identity.json`  
-- [ ] `@securist/operator` remains **`private: true` in monorepo** until human flips publish intent  
-- [ ] Tag release (e.g. `operator-v0.1.0`) with checksums  
+**Plan (WO-023):** first ship = **GitHub Release pre-release tarball** — not public npm.  
+Full steps: [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md).
+
+- [x] Channel decided: GitHub Release tarball first; npm later only if deliberate  
+- [ ] Offline prep: `npm run operator:rc` → `operator:rc:verify-clean` → `operator:rc:publish-prep`  
+- [ ] Human creates pre-release tag + uploads tarball + SHA256SUMS + MANIFEST  
+- [x] Artifact set defined: `dist/`, `bin/`, `package.json`, `keys/trust-root.pem`, `runtime-identity.json`  
+- [x] `@securist/operator` remains **`private: true` in monorepo** until human flips publish intent  
+- [ ] Tag e.g. `operator-v0.1.0-rc.1` with checksums  
 
 ### F. Public messaging unlock
 
-Only after E and deliberate publish:
+Only after E and deliberate human decision:
 
 - [ ] Update [`BUYER-MESSAGING.md`](./BUYER-MESSAGING.md) public status table  
-- [ ] Site may list public install command  
+- [ ] Site may link GitHub Releases (still **no** public npx until npm path chosen)  
 - [ ] Still: no credits metering; free path stays private individual  
+- [ ] Announcement remains HOLD unless founder explicitly lifts it
 
 ---
 
