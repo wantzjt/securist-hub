@@ -14,7 +14,7 @@ This lane turns **internally shipped** Operator code into a **distribution-shipp
 
 ```text
 Public Assess                         LIVE
-Local Operator (monorepo / signed RC)  Gate 1 local PASS (WO-020) · not npm-public
+Local Operator (monorepo / signed RC)  Gate 1 PASS · /operator dual path (WO-022) · not npm-public
 Team Graph / shared re-review         NOT LIVE (R1)
 ```
 
@@ -120,7 +120,9 @@ Fixture: `packages/operator/fixtures/sample-target` (public dogfood only).
 
 - [x] Human holds offline private key matching production `trust-root.pem` (Ed25519 under `~/.securist/keys/`; **never in git**)  
 - [ ] **Backup** of private key exists off the primary machine (human only)  
-- [ ] Production `trust-root.pem` merged to `main` (WO-020)  
+- [x] Production `trust-root.pem` merged to `main` (WO-020)  
+- [x] Automated golden-path battery in CI (WO-021 · `npm run test:golden-path`)  
+- [x] `/operator` documents monorepo + signed RC paths without public npx (WO-022)  
 - [x] `npm run operator:rc:preflight` green (local)  
 
 ### B–D. Signed RC
