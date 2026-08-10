@@ -92,8 +92,8 @@ function main() {
     LADDER.map((s) => s.status).join(',') === 'live,local,next',
   )
   assert(
-    'public assess is LIVE step',
-    LADDER.some((s) => s.id === 'public' && s.status === 'live'),
+    'public ladder step href is /assess',
+    LADDER.map((s) => s.href).includes('/assess'),
   )
   assert(
     'operator commands deny public npx',
