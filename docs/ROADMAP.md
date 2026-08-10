@@ -34,7 +34,7 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 ```text
 Public repository
   → honest Decision Brief              LIVE (/assess)
-  → private Local Operator             BUILT · RC proof (WO-018) · not npm-public
+  → private Local Operator             BUILT · Gate 1 signed RC proven locally (WO-020) · not npm-public
   → shared decision + owner + policy   NOT LIVE (R1 / WO-008)
   → material change reopens review     NOT LIVE
 ```
@@ -44,11 +44,13 @@ Public repository
 ### Strategic sequence (do not reorder lightly)
 
 1. **WO-012** — free private Operator (`LocalDecisionBriefV1`) — **internally shipped** (PR #19).  
-2. **WO-018** — Local Operator **release-candidate proof** (preflight + signed pack + clean-machine verify) — **agent tooling**; human still signs.  
-3. **Human** — sign RC with offline key · clean-machine verify · then  
-4. **R1 / WO-008** — durable **paid Team Graph** (shared memory) — human provision only.  
-5. **Narrow Team Graph workflow** — owner + policy + evidence + re-review for one artifact.  
-6. **Change detection / CI enforcement / AI propose-only** — only after the loop is trusted.
+2. **WO-018** — Local Operator **release-candidate proof** (preflight + dogfood + clean-machine tooling) — **complete** (PR #34).  
+3. **WO-019** — Developer-native IA (Assess · Local Operator · Team Graph) — **complete** (PR #36).  
+4. **WO-020 / Gate 1** — production public trust-root + offline private key · local signed RC + clean verify — **in progress** (public key lands via WO-020 PR).  
+5. **Human** — backup offline private key · optional second-machine verify · limited dogfood · then  
+6. **R1 / WO-008** — durable **paid Team Graph** (shared memory) — human provision only.  
+7. **Narrow Team Graph workflow** — owner + policy + evidence + re-review for one artifact.  
+8. **Change detection / CI enforcement / AI propose-only** — only after the loop is trusted.
 
 ---
 
@@ -88,13 +90,17 @@ Public repository
 
 | | |
 | -- | -- |
-| **Owner** | grok (RC tooling WO-018) · **human** (sign, clean-machine, publish) |
-| **Status** | **WO-012 complete** · **WO-018 RC proof** · **not** public npm/npx |
-| **Work order** | [`WO-018`](../ops/work-orders/WO-018-operator-rc-proof.md) · [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
-| **Human next** | `SECURIST_OPERATOR_SIGNING_KEY=… npm run operator:rc` then clean verify |
-| **Live product** | Public `/assess` (PR #14) + monorepo `securist doctor` / `securist assess .` |
-| **Distribution** | [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) — human-signed install next |
+| **Owner** | grok (WO-018 tooling · WO-020 public trust-root) · **human** (private key custody, backup, publish) |
+| **Status** | **WO-012 complete** · **WO-018 complete** · **Gate 1 local PASS** · **WO-020** lands production `trust-root.pem` · **not** public npm/npx |
+| **Work order** | [`WO-020`](../ops/work-orders/WO-020-production-trust-root.md) · [`WO-018`](../ops/work-orders/WO-018-operator-rc-proof.md) · [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
+| **Gate 1 (local)** | Production Ed25519 key established offline; `operator:rc` + `operator:rc:verify-clean` PASS; `signerKeyId=securist-operator-release-key` |
+| **Human next** | (1) **Backup** private key off this Mac · (2) merge WO-020 · (3) optional second-machine tarball verify · (4) limited dogfood when ready |
+| **Live product** | Public `/assess` + `/operator` (WO-019) + monorepo Operator · signed RC staged under gitignored `.operator-rc/` |
+| **Distribution** | Signed RC proven locally — still **no** public install claim until publish gate (E–F) |
 | **Not claimed publicly** | `npx @securist/operator` until release lane exit |
+
+**What “backup the private key” means (B — plain English):**  
+The private key file lives only at `~/.securist/keys/securist-operator-release-private.pem`. If this Mac dies and you have no copy, you **cannot sign** future Operator releases with the same trust root. Backup = copy that one file to somewhere **you** control that is not only this laptop (encrypted USB, password manager secure note/attachment, or encrypted disk image). **Never** put it in git, Slack, email, or chat. Public half is already in the repo as `trust-root.pem`.
 
 TARX behind the curtain. Synthesis unavailable until real signed model pack.
 
@@ -102,14 +108,12 @@ TARX behind the curtain. Synthesis unavailable until real signed model pack.
 
 | | |
 | -- | -- |
-| **Owner** | codex |
-| **Status** | `now` · public-surface only |
+| **Owner** | codex / grok |
+| **Status** | `done` (WO-015–017 · public surfaces live) |
 | **Work order** | [`WO-015`](../ops/work-orders/WO-015-public-funnel-surface.md) |
 
-Public assess remains the primary entry. This narrow surface lane makes the
-next boundary explicit: source-available Local Operator for private code and
-future Team Graph for shared decisions. It does not activate accounts, R1, or
-public Operator distribution.
+Public assess remains the primary entry. Local Operator is the private middle step.
+Team Graph (R1) is the paid shared step. Not activated yet.
 
 ---
 
@@ -117,14 +121,16 @@ public Operator distribution.
 
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
-| **WO-019** | **Developer-native IA** (web assess → local Operator → CI → Team Graph) | Claimed after WO-018 · **not concurrent** with human sign/R1 provision · [`WO-019`](../ops/work-orders/WO-019-developer-native-ia.md) |
-| WO-008 / R1 | Paid Team Graph (durable shared memory) | Human provision + WO-008 exit |
-| Operator release | Signed package + clean-machine install | Human key + [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
+| **WO-020** | Production public trust-root on `main` | PR merge · [`WO-020`](../ops/work-orders/WO-020-production-trust-root.md) |
+| Human backup | Offline copy of release private key | You — not Grok |
+| Limited dogfood | Small cohort on `/assess` → signed Operator RC | After WO-020 merge + key backup |
+| WO-008 / R1 | Paid Team Graph (durable shared memory) | Human provision authority |
+| Operator publish | Public install channel (tarball/npm) | Publish gate E–F · deliberate human unlock |
 | RM-004 | Repo trust gap / lockfile import | After local Operator + R1 preferred |
 | RM-005 | Securist Verify / signed evidence | After adoption loop trusted |
 | RM-006 | Eve proposals (propose-only) | Feature-flag review + founder bar |
 
-**IA intent (WO-019, queued):** Product nav = Assess · Local Operator · Team Graph (coming next). Research collapsed. `/operator` onboarding. Artifact profiles as shareable Decision Briefs. Not an Electron product. Contact `securist_info_sec@protonmail.com` on footer/support/security only when claimed.
+**IA live (WO-019):** Product nav = Assess · Local Operator · Team Graph (coming next). Research collapsed. `/operator` onboarding. Not an Electron product.
 
 ---
 
@@ -146,7 +152,8 @@ public Operator distribution.
 | WO-015 | Public Decision Brief funnel | PR #30 |
 | WO-016 | Public assess resilience | PR #32 |
 | WO-017 | Product-first launch surface | PR #33 |
-| WO-018 | Local Operator RC proof | PR #34 · **agent tooling done; human sign next** |
+| WO-018 | Local Operator RC proof | PR #34 · **complete** |
+| WO-019 | Developer-native IA | PR #36 · **complete** |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---
