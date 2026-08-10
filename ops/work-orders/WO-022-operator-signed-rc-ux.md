@@ -1,7 +1,7 @@
 ---
 id: WO-022
 title: "Operator UX: signed RC path + roadmap honesty"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-022-operator-signed-rc-ux
 depends_on:
