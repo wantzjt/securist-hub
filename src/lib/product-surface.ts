@@ -46,7 +46,7 @@ export const LADDER = [
     status: 'local' as const,
     statusLabel: 'Local',
     title: 'Assess privately',
-    body: 'Keep private code on your machine. Free Local Operator runs from the Securist monorepo today. Public package install is forthcoming after signed distribution—not an Electron app.',
+    body: 'Keep private code on your machine. Free Local Operator: monorepo path today, or a human-signed release-candidate tarball when you have one. Not public npm. Not Electron.',
     cta: 'Local Operator guide',
     href: '/operator' as const,
   },
@@ -106,4 +106,30 @@ export const OPERATOR_COMMANDS = {
   assess: 'npm run securist -- assess . --intended-use "Local engineering review"',
   mcp: 'npm run securist -- mcp',
   note: 'Package @securist/operator remains private. Public npx install is not available until a human-signed distribution ships.',
+} as const
+
+/**
+ * Signed release-candidate path (Gate 1 proven).
+ * Commands assume the developer already has a signed RC tarball
+ * (built offline with the production key — not a public download claim).
+ * Still not public npm / npx.
+ */
+export const OPERATOR_RC_COMMANDS = {
+  unpack: 'tar -xzf securist-operator-0.1.0-rc.tgz && cd securist-operator-0.1.0-rc',
+  home: 'export SECURIST_HOME="$(pwd)/.securist-home" && mkdir -p "$SECURIST_HOME"',
+  doctor: 'node bin/securist.mjs doctor',
+  assess:
+    'node bin/securist.mjs assess /path/to/your/repo --intended-use "Local engineering review"',
+  mcp: 'node bin/securist.mjs mcp',
+  note: 'Signed RC requires a human-produced tarball with runtime-identity.json over the production trust root. Expect “Runtime verified” only when the signature matches. Public npx is still not available. Not Electron.',
+  statusLabel: 'Signed RC · not public npm',
+} as const
+
+/** Ladder / status chips — product truth after WO-020 / WO-021. */
+export const OPERATOR_DISTRIBUTION_STATUS = {
+  monorepo: 'Available today from the Securist monorepo',
+  signedRc:
+    'Human-signed release candidates are proven offline (Gate 1). Not a public download store yet.',
+  publicNpx: 'Public npx @securist/operator is not available',
+  teamGraph: 'Team Graph shared memory is not live (R1)',
 } as const

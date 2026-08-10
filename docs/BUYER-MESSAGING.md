@@ -59,13 +59,14 @@ Outbound and website copy should address the **coalition**, not invent a single 
 | Claim | Status |
 |-------|--------|
 | Free Local Operator in monorepo | **Yes** — WO-012 on `main` (`npm run operator:build` · `npm run securist`) |
-| Public install (`npx @securist/operator`) | **No** — forthcoming after human-signed release artifact + deliberate publish |
+| Signed RC path (offline tarball) | **Yes, when you hold a human-signed RC** — Gate 1 proven; site documents unpack → doctor → assess · **no public download store** |
+| Public install (`npx @securist/operator`) | **No** — forthcoming after deliberate publish gate |
 | Runtime “verified” without release signature | **No** — doctor reports `runtime_unavailable`; assess blocked |
 | Paid Team Graph / multi-user durability | **No** until R1 (WO-008) human-signed |
 
 **Website / deck default copy:**
 
-> Free Local Operator: available from the Securist monorepo today.  
+> Free Local Operator: monorepo today; signed RC when you have a human-produced tarball.  
 > Public install: forthcoming after signed distribution.
 
 Do **not** put `npx @securist/operator` on the public site until a human-signed release exists and the package is deliberately published.

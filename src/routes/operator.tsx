@@ -3,6 +3,8 @@ import { BRAND } from '#/lib/brand'
 import {
   OPEN_BUILD_REPO_URL,
   OPERATOR_COMMANDS,
+  OPERATOR_DISTRIBUTION_STATUS,
+  OPERATOR_RC_COMMANDS,
   PRODUCT_SENTENCE,
 } from '#/lib/product-surface'
 import { CopyPage } from '#/components/CopyPage'
@@ -11,7 +13,7 @@ export const Route = createFileRoute('/operator')({
   component: OperatorPage,
 })
 
-const STEPS = [
+const MONOREPO_STEPS = [
   { title: 'Clone the monorepo', cmd: OPERATOR_COMMANDS.clone },
   { title: 'Install dependencies', cmd: OPERATOR_COMMANDS.install },
   { title: 'Build the Operator CLI', cmd: OPERATOR_COMMANDS.build },
@@ -19,8 +21,18 @@ const STEPS = [
   { title: 'Assess the current directory', cmd: OPERATOR_COMMANDS.assess },
 ] as const
 
+const RC_STEPS = [
+  { title: 'Unpack the signed RC tarball', cmd: OPERATOR_RC_COMMANDS.unpack },
+  { title: 'Set a private SECURIST_HOME', cmd: OPERATOR_RC_COMMANDS.home },
+  { title: 'Doctor — expect Runtime verified', cmd: OPERATOR_RC_COMMANDS.doctor },
+  { title: 'Assess a local repo path', cmd: OPERATOR_RC_COMMANDS.assess },
+] as const
+
 function OperatorPage() {
-  const commandsBlock = STEPS.map((s) => `# ${s.title}\n${s.cmd}`).join('\n\n')
+  const monorepoBlock = MONOREPO_STEPS.map(
+    (s) => `# ${s.title}\n${s.cmd}`,
+  ).join('\n\n')
+  const rcBlock = RC_STEPS.map((s) => `# ${s.title}\n${s.cmd}`).join('\n\n')
 
   return (
     <div className="space-y-8">
@@ -29,24 +41,30 @@ function OperatorPage() {
           <div className="ops-label">Product · Local Operator</div>
           <span className="ops-chip ops-chip-local">Local</span>
           <span className="ops-chip">Not public npm</span>
+          <span className="ops-chip">{OPERATOR_RC_COMMANDS.statusLabel}</span>
         </div>
         <h1 className="max-w-2xl text-2xl font-semibold tracking-[0.04em] text-white sm:text-3xl">
           Keep private code local.
         </h1>
         <p className="max-w-2xl text-[14px] leading-relaxed text-[var(--securist-muted)]">
           {PRODUCT_SENTENCE} The free Local Operator is a{' '}
-          <strong className="font-medium text-white">Node CLI</strong> in the
-          Securist monorepo—not an Electron desktop app, not a cloud uploader.
+          <strong className="font-medium text-white">Node CLI</strong>
+          —not an Electron desktop app, not a cloud uploader, not public{' '}
+          <code className="text-[12px] text-white">npx</code>.
         </p>
       </header>
 
-      <section className="ops-panel grid gap-3 p-4 sm:grid-cols-3">
+      <section className="ops-panel grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="ops-label">Available today</div>
+          <div className="ops-label">Monorepo</div>
           <p className="mt-1 text-[12px] leading-relaxed text-[var(--securist-muted)]">
-            Source in the monorepo. Build + run{' '}
-            <code className="text-[11px] text-white">securist doctor</code> /{' '}
-            <code className="text-[11px] text-white">securist assess .</code>
+            {OPERATOR_DISTRIBUTION_STATUS.monorepo}
+          </p>
+        </div>
+        <div>
+          <div className="ops-label">Signed RC</div>
+          <p className="mt-1 text-[12px] leading-relaxed text-[var(--securist-muted)]">
+            {OPERATOR_DISTRIBUTION_STATUS.signedRc}
           </p>
         </div>
         <div>
@@ -60,28 +78,35 @@ function OperatorPage() {
         <div>
           <div className="ops-label">Not available</div>
           <p className="mt-1 text-[12px] leading-relaxed text-[var(--securist-muted)]">
-            Public <code className="text-[11px]">npx @securist/operator</code>,
-            signed package install claims, Team Graph sync, or automatic share
-            of local briefs.
+            {OPERATOR_DISTRIBUTION_STATUS.publicNpx}.{' '}
+            {OPERATOR_DISTRIBUTION_STATUS.teamGraph}.
           </p>
         </div>
       </section>
 
-      <section className="space-y-3" aria-labelledby="run-heading">
+      <section className="space-y-3" aria-labelledby="path-a-heading">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <div className="ops-label">Developer path</div>
+            <div className="ops-label">Path A · available to everyone today</div>
             <h2
-              id="run-heading"
+              id="path-a-heading"
               className="text-sm font-semibold tracking-[0.1em] text-white uppercase"
             >
               Monorepo commands
             </h2>
           </div>
-          <CopyPage title="Securist Local Operator commands" body={commandsBlock} />
+          <CopyPage
+            title="Securist Local Operator — monorepo"
+            body={monorepoBlock}
+          />
         </div>
+        <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
+          Clone the open hub, build the CLI, then run doctor/assess. Unsigned
+          monorepo builds fail closed until a human signs a release identity for
+          that artifact set.
+        </p>
         <ol className="space-y-3">
-          {STEPS.map((step, i) => (
+          {MONOREPO_STEPS.map((step, i) => (
             <li key={step.title} className="ops-panel p-4">
               <div className="ops-label">
                 {String(i + 1).padStart(2, '0')} · {step.title}
@@ -97,6 +122,53 @@ function OperatorPage() {
         </p>
       </section>
 
+      <section className="space-y-3" aria-labelledby="path-b-heading">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <div className="ops-label">Path B · when you have a signed RC</div>
+            <h2
+              id="path-b-heading"
+              className="text-sm font-semibold tracking-[0.1em] text-white uppercase"
+            >
+              Signed release-candidate tarball
+            </h2>
+          </div>
+          <CopyPage
+            title="Securist Local Operator — signed RC"
+            body={rcBlock}
+          />
+        </div>
+        <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
+          Gate 1 proved human-signed Operator release candidates offline. If
+          someone gives you a{' '}
+          <code className="text-[11px] text-white">
+            securist-operator-*-rc.tgz
+          </code>{' '}
+          that includes{' '}
+          <code className="text-[11px] text-white">runtime-identity.json</code>{' '}
+          and the production trust root, unpack with{' '}
+          <code className="text-[11px] text-white">tar -xzf</code> and run—no
+          monorepo build step. This page does{' '}
+          <strong className="text-white">not</strong> offer a public download
+          store or npm package.
+        </p>
+        <ol className="space-y-3">
+          {RC_STEPS.map((step, i) => (
+            <li key={step.title} className="ops-panel p-4">
+              <div className="ops-label">
+                {String(i + 1).padStart(2, '0')} · {step.title}
+              </div>
+              <pre className="ops-pre mt-2 text-[var(--securist-accent)]">
+                {step.cmd}
+              </pre>
+            </li>
+          ))}
+        </ol>
+        <p className="text-[11px] text-[var(--securist-muted)]">
+          {OPERATOR_RC_COMMANDS.note}
+        </p>
+      </section>
+
       <section className="grid gap-3 lg:grid-cols-2">
         <div className="ops-panel space-y-2 p-4">
           <div className="ops-label">MCP (stdio · local)</div>
@@ -108,6 +180,8 @@ function OperatorPage() {
             {OPERATOR_COMMANDS.mcp}
           </pre>
           <p className="text-[11px] text-[var(--securist-muted)]">
+            From a signed RC directory use{' '}
+            <code className="text-white">{OPERATOR_RC_COMMANDS.mcp}</code>.
             Tools: <code className="text-white">get_brief</code>,{' '}
             <code className="text-white">list_gaps</code>,{' '}
             <code className="text-white">get_run_metadata</code>. No execute,
@@ -120,7 +194,9 @@ function OperatorPage() {
             <li>What is this artifact?</li>
             <li>What did Securist actually observe?</li>
             <li>What remains unknown?</li>
-            <li>What should happen next—and who owns it? (durable after Team Graph)</li>
+            <li>
+              What should happen next—and who owns it? (durable after Team Graph)
+            </li>
           </ol>
           <p className="text-[11px] text-[var(--securist-muted)]">
             Local briefs are <span className="text-white">local_only</span> and
@@ -135,7 +211,7 @@ function OperatorPage() {
           <p className="mt-1 text-[12px] text-[var(--securist-muted)]">
             Monorepo package{' '}
             <code className="text-white">@securist/operator</code> · private ·
-            not published.
+            not published. Signed RCs stay offline until the human publish gate.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -168,8 +244,8 @@ function OperatorPage() {
         <div className="ops-panel p-4">
           <div className="ops-label">Release honesty</div>
           <p className="mt-2 text-[12px] leading-relaxed text-[var(--securist-muted)]">
-            Human-signed release candidates and clean-machine verification are
-            documented in the monorepo release lane. Contact{' '}
+            Human-signed release candidates and clean-machine verification live
+            in the monorepo release lane (WO-018–WO-021). Contact{' '}
             <a className="ops-accent" href={`mailto:${BRAND.email}`}>
               {BRAND.email}
             </a>{' '}

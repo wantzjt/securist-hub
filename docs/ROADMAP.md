@@ -34,7 +34,7 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 ```text
 Public repository
   → honest Decision Brief              LIVE (/assess)
-  → private Local Operator             BUILT · Gate 1 signed RC proven locally (WO-020) · not npm-public
+  → private Local Operator             monorepo + signed RC path on /operator · Gate 1 PASS · not npm-public
   → shared decision + owner + policy   NOT LIVE (R1 / WO-008)
   → material change reopens review     NOT LIVE
 ```
@@ -46,11 +46,13 @@ Public repository
 1. **WO-012** — free private Operator (`LocalDecisionBriefV1`) — **internally shipped** (PR #19).  
 2. **WO-018** — Local Operator **release-candidate proof** (preflight + dogfood + clean-machine tooling) — **complete** (PR #34).  
 3. **WO-019** — Developer-native IA (Assess · Local Operator · Team Graph) — **complete** (PR #36).  
-4. **WO-020 / Gate 1** — production public trust-root + offline private key · local signed RC + clean verify — **in progress** (public key lands via WO-020 PR).  
-5. **Human** — backup offline private key · optional second-machine verify · limited dogfood · then  
-6. **R1 / WO-008** — durable **paid Team Graph** (shared memory) — human provision only.  
-7. **Narrow Team Graph workflow** — owner + policy + evidence + re-review for one artifact.  
-8. **Change detection / CI enforcement / AI propose-only** — only after the loop is trusted.
+4. **WO-020 / Gate 1** — production public trust-root + offline private key · signed RC + clean verify — **complete**.  
+5. **WO-021** — automated dogfood / golden-path battery in CI — **complete**.  
+6. **WO-022** — `/operator` dual path (monorepo + signed RC UX honesty) — **now**.  
+7. **Human** — private-key backup · optional second-machine verify · deliberate publish gate E–F.  
+8. **R1 / WO-008** — durable **paid Team Graph** (shared memory) — human provision only.  
+9. **Narrow Team Graph workflow** — owner + policy + evidence + re-review for one artifact.  
+10. **Change detection / CI enforcement / AI propose-only** — only after the loop is trusted.
 
 ---
 
@@ -90,13 +92,13 @@ Public repository
 
 | | |
 | -- | -- |
-| **Owner** | grok (WO-018 tooling · WO-020 public trust-root) · **human** (private key custody, backup, publish) |
-| **Status** | **WO-012 complete** · **WO-018 complete** · **Gate 1 local PASS** · **WO-020** lands production `trust-root.pem` · **not** public npm/npx |
-| **Work order** | [`WO-020`](../ops/work-orders/WO-020-production-trust-root.md) · [`WO-018`](../ops/work-orders/WO-018-operator-rc-proof.md) · [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
-| **Gate 1 (local)** | Production Ed25519 key established offline; `operator:rc` + `operator:rc:verify-clean` PASS; `signerKeyId=securist-operator-release-key` |
-| **Human next** | (1) **Backup** private key off this Mac · (2) merge WO-020 · (3) optional second-machine tarball verify · (4) limited dogfood when ready |
-| **Live product** | Public `/assess` + `/operator` (WO-019) + monorepo Operator · signed RC staged under gitignored `.operator-rc/` |
-| **Distribution** | Signed RC proven locally — still **no** public install claim until publish gate (E–F) |
+| **Owner** | grok (tooling · UX honesty) · **human** (private key custody, backup, publish) |
+| **Status** | **WO-012–021 complete** · **WO-022** dual-path `/operator` · **not** public npm/npx |
+| **Work order** | [`WO-022`](../ops/work-orders/WO-022-operator-signed-rc-ux.md) · [`WO-021`](../ops/work-orders/WO-021-automated-dogfood-battery.md) · [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
+| **Gate 1** | Production Ed25519 trust-root on `main`; offline private key; signed RC + clean verify; CI golden-path battery |
+| **UX truth** | Path A monorepo · Path B signed RC tarball when the developer already holds one · no public download store |
+| **Human next** | (1) Keep private-key backup · (2) optional second-machine verify · (3) publish gate E–F when ready |
+| **Live product** | Public `/assess` + `/operator` dual path · monorepo Operator · offline signed RC |
 | **Not claimed publicly** | `npx @securist/operator` until release lane exit |
 
 **What “backup the private key” means (B — plain English):**  
@@ -121,12 +123,10 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
-| **WO-020** | Production public trust-root on `main` | **complete** · [`WO-020`](../ops/work-orders/WO-020-production-trust-root.md) |
-| **WO-021** | Automated dogfood / golden-path battery | CI pounds Assess → Operator RC · [`WO-021`](../ops/work-orders/WO-021-automated-dogfood-battery.md) |
+| **WO-022** | Operator dual-path UX (monorepo + signed RC) | This PR · [`WO-022`](../ops/work-orders/WO-022-operator-signed-rc-ux.md) |
 | Human backup | Offline copy of release private key | Founder |
-| Limited human dogfood | Optional cohort after automated battery green | After WO-021 |
+| Operator publish | Public install channel (GitHub Release tarball or deliberate npm) | Publish gate E–F · human unlock only |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human provision authority |
-| Operator publish | Public install channel (tarball/npm) | Publish gate E–F · deliberate human unlock |
 | RM-004 | Repo trust gap / lockfile import | After local Operator + R1 preferred |
 | RM-005 | Securist Verify / signed evidence | After adoption loop trusted |
 | RM-006 | Eve proposals (propose-only) | Feature-flag review + founder bar |
@@ -155,6 +155,8 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 | WO-017 | Product-first launch surface | PR #33 |
 | WO-018 | Local Operator RC proof | PR #34 · **complete** |
 | WO-019 | Developer-native IA | PR #36 · **complete** |
+| WO-020 | Production Operator trust-root (Gate 1) | PR #37 · **complete** |
+| WO-021 | Automated dogfood / golden-path battery | PR #39 · **complete** |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---

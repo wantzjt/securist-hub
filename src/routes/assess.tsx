@@ -294,8 +294,9 @@ function BriefResult({
           <div className="border border-[var(--securist-border)] bg-black/20 p-3">
             <div className="ops-label">Private code · local</div>
             <p className="mt-1 text-[11px] leading-relaxed text-[var(--securist-muted)]">
-              Keep private repos on your machine. Free Local Operator is a Node
-              CLI in the monorepo—not public npm, not Electron.
+              Keep private repos on your machine. Free Local Operator: monorepo
+              path today, or a human-signed RC tarball when you have one—not
+              public npm, not Electron.
             </p>
             <Link to="/operator" className="ops-btn mt-3 inline-flex no-underline">
               Local Operator guide

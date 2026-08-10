@@ -11,6 +11,8 @@ import {
   LADDER,
   OPEN_BUILD_REPO_URL,
   OPERATOR_COMMANDS,
+  OPERATOR_DISTRIBUTION_STATUS,
+  OPERATOR_RC_COMMANDS,
   PRODUCT_NAV,
   PRODUCT_SENTENCE,
   RESEARCH_LINKS,
@@ -92,6 +94,20 @@ function main() {
       !/^npx @securist/m.test(OPERATOR_COMMANDS.note),
   )
   assert(
+    'operator RC commands unpack tarball not npx',
+    OPERATOR_RC_COMMANDS.unpack.includes('tar -xzf') &&
+      OPERATOR_RC_COMMANDS.doctor.includes('bin/securist.mjs') &&
+      /not available|Not Electron/i.test(OPERATOR_RC_COMMANDS.note),
+  )
+  assert(
+    'distribution status forbids public npx claim',
+    /not available/i.test(OPERATOR_DISTRIBUTION_STATUS.publicNpx),
+  )
+  assert(
+    'ladder private step mentions monorepo or signed RC',
+    /monorepo/i.test(LADDER[1].body) && /signed|RC|release/i.test(LADDER[1].body),
+  )
+  assert(
     'buyer outcome outliving approvals',
     BUYER_OUTCOME.includes('outliving') && BUYER_OUTCOME.includes('version'),
   )
@@ -139,13 +155,29 @@ function main() {
       /not an Electron|not.*Electron/i.test(operator),
   )
   assert(
+    'operator page has Path A monorepo and Path B signed RC',
+    /Path A/i.test(operator) &&
+      /Path B/i.test(operator) &&
+      /signed RC|release-candidate tarball/i.test(operator),
+  )
+  assert(
+    'operator page documents tarball unpack not public download store',
+    operator.includes('tar -xzf') &&
+      operator.includes('public download') &&
+      /not.*offer|does.*not/i.test(operator),
+  )
+  assert(
     'operator page forbids public npx availability claim',
     /Not available|not available/i.test(operator) &&
-      operator.includes('npx @securist/operator'),
+      operator.includes('npx'),
   )
   assert(
     'operator page does not instruct live npx install',
     !/npx @securist\/operator\s*$/m.test(operator),
+  )
+  assert(
+    'assess handoff mentions monorepo or signed RC',
+    /monorepo/i.test(assess) && /signed RC|RC tarball/i.test(assess),
   )
   assert(
     'team page is coming next not live',
