@@ -22,6 +22,7 @@
     "operator:rc": "node scripts/operator-rc-release.mjs",
     "operator:rc:dogfood": "node scripts/operator-rc-dogfood.mjs",
     "operator:rc:verify-clean": "node scripts/operator-rc-verify-clean.mjs",
+    "operator:rc:publish-prep": "node scripts/operator-rc-publish-prep.mjs",
     "test:operator-rc": "tsx packages/operator/fixtures/run-operator-rc-tests.ts",
     "test:golden-path": "tsx packages/operator/fixtures/run-golden-path-tests.ts",
     "test:dogfood-battery": "npm run test:golden-path",
