@@ -1,7 +1,7 @@
 ---
 id: WO-019
 title: "Developer-native information architecture"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-019-developer-native-ia
 depends_on:

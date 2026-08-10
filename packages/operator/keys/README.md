@@ -3,8 +3,22 @@
 `trust-root.pem` is the **public** key used to verify release-signed
 `runtime-identity.json`.
 
+**Algorithm:** Ed25519 (SPKI PEM).  
+**Production root:** established for Gate 1 (WO-020). Replaces the old
+fixture public key that was renamed into this path during WO-012. The old
+fixture private key is **burned** (was briefly in git history)—never reuse it
+for release signing.
+
 The matching **private** release key is human-controlled and must **never**
-appear in git, npm packages, or CI artifacts.
+appear in git, npm packages, or CI artifacts. Default offline location on the
+founder machine (not committed):
+
+```text
+~/.securist/keys/securist-operator-release-private.pem   # mode 0600
+```
+
+**Backup that file** somewhere only you control (encrypted USB / password
+manager). Losing it forces a trust-root rotation.
 
 ## Release signing (humans only)
 

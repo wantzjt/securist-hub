@@ -1,7 +1,7 @@
 ---
 id: WO-018
 title: "Local Operator release-candidate proof"
-status: in_review
+status: complete
 owner: grok
 branch: ops/wo-018-operator-rc-proof
 depends_on:

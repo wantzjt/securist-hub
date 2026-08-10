@@ -14,7 +14,7 @@ This lane turns **internally shipped** Operator code into a **distribution-shipp
 
 ```text
 Public Assess                         LIVE
-Local Operator (monorepo / signed RC)  BUILT · RC tooling ready · not npm-public
+Local Operator (monorepo / signed RC)  Gate 1 local PASS (WO-020) · not npm-public
 Team Graph / shared re-review         NOT LIVE (R1)
 ```
 
@@ -118,14 +118,17 @@ Fixture: `packages/operator/fixtures/sample-target` (public dogfood only).
 
 ### A. Prerequisites
 
-- [ ] Human holds offline private key matching `trust-root.pem`  
-- [ ] Clean `main` at intended release commit  
-- [ ] `npm run operator:rc:preflight` green  
+- [x] Human holds offline private key matching production `trust-root.pem` (Ed25519 under `~/.securist/keys/`; **never in git**)  
+- [ ] **Backup** of private key exists off the primary machine (human only)  
+- [ ] Production `trust-root.pem` merged to `main` (WO-020)  
+- [x] `npm run operator:rc:preflight` green (local)  
 
 ### B–D. Signed RC
 
-- [ ] `SECURIST_OPERATOR_SIGNING_KEY=… npm run operator:rc`  
-- [ ] Clean-machine `operator:rc:verify-clean` green on a second machine if possible  
+- [x] Local `SECURIST_OPERATOR_SIGNING_KEY=… npm run operator:rc` (signerKeyId `securist-operator-release-key`)  
+- [x] Local `operator:rc:verify-clean` green  
+- [ ] Clean-machine `operator:rc:verify-clean` green on a **second** machine if possible  
+
 
 ### E. Package / install distribution
 
