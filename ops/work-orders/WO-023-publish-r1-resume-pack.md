@@ -1,7 +1,7 @@
 ---
 id: WO-023
 title: "Publish-gate prep + R1 readiness + session resume pack"
-status: in_review
+status: complete
 owner: grok
 branch: docs/wo-023-publish-r1-resume-pack
 depends_on:
