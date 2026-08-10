@@ -1,7 +1,7 @@
 ---
 id: WO-021
 title: "Automated dogfood / golden-path battery"
-status: in_review
+status: complete
 owner: grok
 branch: test/wo-021-automated-dogfood-battery
 depends_on:
