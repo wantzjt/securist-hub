@@ -110,6 +110,44 @@ function main() {
     )
   }
 
+  console.log('\n[dogfood MANIFEST + tarball re-verify]')
+  const latestPath = join(root, '.operator-rc/latest-rc.json')
+  if (existsSync(latestPath)) {
+    const latest = JSON.parse(readFileSync(latestPath, 'utf8'))
+    const stage = join(root, latest.stageDir)
+    if (existsSync(join(stage, 'MANIFEST.json'))) {
+      const man = JSON.parse(readFileSync(join(stage, 'MANIFEST.json'), 'utf8'))
+      assert(
+        'dogfood MANIFEST publicNpxClaim false',
+        man.publicNpxClaim === false,
+      )
+      assert(
+        'dogfood MANIFEST has contentDigest hex',
+        typeof man.contentDigest?.hex === 'string' &&
+          man.contentDigest.hex.length === 64,
+      )
+      assert(
+        'dogfood MANIFEST signerKeyId ephemeral',
+        /dogfood|ephemeral/i.test(String(man.signerKeyId || '')),
+      )
+    }
+    const tgzRel = latest.tarball
+    if (tgzRel && existsSync(join(root, tgzRel))) {
+      const tgzVerify = spawnSync(
+        process.execPath,
+        ['scripts/operator-rc-verify-clean.mjs', '--rc-tgz', join(root, tgzRel)],
+        { cwd: root, encoding: 'utf8' },
+      )
+      assert(
+        'verify-clean via dogfood tarball exits 0',
+        tgzVerify.status === 0,
+        tgzVerify.stderr || tgzVerify.stdout || `status ${tgzVerify.status}`,
+      )
+    } else {
+      fail('dogfood tarball path', 'missing after dogfood RC')
+    }
+  }
+
   console.log(`\n${passed}/${passed + failed} passed`)
   if (failed > 0) process.exit(1)
 }

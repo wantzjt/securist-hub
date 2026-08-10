@@ -80,6 +80,11 @@
       "command": "npm run test:public-assess"
     },
     {
+      "id": "golden-path",
+      "mode": "automated",
+      "command": "npm run test:golden-path"
+    },
+    {
       "id": "coordination",
       "mode": "automated",
       "command": "npm run verify:coordination"

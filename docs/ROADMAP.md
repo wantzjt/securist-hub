@@ -121,9 +121,10 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
-| **WO-020** | Production public trust-root on `main` | PR merge · [`WO-020`](../ops/work-orders/WO-020-production-trust-root.md) |
-| Human backup | Offline copy of release private key | You — not Grok |
-| Limited dogfood | Small cohort on `/assess` → signed Operator RC | After WO-020 merge + key backup |
+| **WO-020** | Production public trust-root on `main` | **complete** · [`WO-020`](../ops/work-orders/WO-020-production-trust-root.md) |
+| **WO-021** | Automated dogfood / golden-path battery | CI pounds Assess → Operator RC · [`WO-021`](../ops/work-orders/WO-021-automated-dogfood-battery.md) |
+| Human backup | Offline copy of release private key | Founder |
+| Limited human dogfood | Optional cohort after automated battery green | After WO-021 |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human provision authority |
 | Operator publish | Public install channel (tarball/npm) | Publish gate E–F · deliberate human unlock |
 | RM-004 | Repo trust gap / lockfile import | After local Operator + R1 preferred |
