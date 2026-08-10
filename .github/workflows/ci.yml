@@ -60,6 +60,9 @@ jobs:
       - name: Operator release-candidate fixtures (WO-018)
         run: npm run test:operator-rc
 
+      - name: Golden-path dogfood battery (WO-021)
+        run: npm run test:golden-path
+
       - name: Build
         run: npm run build
 
