@@ -29,8 +29,10 @@ export const Route = createFileRoute('/assess')({
     url: typeof search.url === 'string' ? search.url : undefined,
     artifact: typeof search.artifact === 'string' ? search.artifact : undefined,
   }),
-  head: ({ search }) => {
-    const repo = repoHintFromUrl(search.url)
+  loaderDeps: ({ search }) => ({ url: search.url }),
+  loader: ({ deps }) => deps,
+  head: ({ loaderData }) => {
+    const repo = repoHintFromUrl(loaderData?.url)
     const title = repo
       ? `Public Decision Brief (ephemeral) · ${repo} · Securist`
       : 'Public Decision Brief (ephemeral) · Securist'
