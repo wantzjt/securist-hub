@@ -1,7 +1,7 @@
 ---
 id: WO-025
 title: "Grok Bot operating system + standup prompt"
-status: in_progress
+status: complete
 owner: grok
 branch: docs/wo-025-grok-bot-os
 depends_on:
@@ -32,3 +32,5 @@ verification:
 ## Blockers
 
 Founder installs Grok Bot and pastes standup prompt (human).
+
+- 2026-08-12 — PR #47 merged; complete.
