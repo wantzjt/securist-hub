@@ -1,7 +1,7 @@
 ---
 id: WO-026
 title: "Honest org pointers + crypto-agility inventory note"
-status: in_progress
+status: in_review
 owner: grok
 branch: feat/wo-026-honest-org-crypto-agility
 depends_on:
@@ -42,3 +42,5 @@ hybrid PQ/T key agreement **X25519MLKEM768** as inventory posture only.
 ## Blockers
 
 None for code. Production `VITE_PUBLIC_GITHUB_ORG` may need human/Vercel update if set to `securist`.
+
+- 2026-08-12 — PR open; beachheads pushed to Securist-InfoSec; Vercel GITHUB_ORG env set.
