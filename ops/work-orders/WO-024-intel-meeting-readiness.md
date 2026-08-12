@@ -1,7 +1,7 @@
 ---
 id: WO-024
 title: "Intel firm meeting readiness pack"
-status: in_review
+status: complete
 owner: grok
 branch: docs/wo-024-intel-meeting-readiness
 depends_on:
@@ -48,6 +48,8 @@ pre-release, and a cold-start resume that does not re-litigate strategy.
 5. GitHub About polish where API allows
 
 ## Progress
+
+- 2026-08-12 — PR #45 merged; status complete.
 
 - 2026-08-12 — PR open for review.
 
