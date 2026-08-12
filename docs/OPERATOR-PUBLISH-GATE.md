@@ -31,7 +31,7 @@ This document is **publish gate E–F**: how we intentionally ship a signed Loca
 - [x] `npm run test:golden-path` green  
 - [x] `/operator` dual path honest (WO-022)  
 - [ ] Private key backed up off primary machine  
-- [ ] Human decides **this** commit SHA is the release tip  
+- [x] Human / authorized session chose tip for first RC pre-release (`operator-v0.1.0-rc.1` · 2026-08-12 · main)  
 
 ---
 

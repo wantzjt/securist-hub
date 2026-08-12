@@ -79,14 +79,15 @@ Public repository
 **R1 is where paid company value starts:** shared decisions, policy, owner, drift, re-review.  
 **R1 is not active** until WO-008 exit is human-signed. No private durability claims before then.
 
-### Track B — Wedge validation (R2 inputs)
+### Track B — Wedge validation (R2 inputs) + intel firm readiness
 
 | | |
 | -- | -- |
-| **Owner** | **human** |
-| **Status** | `now` |
-| **Work order** | [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) |
+| **Owner** | **human** (interviews) · grok (meeting kit) |
+| **Status** | `now` · kit shipped WO-024 · interviews still human |
+| **Work order** | [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) · [`WO-024`](../ops/work-orders/WO-024-intel-meeting-readiness.md) |
 | **Buyer language** | [`BUYER-MESSAGING.md`](./BUYER-MESSAGING.md) |
+| **Meeting pack** | [`meeting/`](./meeting/) — one-pager · demo script · non-promises · checklist |
 
 ### Track C — Free Operator → distribution RC
 
@@ -124,9 +125,10 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 | ID | Item | Unblock when |
 | -- | ---- | ------------ |
 | **WO-022** | Operator dual-path UX (monorepo + signed RC) | **complete** · PR #41 |
-| **WO-023** | Publish-gate plan + R1 readiness + session resume | [`SESSION-RESUME.md`](./SESSION-RESUME.md) · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
-| Human backup | Offline copy of release private key | Founder |
-| Operator publish | GitHub Release tarball first (not npm) | Human · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
+| **WO-023** | Publish-gate plan + R1 readiness + session resume | **complete** · PR #43–#44 |
+| **WO-024** | Intel meeting readiness pack | Meeting kit + WO hygiene · RC re-sign 2026-08-12 |
+| Human backup | Offline copy of release private key | Founder ★ still required |
+| Operator publish | GitHub Release tarball first (not npm) | Artifacts ready locally · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human authority · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
 | RM-004 | Repo trust gap / lockfile import | After local Operator + R1 preferred |
 | RM-005 | Securist Verify / signed evidence | After adoption loop trusted |
@@ -159,6 +161,7 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 | WO-020 | Production Operator trust-root (Gate 1) | PR #37 · **complete** |
 | WO-021 | Automated dogfood / golden-path battery | PR #39 · **complete** |
 | WO-022 | Operator dual-path UX | PR #41 · **complete** |
+| WO-023 | Publish gate + R1 pack + session resume | PR #43–#44 · **complete** |
 | WO-012 contracts | LocalDecisionBrief + honest provenance | PR #17 · **filing complete** |
 
 ---

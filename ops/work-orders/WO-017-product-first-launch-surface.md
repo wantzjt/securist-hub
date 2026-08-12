@@ -1,7 +1,7 @@
 ---
 id: WO-017
 title: "Product-first launch surface"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-017-product-first-launch-surface
 depends_on:
@@ -52,3 +52,7 @@ verification:
 **Mismatch is not deploy lag.** Production is on main. The gap is **product expression**: hero subtext weaker than locked product sentence; no homepage Decision Brief preview; research grid still competes with product; missing buyer-outcome and open-build proof; dual-forge meta/chrome framing still reads as ops catalog.
 
 This WO redesigns the public product surface only—no contract or deploy changes.
+
+## Progress
+
+- 2026-08-12 — status marked complete (merged PR; WO-024 hygiene).

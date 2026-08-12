@@ -1,7 +1,7 @@
 ---
 id: WO-014
 title: "Dependabot Work-Order exemption (author login only)"
-status: in_review
+status: complete
 owner: grok
 branch: ops/wo-014-dependabot-work-order-exempt
 depends_on:
@@ -50,6 +50,8 @@ CI sets `REQUIRE_PR_WORK_ORDER=0` **only** when:
 `verify-coordination.mjs` honors `REQUIRE_PR_WORK_ORDER=0` as an explicit skip (previously pull_request event still forced the check).
 
 ## Progress
+
+- 2026-08-12 — status marked complete (merged PR; WO-024 hygiene).
 
 - 2026-08-07: Implemented; PR under this WO.
 

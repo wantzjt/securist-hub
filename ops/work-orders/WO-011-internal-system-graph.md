@@ -1,7 +1,7 @@
 ---
 id: WO-011
 title: Internal system graph and regression guardrails
-status: in_review
+status: complete
 owner: codex
 branch: ops/wo-011-internal-system-graph
 depends_on:
