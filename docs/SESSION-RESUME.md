@@ -35,6 +35,7 @@ Broad announcement                      HOLD
 | R1 readiness | [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
 | Operator UX | `/operator` · WO-022 |
 | **Intel meeting pack** | [`meeting/`](./meeting/) · WO-024 |
+| **Grok Bot OS + standup prompt** | [`GROK-BOT-OPERATING-SYSTEM.md`](./GROK-BOT-OPERATING-SYSTEM.md) · [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) |
 
 ### Private key reminder
 
@@ -101,6 +102,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **A** | Human: backup private key if not done | you |
 | **B** | Optional: GitHub pre-release of signed RC ([`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md)) | you or authorized session |
 | **M** | Run meeting dry-run ([`meeting/DEMO-SCRIPT.md`](./meeting/DEMO-SCRIPT.md)) | you |
+| **G** | Stand up Grok Bot **Securist COS** with [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) | you + Bot |
 | **C** | R1: grant provision authority then [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) | **you only** for credentials |
 | **D** | Stay HOLD — no announce | default |
 
