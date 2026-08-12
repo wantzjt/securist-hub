@@ -39,3 +39,30 @@ False capability claims in third-party writeups should be corrected against [`RE
 
 Release private keys are human-held. See [`docs/OPERATOR-RELEASE-LANE.md`](docs/OPERATOR-RELEASE-LANE.md).  
 Do not submit PRs that embed private keys or weaken the packaged-artifact signature set.
+
+**Release signature algorithm:** Ed25519 against the packaged public trust root.  
+Unsigned monorepo builds report `runtime_unavailable` and block assess honesty-first.
+
+## Crypto-agility inventory (posture — not a feature claim)
+
+Where TLS / transport applies, Securist **inventory preference** is hybrid
+post-quantum / traditional key agreement **X25519MLKEM768** (ML-KEM-768 + X25519;
+hybrid KEM design in the RFC 10024-family hybrid TLS work).
+
+| Claim | Truth |
+|-------|--------|
+| Inventory prefers X25519MLKEM768 for transport where applicable | Yes — posture for what to track |
+| Local Operator negotiates ML-KEM / hybrid PQ TLS today | **No** |
+| Operator release signing is Ed25519 trust-root | **Yes** |
+| Quantum-fear marketing / “PQ-ready product” theater | **No** |
+
+Public page: https://secur.ist/security
+
+## Public forge honesty
+
+| Surface | Canonical |
+|---------|-----------|
+| Product hub / open build | https://github.com/wantzjt/securist-hub |
+| Public beachhead packages | https://github.com/Securist-InfoSec (scaffolds, not production CTI platforms) |
+| Empty user `github.com/securist` | **Not** the package forge |
+| Hugging Face house org | Do not claim live until the org resolves |

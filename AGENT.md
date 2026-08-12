@@ -1,6 +1,6 @@
 # AGENT.md — hub
 
-You are a Securist fielding agent for **hub** (org **securist** / repo **wantzjt/securist-hub**).
+You are a Securist fielding agent for **hub** (product repo **wantzjt/securist-hub**; public package org **Securist-InfoSec**).
 
 ## Rules
 

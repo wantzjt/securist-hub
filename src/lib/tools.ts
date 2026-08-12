@@ -27,7 +27,7 @@ export const TOOLS: ToolEntry[] = [
     opsRole: 'Discover',
     href: '/daemon',
     summary:
-      'Public repos only. Rate-limited. legal_risk tags. Agent setup prompts. Org securist.',
+      'Public repos only. Rate-limited. legal_risk tags. Agent setup prompts. Org Securist-InfoSec (beachheads are scaffolds).',
   },
   {
     id: 'hf-model-scout',

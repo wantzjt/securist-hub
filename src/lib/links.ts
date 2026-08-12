@@ -27,13 +27,13 @@ export const SHORT_LINKS: ShortLink[] = [
   {
     token: 'hwihf',
     target: 'https://huggingface.co/securist',
-    label: 'HF house (securist)',
+    label: 'HF org slug (provision when live — not claimed)',
     opsRole: 'Field proof',
   },
   {
     token: 'gh',
-    target: 'https://github.com/securist',
-    label: 'GitHub org securist',
+    target: 'https://github.com/Securist-InfoSec',
+    label: 'GitHub org Securist-InfoSec',
     opsRole: 'Contribute',
   },
   {

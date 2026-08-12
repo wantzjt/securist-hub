@@ -18,14 +18,19 @@ export const BRAND = {
   email: PUBLIC_CONTACT_EMAIL,
   securityEmail: PUBLIC_CONTACT_EMAIL,
   legalEmail: PUBLIC_CONTACT_EMAIL,
+  /** Public package org (real). Empty user github.com/securist is not the forge. */
   githubOrg:
     (import.meta.env.VITE_PUBLIC_GITHUB_ORG as string | undefined) ||
-    'securist',
+    'Securist-InfoSec',
   githubUrl:
     (import.meta.env.VITE_PUBLIC_GITHUB_URL as string | undefined) ||
-    'https://github.com/securist',
-  /** Monorepo that contains the Local Operator (not a personal handle). */
+    'https://github.com/Securist-InfoSec',
+  /** Monorepo that contains the Local Operator (product hub / open build). */
   hubRepoUrl: 'https://github.com/wantzjt/securist-hub',
+  /**
+   * HF org slug when provisioned. Do not claim house models live until the org
+   * resolves; Scout uses public third-party models with license review.
+   */
   hfOrg:
     (import.meta.env.VITE_PUBLIC_HF_ORG as string | undefined) || 'securist',
   hfUrl: 'https://huggingface.co/securist',
