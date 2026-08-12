@@ -1,37 +1,35 @@
 ---
 id: WO-027
 title: "PLG shareable Decision Brief re-run link after /assess"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-027-plg-shareable-rerun-link
 depends_on:
   - WO-026
 contracts: []
 acceptance:
-  - After successful public /assess, primary CTA is Copy re-run link (/assess?url=...)
-  - Address bar syncs to the same re-run URL for native browser share
-  - Honest non-durable copy: re-runs assess, does not save the brief, Team Graph not live
-  - Copy page + Download draft JSON remain available as secondary actions
+  - After successful public /assess, primary CTA is Copy re-run link
+  - Address bar syncs to the same re-run URL
+  - Honest non-durable copy; Team Graph not live
+  - Copy page + Download draft JSON remain secondary
 non_goals:
   - R1 durable store
-  - npm
+  - package registry publish
   - Announcement
 verification:
-  - Manual /assess run + Copy re-run link paste in fresh tab
-  - npm run verify:coordination
+  - Manual /assess + Copy re-run link in fresh tab
+  - coordination verify
 ---
 
-# WO-027 — PLG shareable Decision Brief re-run link
+# WO-027
 
-## Context
-
-Public /assess should leave a shareable, honest re-run path after a Decision Brief.
-No durable brief storage or Team Graph claims.
+PLG shareable Decision Brief re-run link after /assess.
 
 ## Progress
 
 - 2026-08-12 — Implementation on branch; PR #58 open.
 - 2026-08-12 — Work-order file added for coordination verify.
+- 2026-08-12 — PR #58 merged; complete.
 
 ## Blockers
 

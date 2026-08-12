@@ -80,6 +80,9 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | WO-022 | `/operator` dual path (monorepo + signed RC) |
 | WO-023 | Publish-gate plan · R1 readiness pack · session resume |
 | **WO-024** | Intel meeting kit · WO status hygiene · RC re-sign 2026-08-12 |
+| **WO-025** | Grok Bot operating system docs |
+| **WO-026** | Honest org pointers + crypto-agility inventory · PR #50/#51 |
+| **WO-027** | PLG shareable /assess re-run link · PR #58 merged |
 
 ### 2026-08-12 Operator RC (local, gitignored)
 
