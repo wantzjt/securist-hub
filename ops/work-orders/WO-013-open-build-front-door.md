@@ -1,7 +1,7 @@
 ---
 id: WO-013
 title: "Open-build GitHub front door (README + community docs)"
-status: in_progress
+status: complete
 owner: grok
 branch: docs/wo-013-open-build-front-door
 depends_on:
@@ -41,5 +41,7 @@ verification:
 Public product (secur.ist) and CI posture are launch-ready. GitHub README still frames “dual-forge / open index / field layer,” which undercuts credibility.
 
 ## Progress
+
+- 2026-08-12 — status marked complete (merged PR; WO-024 hygiene).
 
 - 2026-08-07: Claimed; front-door docs PR.

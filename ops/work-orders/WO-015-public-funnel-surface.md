@@ -1,7 +1,7 @@
 ---
 id: WO-015
 title: Public Decision Brief funnel surface
-status: in_review
+status: complete
 owner: codex
 branch: feat/wo-015-public-funnel
 depends_on: []

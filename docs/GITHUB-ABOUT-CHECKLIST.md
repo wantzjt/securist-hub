@@ -42,10 +42,10 @@ Preserve existing topics that remain accurate until a human decides otherwise.
 
 ## Social preview / About checklist
 
-- [ ] Description updated (above)  
-- [ ] Website = https://secur.ist  
-- [ ] Topics applied  
-- [ ] README renders the product ladder and “no public npx yet”  
+- [x] Description updated (above) — 2026-08-12 via API  
+- [x] Website = https://secur.ist  
+- [x] Topics applied (ai-governance, software-supply-chain, devsecops, …)  
+- [x] README renders the product ladder and “no public npx yet”  
 - [ ] SECURITY.md + CONTRIBUTING.md linked from About if GitHub offers shortcuts  
 
 ---

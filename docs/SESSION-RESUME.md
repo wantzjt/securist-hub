@@ -1,6 +1,6 @@
 # Session resume — Securist (pick up here)
 
-**Last packed:** 2026-08-10  
+**Last packed:** 2026-08-12  
 **Repo:** [wantzjt/securist-hub](https://github.com/wantzjt/securist-hub) · local `ftw-lab/vantage-hub`  
 **Purpose:** One page so a cold machine / new Grok session can continue without archaeology.
 
@@ -34,6 +34,7 @@ Broad announcement                      HOLD
 | Publish gate plan | [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
 | R1 readiness | [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
 | Operator UX | `/operator` · WO-022 |
+| **Intel meeting pack** | [`meeting/`](./meeting/) · WO-024 |
 
 ### Private key reminder
 
@@ -76,27 +77,37 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | WO-020 | Production trust-root on `main` · Gate 1 |
 | WO-021 | CI golden-path battery |
 | WO-022 | `/operator` dual path (monorepo + signed RC) |
-| WO-023 | Publish-gate plan · R1 readiness pack · this resume file |
+| WO-023 | Publish-gate plan · R1 readiness pack · session resume |
+| **WO-024** | Intel meeting kit · WO status hygiene · RC re-sign 2026-08-12 |
+
+### 2026-08-12 Operator RC (local, gitignored)
+
+| Field | Value |
+|-------|--------|
+| Tarball | `.operator-rc/securist-operator-0.1.0-rc.tgz` |
+| SHA-256 | `8242def0c4967cae4216f12d24003c79584539c7a50c13ca923457acd69cad40` |
+| Content digest | `436b6cd2b679e8151fa069b51d761882ba5501a39d213f6cec14ddb9e949ab73` |
+| signerKeyId | `securist-operator-release-key` |
+| publicNpxClaim | false |
+| verify-clean | **PASS** (doctor Runtime verified · assess LocalDecisionBriefV1) |
+| GitHub pre-release | [operator-v0.1.0-rc.1](https://github.com/wantzjt/securist-hub/releases/tag/operator-v0.1.0-rc.1) · **not** npm |
 
 ---
 
 ## Next moves (when you return)
 
-**Do not start all three at once.** Pick one:
-
 | Priority | Work | Owner |
 |----------|------|--------|
 | **A** | Human: backup private key if not done | you |
-| **B** | Publish gate: GitHub Release of signed RC tarball per [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) | you sign/upload · Grok can prep |
-| **C** | R1: grant provision authority then execute [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) | **you only** for credentials |
+| **B** | Optional: GitHub pre-release of signed RC ([`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md)) | you or authorized session |
+| **M** | Run meeting dry-run ([`meeting/DEMO-SCRIPT.md`](./meeting/DEMO-SCRIPT.md)) | you |
+| **C** | R1: grant provision authority then [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) | **you only** for credentials |
 | **D** | Stay HOLD — no announce | default |
 
-### Tell Grok tonight
-
-Paste one line:
+### Tell Grok
 
 ```text
-Resume Securist from docs/SESSION-RESUME.md — continue with [A backup | B publish gate | C R1 | D hold]
+Resume Securist from docs/SESSION-RESUME.md — continue with [A backup | B publish | M meeting dry-run | C R1 | D hold]
 ```
 
 ---

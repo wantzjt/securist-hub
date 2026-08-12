@@ -1,7 +1,7 @@
 ---
 id: WO-016
 title: "Public Assess Resilience (timeout, cache, honest failure)"
-status: in_review
+status: complete
 owner: grok
 branch: ops/wo-016-public-assess-resilience
 depends_on:
@@ -56,5 +56,7 @@ Harden live `secur.ist/assess` against GitHub API flakiness and load without wea
 Tokens for anonymous path · private input logging · accounts · Graph writes · pretend SLAs
 
 ## Progress
+
+- 2026-08-12 — status marked complete (merged PR; WO-024 hygiene).
 
 - 2026-08-07: Claimed after launch merges (#29 front door, #30 funnel) and WO-014 Dependabot exemption.
