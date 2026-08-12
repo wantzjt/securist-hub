@@ -71,6 +71,39 @@ function SecurityPage() {
       </section>
 
       <section className="ops-panel p-4">
+        <h2 className="ops-label">Crypto-agility inventory (posture)</h2>
+        <p className="mt-2 text-[12px] leading-relaxed text-[var(--securist-muted)]">
+          Where TLS / transport applies, Securist inventory prefers hybrid
+          post-quantum / traditional key agreement{' '}
+          <strong className="text-white">X25519MLKEM768</strong> (ML-KEM-768
+          combined with X25519; hybrid KEM design in the class documented by{' '}
+          <span className="text-white">RFC 10024</span>
+          -family hybrid TLS work). This is an{' '}
+          <strong className="text-white">inventory posture</strong> for what
+          environments should track — not a product claim and not quantum-fear
+          marketing.
+        </p>
+        <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--securist-muted)]">
+          <li>
+            <strong className="text-white">Operator does not negotiate ML-KEM:</strong>{' '}
+            the free Local Operator does{' '}
+            <em className="text-white">not</em> currently perform hybrid PQ/T
+            key agreement or advertise X25519MLKEM768 as a runtime capability.
+          </li>
+          <li>
+            <strong className="text-white">Release signing remains Ed25519:</strong>{' '}
+            Operator release identity is signed with Ed25519 against the packaged
+            public trust root — separate from transport KEM inventory.
+          </li>
+          <li>
+            <strong className="text-white">Public assess TLS:</strong> edge/origin
+            terminate TLS as configured by the host (Vercel / CDN). Inventory
+            preference does not rewrite edge cipher suites from this page.
+          </li>
+        </ul>
+      </section>
+
+      <section className="ops-panel p-4">
         <h2 className="ops-label">Edge + origin controls (live)</h2>
         <ul className="mt-2 list-disc space-y-2 pl-4 text-[12px] text-[var(--securist-muted)]">
           <li>

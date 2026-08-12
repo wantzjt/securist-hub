@@ -232,7 +232,7 @@ export async function getFlywheelPulse(options?: {
   const sources: PulseSourceCard[] = [
     {
       id: 'github',
-      label: 'GitHub securist',
+      label: 'GitHub Securist-InfoSec',
       status: gh.status === 'empty' && SEED_EVENTS.length ? 'seed' : gh.status,
       count:
         gh.events.length ||

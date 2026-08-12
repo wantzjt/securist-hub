@@ -46,7 +46,7 @@ The public runtime requires only:
 | Variable                 | Purpose                                   |
 | ------------------------ | ----------------------------------------- |
 | `VITE_PUBLIC_HOSTNAME`   | Public host, normally `secur.ist`         |
-| `VITE_PUBLIC_GITHUB_ORG` | Public GitHub organization identity       |
+| `VITE_PUBLIC_GITHUB_ORG` | Public GitHub organization identity (use Securist-InfoSec; not empty user securist)       |
 | `VITE_PUBLIC_HF_ORG`     | Public Hugging Face organization identity |
 
 Server-only integrations are optional and must not be added until their production gates are complete:

@@ -127,6 +127,8 @@ Team Graph (R1) is the paid shared step. Not activated yet.
 | **WO-022** | Operator dual-path UX (monorepo + signed RC) | **complete** · PR #41 |
 | **WO-023** | Publish-gate plan + R1 readiness + session resume | **complete** · PR #43–#44 |
 | **WO-024** | Intel meeting readiness pack | Meeting kit + WO hygiene · RC re-sign 2026-08-12 |
+| **WO-025** | Grok Bot OS + standup prompt | **complete** |
+| **WO-026** | Honest org pointers + crypto-agility inventory | Securist-InfoSec + X25519MLKEM768 posture |
 | Human backup | Offline copy of release private key | Founder ★ still required |
 | Operator publish | GitHub Release tarball first (not npm) | Artifacts ready locally · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human authority · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |

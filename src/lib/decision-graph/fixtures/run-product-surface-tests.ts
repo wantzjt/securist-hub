@@ -121,6 +121,8 @@ function main() {
   const preview = read('src/components/DecisionBriefPreview.tsx')
   const chrome = read('src/components/SiteChrome.tsx')
   const brand = read('src/lib/brand.ts')
+  const packages = read('src/lib/packages.ts')
+  const security = read('src/routes/security.tsx')
   const securityMd = read('SECURITY.md')
   const supportMd = read('SUPPORT.md')
 
@@ -207,6 +209,39 @@ function main() {
   assert(
     'SECURITY.md uses protonmail contact',
     securityMd.includes('securist_info_sec@protonmail.com'),
+  )
+  assert(
+    'SECURITY.md crypto-agility inventory X25519MLKEM768',
+    securityMd.includes('X25519MLKEM768') &&
+      securityMd.includes('Ed25519') &&
+      /Local Operator negotiates ML-KEM[\s\S]*?\|\s*\*\*No\*\*/i.test(
+        securityMd,
+      ),
+  )
+  assert(
+    'SECURITY.md honest forge Securist-InfoSec + product hub',
+    securityMd.includes('Securist-InfoSec') &&
+      securityMd.includes('wantzjt/securist-hub'),
+  )
+  assert(
+    'packages GITHUB_ORG is Securist-InfoSec',
+    packages.includes("GITHUB_ORG = 'Securist-InfoSec'") ||
+      packages.includes('GITHUB_ORG = "Securist-InfoSec"'),
+  )
+  assert(
+    'packages do not clone empty github.com/securist/',
+    !packages.includes('github.com/securist/') &&
+      !packages.includes('https://github.com/securist/'),
+  )
+  assert(
+    'brand default github org is Securist-InfoSec',
+    brand.includes('Securist-InfoSec'),
+  )
+  assert(
+    'security route crypto-agility note',
+    security.includes('X25519MLKEM768') &&
+      /inventory|posture/i.test(security) &&
+      /does not|not.*negotiat/i.test(security),
   )
   assert(
     'SUPPORT.md uses protonmail contact',
