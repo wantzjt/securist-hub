@@ -35,7 +35,12 @@ secur.ist/assess          monorepo today              R1 (next)           after 
 3. State intended use, environment, and deployment boundary  
 4. Get a share-safe brief: observed facts, unknowns, evidence gaps — not a pentest  
 
-Also: [sample Decision Brief](https://secur.ist/artifacts/art-scout-daemon)
+Also: [sample Decision Brief (SEED · illustrative)](https://secur.ist/artifacts/art-scout-daemon)
+
+### Briefs we ran (dogfood)
+
+Public /assess dogfood log (ephemeral briefs; share via re-run link after WO-027): [Briefs we ran — 2026-08-12](https://github.com/wantzjt/securist-hub/issues/57)
+
 
 **Not supported on the public path:** private repos, secrets, local paths, non-GitHub hosts.
 
