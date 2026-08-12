@@ -71,6 +71,13 @@ function AssessPage() {
         setError(result.error)
       } else {
         setBrief(result.brief)
+        // PLG: put an honest re-run URL in the address bar (not a durable brief).
+        if (typeof window !== 'undefined' && repositoryUrl.trim()) {
+          const next = new URL(window.location.href)
+          next.searchParams.set('url', repositoryUrl.trim())
+          next.searchParams.delete('artifact')
+          window.history.replaceState(window.history.state, '', next.toString())
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Assess failed')
@@ -207,10 +214,16 @@ function AssessPage() {
         </div>
       ) : null}
 
-      {brief ? <BriefResult brief={brief} onDownload={downloadDraft} /> : null}
+      {brief ? (
+        <BriefResult
+          brief={brief}
+          repositoryUrl={repositoryUrl.trim()}
+          onDownload={downloadDraft}
+        />
+      ) : null}
 
       <p className="text-[11px] text-[var(--securist-muted)]">
-        Prefer a curated seed profile?{' '}
+        Prefer a SEED illustrative profile?{' '}
         <Link
           to="/artifacts/$artifactId"
           params={{ artifactId: 'art-scout-daemon' }}
@@ -226,11 +239,32 @@ function AssessPage() {
 
 function BriefResult({
   brief,
+  repositoryUrl,
   onDownload,
 }: {
   brief: PublicDecisionBriefV1
+  repositoryUrl: string
   onDownload: () => void
 }) {
+  const [shareCopied, setShareCopied] = useState(false)
+  const rerunUrl = useMemo(() => {
+    const origin =
+      typeof window !== 'undefined' ? window.location.origin : 'https://secur.ist'
+    const u = new URL('/assess', origin)
+    if (repositoryUrl) u.searchParams.set('url', repositoryUrl)
+    return u.toString()
+  }, [repositoryUrl])
+
+  async function copyRerunLink() {
+    try {
+      await navigator.clipboard.writeText(rerunUrl)
+      setShareCopied(true)
+      setTimeout(() => setShareCopied(false), 1500)
+    } catch {
+      setShareCopied(false)
+    }
+  }
+
   return (
     <div className="space-y-4" id="decision-brief-result">
       <header className="flex flex-wrap items-end justify-between gap-3">
@@ -247,14 +281,28 @@ function BriefResult({
             Not durable · Not a production approval
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <CopyPage
-            title={`Decision Brief · ${brief.repository.fullName}`}
-            body={brief.draftJson}
-          />
-          <button type="button" className="ops-btn" onClick={onDownload}>
-            Download draft JSON
-          </button>
+        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="ops-btn ops-btn-solid"
+              onClick={copyRerunLink}
+              title="Copies a link that re-runs assess for this public repo. Does not save the brief."
+            >
+              {shareCopied ? 'Link copied' : 'Copy re-run link'}
+            </button>
+            <CopyPage
+              title={`Decision Brief · ${brief.repository.fullName}`}
+              body={brief.draftJson}
+            />
+            <button type="button" className="ops-btn" onClick={onDownload}>
+              Download draft JSON
+            </button>
+          </div>
+          <p className="max-w-md text-[10px] leading-relaxed text-[var(--securist-muted)]">
+            Re-run link opens /assess for this public repo. It does not save this
+            brief. Team Graph shared memory is not live.
+          </p>
         </div>
       </header>
 
