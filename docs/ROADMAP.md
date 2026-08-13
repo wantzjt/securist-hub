@@ -131,7 +131,7 @@ CI dogfood (WO-030): one ephemeral Decision Brief comment on public PRs in this 
 | **WO-025** | Grok Bot OS + standup prompt | **complete** |
 | **WO-026** | Honest org pointers + crypto-agility inventory | Securist-InfoSec + X25519MLKEM768 posture |
 | **WO-030** | Public Decision Brief GitHub Action (read-only) | **complete** · PR #70 · ephemeral PR comment, not approval |
-| **WO-031** | Admission packs (coding agents / MCP / models) | in review · scaffolds, not certs; Team Graph not live |
+| **WO-031** | Admission packs (coding agents / MCP / models) | **complete** · PR #72 · scaffolds, not certs; Team Graph not live |
 | Human backup | Offline copy of release private key | Founder ★ still required |
 | Operator publish | GitHub Release tarball first (not npm) | Artifacts ready locally · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human authority · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
