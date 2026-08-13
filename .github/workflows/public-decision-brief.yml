@@ -1,0 +1,42 @@
+name: public-decision-brief
+
+# Dogfood on wantzjt/securist-hub. Read-only vs repo contents/secrets.
+# Posts or updates one ephemeral Decision Brief comment. Not production approval.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Public PR number to post or update the ephemeral Brief on
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: public-decision-brief-${{ github.event.pull_request.number || inputs.pr_number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  brief:
+    name: decision-brief-comment
+    runs-on: ubuntu-latest
+    # Public repos only — private-code cloud assess is a non-goal.
+    if: ${{ github.event.repository.private == false && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Offline Brief renderer + idempotency fixtures
+        run: node scripts/public-decision-brief-lib.mjs
+
+      - name: Post or update one Brief comment
+        uses: ./.github/actions/public-decision-brief
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ github.event.pull_request.number || inputs.pr_number }}
