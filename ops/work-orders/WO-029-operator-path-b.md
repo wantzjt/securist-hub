@@ -1,7 +1,7 @@
 ---
 id: WO-029
 title: "Operator 5-minute Path B (signed GitHub Release)"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-029-operator-path-b
 depends_on:
@@ -30,6 +30,7 @@ Operator 5-minute Path B (signed GitHub Release).
 ## Progress
 
 - 2026-08-12 — Path B UX + docs; PR open.
+- 2026-08-12 — PR #68 merged; complete.
 
 
 ## Blockers
