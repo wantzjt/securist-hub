@@ -8,6 +8,19 @@ import type {
 } from '#/lib/decision-graph/surface-contracts'
 import { CopyPage } from '#/components/CopyPage'
 
+function repoHintFromUrl(raw: string | undefined): string | null {
+  if (!raw?.trim()) return null
+  try {
+    const u = new URL(raw.trim())
+    if (!/(^|\.)github\.com$/i.test(u.hostname)) return null
+    const parts = u.pathname.split('/').filter(Boolean)
+    if (parts.length >= 2) return `${parts[0]}/${parts[1]}`
+  } catch {
+    return null
+  }
+  return null
+}
+
 export const Route = createFileRoute('/assess')({
   validateSearch: (search: Record<string, unknown>): {
     url?: string
@@ -16,6 +29,29 @@ export const Route = createFileRoute('/assess')({
     url: typeof search.url === 'string' ? search.url : undefined,
     artifact: typeof search.artifact === 'string' ? search.artifact : undefined,
   }),
+  loaderDeps: ({ search }) => ({ url: search.url }),
+  loader: ({ deps }) => deps,
+  head: ({ loaderData }) => {
+    const repo = repoHintFromUrl(loaderData?.url)
+    const title = repo
+      ? `Public Decision Brief (ephemeral) · ${repo} · Securist`
+      : 'Public Decision Brief (ephemeral) · Securist'
+    const description = repo
+      ? `Ephemeral Decision Brief draft for ${repo}. Re-run assess from this link — not a durable saved brief. Not a production approval.`
+      : 'Paste a public GitHub URL for an ephemeral Decision Brief draft. Not durable. Not a production approval. No account required.'
+    return {
+      meta: [
+        { title },
+        { name: 'description', content: description },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: description },
+        { property: 'og:type', content: 'website' },
+        { name: 'twitter:card', content: 'summary' },
+        { name: 'twitter:title', content: title },
+        { name: 'twitter:description', content: description },
+      ],
+    }
+  },
   component: AssessPage,
 })
 
@@ -97,8 +133,8 @@ function AssessPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <header>
+    <div className={`space-y-6${brief ? ' assess-has-brief' : ''}`}>
+      <header className={brief ? 'no-print' : undefined}>
         <div className="flex flex-wrap items-center gap-2">
           <div className="ops-label">Product · Assess</div>
           <span className="ops-chip ops-chip-live">Live</span>
@@ -114,7 +150,10 @@ function AssessPage() {
         </p>
       </header>
 
-      <form onSubmit={onSubmit} className="ops-panel space-y-4 p-4">
+      <form
+        onSubmit={onSubmit}
+        className={`ops-panel space-y-4 p-4${brief ? ' no-print' : ''}`}
+      >
         <div>
           <label className="ops-label" htmlFor="repo-url">
             Public GitHub repository URL
@@ -222,7 +261,7 @@ function AssessPage() {
         />
       ) : null}
 
-      <p className="text-[11px] text-[var(--securist-muted)]">
+      <p className="no-print text-[11px] text-[var(--securist-muted)]">
         Prefer a SEED illustrative profile?{' '}
         <Link
           to="/artifacts/$artifactId"
@@ -237,6 +276,81 @@ function AssessPage() {
   )
 }
 
+function buildBriefMarkdown(
+  brief: PublicDecisionBriefV1,
+  repositoryUrl: string,
+  rerunUrl: string,
+): string {
+  const stamp =
+    'Ephemeral public draft · Not durable · Not a production approval · Team Graph shared memory is not live'
+  const code = (s: string) => '`' + s + '`'
+  const lines: string[] = [
+    '# Decision Brief · ' + brief.repository.fullName,
+    '',
+    '> ' + stamp,
+    '>',
+    '> Re-run (does not save this brief): ' + rerunUrl,
+    '',
+    '- Status: ' + code(brief.decisionStatus),
+    '- Data: ' + code(brief.label),
+    '- Persistence: ' + code(brief.persistence),
+    '- Fetched: ' + brief.fetchedAt,
+    '',
+    '## Scope (stated)',
+    '',
+    '- Intended use: ' + brief.scope.intendedUse,
+    '- Environment: ' + brief.scope.environment,
+    '- Boundary: ' + brief.scope.deploymentBoundary,
+    '',
+    '## Repository (observed)',
+    '',
+    '- Canonical URL: ' + brief.repository.htmlUrl,
+    '- Default branch / HEAD: ' +
+      brief.repository.defaultBranch +
+      (brief.repository.headSha
+        ? ' · ' + brief.repository.headSha.slice(0, 12)
+        : ''),
+    '- License: ' +
+      (brief.repository.licenseSpdx ||
+        brief.repository.licenseName ||
+        'Unknown / not asserted'),
+    '- Latest release: ' +
+      (brief.repository.latestReleaseTag || 'None observed'),
+    '- Language: ' + (brief.repository.language || '—'),
+    '- Package.json: ' +
+      (brief.repository.packageName || brief.repository.packageVersion
+        ? (brief.repository.packageName || '—') +
+          '@' +
+          (brief.repository.packageVersion || '—')
+        : 'Not at repo root / not observed'),
+  ]
+  if (brief.repository.description) {
+    lines.push('', brief.repository.description)
+  }
+  lines.push('', '## Observed facts (LIVE)', '')
+  for (const o of brief.observed) {
+    lines.push(
+      '- **' + o.domain + '** · ' + code(o.verification) + ' — ' + o.assertion,
+      '  - Source: ' + o.source,
+    )
+  }
+  lines.push('', '## Evidence gaps', '')
+  for (const g of brief.evidenceGaps) lines.push('- ' + g)
+  lines.push('', '## What would force re-review', '')
+  for (const t of brief.reReviewTriggers) lines.push('- ' + t)
+  lines.push('', '## Unknowns (explicit)', '')
+  for (const u of brief.unknowns) lines.push('- ' + u)
+  lines.push('', '## Policy hints (not a decision)', '')
+  for (const h of brief.policyHints) lines.push('- ' + h)
+  lines.push('', '## Disclaimers', '')
+  for (const d of brief.disclaimers) lines.push('- ' + d)
+  if (repositoryUrl) {
+    lines.push('', '---', '', 'Assess input URL: ' + repositoryUrl)
+  }
+  lines.push('')
+  return lines.join('\n')
+}
+
 function BriefResult({
   brief,
   repositoryUrl,
@@ -247,6 +361,7 @@ function BriefResult({
   onDownload: () => void
 }) {
   const [shareCopied, setShareCopied] = useState(false)
+  const [mdExported, setMdExported] = useState(false)
   const rerunUrl = useMemo(() => {
     const origin =
       typeof window !== 'undefined' ? window.location.origin : 'https://secur.ist'
@@ -265,11 +380,28 @@ function BriefResult({
     }
   }
 
+  function exportMarkdown() {
+    const md = buildBriefMarkdown(brief, repositoryUrl, rerunUrl)
+    const slug = brief.repository.fullName.replace('/', '-')
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' })
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = 'decision-brief-' + slug + '.md'
+    a.click()
+    URL.revokeObjectURL(a.href)
+    void navigator.clipboard.writeText(md).catch(() => {})
+    setMdExported(true)
+    setTimeout(() => setMdExported(false), 1500)
+  }
+
   return (
-    <div className="space-y-4" id="decision-brief-result">
+    <div className="brief-print-root space-y-4" id="decision-brief-result">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="ops-label">Decision Brief · ephemeral</div>
+          <p className="mt-1 text-[11px] font-medium tracking-wide text-[var(--securist-accent)] uppercase">
+            Ephemeral · Not durable · Re-run link does not save this brief
+          </p>
           <h2 className="mt-1 text-lg font-semibold text-white">
             {brief.repository.fullName}
           </h2>
@@ -281,7 +413,7 @@ function BriefResult({
             Not durable · Not a production approval
           </p>
         </div>
-        <div className="flex flex-col items-stretch gap-2 sm:items-end">
+        <div className="no-print flex flex-col items-stretch gap-2 sm:items-end">
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -290,6 +422,14 @@ function BriefResult({
               title="Copies a link that re-runs assess for this public repo. Does not save the brief."
             >
               {shareCopied ? 'Link copied' : 'Copy re-run link'}
+            </button>
+            <button
+              type="button"
+              className="ops-btn"
+              onClick={exportMarkdown}
+              title="Downloads a markdown export of this on-screen Decision Brief. Ephemeral — not a durable store."
+            >
+              {mdExported ? 'Markdown exported' : 'Export markdown'}
             </button>
             <CopyPage
               title={`Decision Brief · ${brief.repository.fullName}`}
@@ -301,7 +441,8 @@ function BriefResult({
           </div>
           <p className="max-w-md text-[10px] leading-relaxed text-[var(--securist-muted)]">
             Re-run link opens /assess for this public repo. It does not save this
-            brief. Team Graph shared memory is not live.
+            brief. Team Graph shared memory is not live. Export markdown is a
+            local snapshot of this screen.
           </p>
         </div>
       </header>
@@ -330,7 +471,7 @@ function BriefResult({
         </dl>
       </section>
 
-      <section className="ops-panel space-y-3 p-4">
+      <section className="ops-panel space-y-3 p-4 no-print">
         <div>
           <div className="ops-label">What next?</div>
           <p className="mt-1 text-[12px] leading-relaxed text-[var(--securist-muted)]">
@@ -487,7 +628,7 @@ function BriefResult({
             <li key={d}>{d}</li>
           ))}
         </ul>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 flex flex-wrap gap-2 no-print">
           <button
             type="button"
             className="ops-btn opacity-60"

@@ -165,3 +165,17 @@ select:focus-visible {
   line-height: 1.45;
   max-width: 100%;
 }
+
+/* WO-028: readable Print / Save-as-PDF for Decision Brief */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff !important; color: #111 !important; }
+  .ops-shell { background: #fff !important; color: #111 !important; }
+  .ops-panel { break-inside: avoid; border-color: #ccc !important; background: #fff !important; }
+  .ops-label, .ops-accent, .ops-chip, .ops-chip-live { color: #222 !important; }
+  .brief-print-root { color: #111; }
+  .brief-print-root a { color: #000 !important; text-decoration: underline; }
+  .brief-print-root .ops-chip,
+  .brief-print-root .ops-chip-live { border-color: #999 !important; background: transparent !important; }
+}
+

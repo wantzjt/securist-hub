@@ -9,13 +9,13 @@ const linkClass =
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   return (
     <div className="ops-shell min-h-screen bg-[var(--securist-void)] text-[#e8e8ec]">
-      <div className="border-b border-[var(--securist-border)] bg-black/50">
+      <div className="no-print border-b border-[var(--securist-border)] bg-black/50">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-3 py-1.5 text-[10px] tracking-[0.12em] text-[var(--securist-muted)] uppercase sm:px-4">
           <span className="ops-accent">Permission system</span>
           <span className="truncate">{BRAND.stack}</span>
         </div>
       </div>
-      <header className="sticky top-0 z-40 border-b border-[var(--securist-border)] bg-[rgba(5,5,6,0.92)] backdrop-blur">
+      <header className="no-print sticky top-0 z-40 border-b border-[var(--securist-border)] bg-[rgba(5,5,6,0.92)] backdrop-blur">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-3 py-2.5 sm:px-4">
           <Link
             to="/"
@@ -87,13 +87,15 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <DispatchTape />
+      <div className="no-print">
+        <DispatchTape />
+      </div>
 
       <main id="main" className="mx-auto max-w-5xl px-3 py-6 sm:px-4 sm:py-8">
         {children}
       </main>
 
-      <footer className="border-t border-[var(--securist-border)] py-5">
+      <footer className="no-print border-t border-[var(--securist-border)] py-5">
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-3 text-[10px] text-[var(--securistel)] sm:px-4">
           <p className="flex flex-wrap gap-x-2 gap-y-1 tracking-wide uppercase">
             <span>{BRAND.productHouse}</span>
