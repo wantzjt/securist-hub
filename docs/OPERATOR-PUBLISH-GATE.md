@@ -97,7 +97,7 @@ gh release create operator-v0.1.0-rc.1 \
 | Surface | After first GH Release | Still forbidden |
 |---------|------------------------|-----------------|
 | Monorepo | Unchanged | — |
-| `/operator` Path B | May later link “GitHub Releases” explicitly (separate WO) | Claiming public npx |
+| `/operator` Path B | Links GitHub Releases (WO-029) | Claiming public npx |
 | BUYER-MESSAGING | Update only when human unlocks download CTA | “Available on npm” |
 | Announcement | Still **HOLD** unless founder decides otherwise | Launch blog implying full golden path paid loop |
 

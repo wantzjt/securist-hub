@@ -59,7 +59,7 @@ Outbound and website copy should address the **coalition**, not invent a single 
 | Claim | Status |
 |-------|--------|
 | Free Local Operator in monorepo | **Yes** — WO-012 on `main` (`npm run operator:build` · `npm run securist`) |
-| Signed RC path (offline tarball) | **Yes, when you hold a human-signed RC** — Gate 1 proven; site documents unpack → doctor → assess · **no public download store** |
+| Signed RC path (GitHub Release) | **Yes via pre-release operator-v0.1.0-rc.1** — Gate 1 proven; site documents unpack → doctor → assess · **no public download store** |
 | Public install (`npx @securist/operator`) | **No** — forthcoming after deliberate publish gate |
 | Runtime “verified” without release signature | **No** — doctor reports `runtime_unavailable`; assess blocked |
 | Paid Team Graph / multi-user durability | **No** until R1 (WO-008) human-signed |

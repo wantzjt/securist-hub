@@ -5,6 +5,7 @@ import {
   OPERATOR_COMMANDS,
   OPERATOR_DISTRIBUTION_STATUS,
   OPERATOR_RC_COMMANDS,
+  OPERATOR_RELEASE_URL,
   PRODUCT_SENTENCE,
 } from '#/lib/product-surface'
 import { CopyPage } from '#/components/CopyPage'
@@ -22,10 +23,12 @@ const MONOREPO_STEPS = [
 ] as const
 
 const RC_STEPS = [
+  { title: 'Fetch signed Release assets', cmd: OPERATOR_RC_COMMANDS.download },
+  { title: 'Verify SHA-256 checksums', cmd: OPERATOR_RC_COMMANDS.verifyChecksum },
   { title: 'Unpack the signed RC tarball', cmd: OPERATOR_RC_COMMANDS.unpack },
   { title: 'Set a private SECURIST_HOME', cmd: OPERATOR_RC_COMMANDS.home },
   { title: 'Doctor — expect Runtime verified', cmd: OPERATOR_RC_COMMANDS.doctor },
-  { title: 'Assess a local repo path', cmd: OPERATOR_RC_COMMANDS.assess },
+  { title: 'First local Decision Brief', cmd: OPERATOR_RC_COMMANDS.assess },
 ] as const
 
 function OperatorPage() {
@@ -125,32 +128,31 @@ function OperatorPage() {
       <section className="space-y-3" aria-labelledby="path-b-heading">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <div className="ops-label">Path B · when you have a signed RC</div>
+            <div className="ops-label">Path B · about five minutes from signed GitHub Release</div>
             <h2
               id="path-b-heading"
               className="text-sm font-semibold tracking-[0.1em] text-white uppercase"
             >
-              Signed release-candidate tarball
+              Signed GitHub Release candidate
             </h2>
           </div>
           <CopyPage
-            title="Securist Local Operator — signed RC"
+            title="Securist Local Operator — Path B signed Release"
             body={rcBlock}
           />
         </div>
         <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
-          Gate 1 proved human-signed Operator release candidates offline. If
-          someone gives you a{' '}
-          <code className="text-[11px] text-white">
-            securist-operator-*-rc.tgz
-          </code>{' '}
-          that includes{' '}
-          <code className="text-[11px] text-white">runtime-identity.json</code>{' '}
-          and the production trust root, unpack with{' '}
-          <code className="text-[11px] text-white">tar -xzf</code> and run—no
-          monorepo build step. This page does{' '}
-          <strong className="text-white">not</strong> offer a public download
-          store or npm package.
+          Skilled operators can finish Path B in about five minutes.
+          Use signed pre-release tag operator-v0.1.0-rc.1 on the hub.
+          Check SHA256SUMS, unpack the RC tarball, set a private home,
+          run doctor against the Ed25519 trust root (expect Runtime verified),
+          then assess for a first local Decision Brief. No monorepo build.
+          Follow the six steps below for the clean-machine path.
+          Release:{' '}
+          <a className="ops-accent" href={OPERATOR_RELEASE_URL} target="_blank" rel="noreferrer">
+            {OPERATOR_RELEASE_URL}
+          </a>
+          . Still not a public registry install path.
         </p>
         <ol className="space-y-3">
           {RC_STEPS.map((step, i) => (
@@ -167,6 +169,37 @@ function OperatorPage() {
         <p className="text-[11px] text-[var(--securist-muted)]">
           {OPERATOR_RC_COMMANDS.note}
         </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="ops-panel space-y-2 p-4">
+            <div className="ops-label">Trust root honesty</div>
+            <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
+              Doctor verifies an Ed25519 signature over the packaged artifacts
+              using the shipped <code className="text-white">trust-root.pem</code>.
+              We do not claim ML-KEM (or other PQC) signing for Operator
+              releases.
+            </p>
+          </div>
+          <div className="ops-panel space-y-2 p-4">
+            <div className="ops-label">Human-readable failures</div>
+            <ul className="list-disc space-y-1.5 pl-4 text-[12px] leading-relaxed text-[var(--securist-muted)]">
+              <li>
+                <span className="text-white">Bad or missing signature</span> —
+                doctor reports signature_invalid / Runtime unavailable; do not
+                treat the build as verified; assess stays blocked.
+              </li>
+              <li>
+                <span className="text-white">Wrong runtime / platform</span> —
+                this Release is a portable Node CLI (Node.js 20 or newer), not an
+                OS-native binary. Missing Node or Node &lt; 20 fails with a clear
+                engines message before doctor runs.
+              </li>
+              <li>
+                <span className="text-white">Checksum mismatch</span> — stop and
+                re-fetch Release assets; do not unpack a bad tarball.
+              </li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section className="grid gap-3 lg:grid-cols-2">
@@ -211,7 +244,7 @@ function OperatorPage() {
           <p className="mt-1 text-[12px] text-[var(--securist-muted)]">
             Monorepo package{' '}
             <code className="text-white">@securist/operator</code> · private ·
-            not published. Signed RCs stay offline until the human publish gate.
+            not published. Path B uses the published signed RC; package remains private.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

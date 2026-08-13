@@ -46,7 +46,7 @@ export const LADDER = [
     status: 'local' as const,
     statusLabel: 'Local',
     title: 'Assess privately',
-    body: 'Keep private code on your machine. Free Local Operator: monorepo path today, or a human-signed release-candidate tarball when you have one. Not public npm. Not Electron.',
+    body: 'Keep private code on your machine. Free Local Operator: monorepo path today, or a ~5-minute Path B from a signed GitHub Release. Not public npm. Not Electron.',
     cta: 'Local Operator guide',
     href: '/operator' as const,
   },
@@ -105,31 +105,42 @@ export const OPERATOR_COMMANDS = {
   doctor: 'npm run securist -- doctor',
   assess: 'npm run securist -- assess . --intended-use "Local engineering review"',
   mcp: 'npm run securist -- mcp',
-  note: 'Package @securist/operator remains private. Public npx install is not available until a human-signed distribution ships.',
+  note: 'Package @securist/operator remains private. Public registry install is not available; use Path B signed Release or Path A monorepo.',
 } as const
 
 /**
- * Signed release-candidate path (Gate 1 proven).
- * Commands assume the developer already has a signed RC tarball
- * (built offline with the production key — not a public download claim).
+ * Path B signed GitHub Release RC (WO-029 / Gate 1).
+ * Commands cover Release assets through first local brief
+ * (Ed25519 trust root; not a website asset store).
  * Still not public npm / npx.
  */
+export const OPERATOR_RELEASE_TAG = 'operator-v0.1.0-rc.1' as const
+export const OPERATOR_RELEASE_URL =
+  'https://github.com/wantzjt/securist-hub/releases/tag/operator-v0.1.0-rc.1' as const
+export const OPERATOR_RELEASE_TARBALL =
+  'securist-operator-0.1.0-rc.tgz' as const
+
 export const OPERATOR_RC_COMMANDS = {
+  download:
+    'curl -fsSL -O https://github.com/wantzjt/securist-hub/releases/download/operator-v0.1.0-rc.1/securist-operator-0.1.0-rc.tgz && curl -fsSL -O https://github.com/wantzjt/securist-hub/releases/download/operator-v0.1.0-rc.1/SHA256SUMS.txt',
+  verifyChecksum: 'shasum -a 256 -c SHA256SUMS.txt',
   unpack: 'tar -xzf securist-operator-0.1.0-rc.tgz && cd securist-operator-0.1.0-rc',
   home: 'export SECURIST_HOME="$(pwd)/.securist-home" && mkdir -p "$SECURIST_HOME"',
   doctor: 'node bin/securist.mjs doctor',
   assess:
     'node bin/securist.mjs assess /path/to/your/repo --intended-use "Local engineering review"',
   mcp: 'node bin/securist.mjs mcp',
-  note: 'Signed RC requires a human-produced tarball with runtime-identity.json over the production trust root. Expect “Runtime verified” only when the signature matches. Public npx is still not available. Not Electron.',
-  statusLabel: 'Signed RC · not public npm',
+  timeTarget: 'About five minutes on a clean machine with Node.js >= 20',
+  note: 'Path B fetches the signed Release tarball; runtime-identity.json is checked against the production Ed25519 trust root. Expect “Runtime verified” only when the signature matches. Not a website asset store. Public registry install remains unavailable. Requires Node.js >= 20. Not Electron.',
+  statusLabel: 'Signed RC from GitHub Release',
 } as const
 
-/** Ladder / status chips — product truth after WO-020 / WO-021. */
+/** Ladder / status chips — product truth after WO-020 / WO-021 / WO-029. */
 export const OPERATOR_DISTRIBUTION_STATUS = {
-  monorepo: 'Available today from the Securist monorepo',
+  monorepo: 'Available today from the Securist monorepo (Path A)',
   signedRc:
-    'Human-signed release candidates are proven offline (Gate 1). Not a public download store yet.',
+    'Human-signed release candidates are proven offline (Gate 1). Available via GitHub pre-release tag operator-v0.1.0-rc.1.',
   publicNpx: 'Public npx @securist/operator is not available',
   teamGraph: 'Team Graph shared memory is not live (R1)',
 } as const
+

@@ -11,7 +11,7 @@
 ```text
 Public Assess (/assess)                 LIVE
 Local Operator monorepo path            LIVE on /operator Path A
-Local Operator signed RC path           UX on /operator Path B · Gate 1 proven offline
+Local Operator signed RC path           Path B on /operator from GitHub Release · Gate 1
 Team Graph / R1                         NOT LIVE (human Postgres only)
 Public npx @securist/operator           NOT available
 Broad announcement                      HOLD
@@ -84,6 +84,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **WO-026** | Honest org pointers + crypto-agility inventory · PR #50/#51 |
 | **WO-027** | PLG shareable /assess re-run link · PR #58 merged |
 | **WO-028** | Share-grade Brief (OG + md export + print) · PR #66 merged |
+| **WO-029** | Operator Path B from signed GitHub Release · in review |
 
 ### 2026-08-12 Operator RC (local, gitignored)
 

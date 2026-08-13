@@ -139,10 +139,10 @@ Full steps: [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md).
 
 - [x] Channel decided: GitHub Release tarball first; npm later only if deliberate  
 - [ ] Offline prep: `npm run operator:rc` → `operator:rc:verify-clean` → `operator:rc:publish-prep`  
-- [ ] Human creates pre-release tag + uploads tarball + SHA256SUMS + MANIFEST  
+- [x] Human creates pre-release tag + uploads tarball + SHA256SUMS + MANIFEST  
 - [x] Artifact set defined: `dist/`, `bin/`, `package.json`, `keys/trust-root.pem`, `runtime-identity.json`  
 - [x] `@securist/operator` remains **`private: true` in monorepo** until human flips publish intent  
-- [ ] Tag e.g. `operator-v0.1.0-rc.1` with checksums  
+- [x] Tag e.g. `operator-v0.1.0-rc.1` with checksums  
 
 ### F. Public messaging unlock
 

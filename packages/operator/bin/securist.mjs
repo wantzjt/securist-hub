@@ -9,6 +9,14 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+const nodeMajor = Number(process.versions.node.split('.')[0])
+if (!Number.isFinite(nodeMajor) || nodeMajor < 20) {
+  console.error(
+    'securist: Node.js >= 20 required (portable Node CLI Release, not a native OS binary). Found: ' +
+      process.versions.node,
+  )
+  process.exit(1)
+}
 const distCli = join(root, 'dist', 'cli.js')
 
 if (!existsSync(distCli)) {

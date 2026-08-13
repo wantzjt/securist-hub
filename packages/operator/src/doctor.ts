@@ -44,7 +44,8 @@ export function runDoctor(): DoctorReport {
     lines.push(`Runtime unavailable: ${runtime.error}`)
     lines.push('Deterministic assess blocked until a release-signed identity is present')
     if (runtime.code === 'signature_invalid') {
-      lines.push('Signature invalid — do not treat this build as verified')
+      lines.push('Signature invalid against Ed25519 trust root — do not treat this build as verified')
+      lines.push('Wrong or tampered Release artifact; re-fetch the signed GitHub Release tarball')
     }
   }
   lines.push(`Local state: ${operatorStateRoot()}`)
