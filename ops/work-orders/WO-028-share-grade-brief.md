@@ -1,7 +1,7 @@
 ---
 id: WO-028
 title: "Share-grade Brief surface (OG + markdown export + print)"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-028-share-grade-brief
 depends_on:
@@ -30,6 +30,7 @@ Share-grade Brief surface (OG + markdown export + print).
 ## Progress
 
 - 2026-08-12 — Implementation on branch feat/wo-028-share-grade-brief; PR open.
+- 2026-08-12 — PR #66 merged; complete.
 
 ## Blockers
 
