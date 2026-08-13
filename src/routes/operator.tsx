@@ -8,6 +8,7 @@ import {
   OPERATOR_RELEASE_URL,
   PRODUCT_SENTENCE,
 } from '#/lib/product-surface'
+import { ADMISSION_PACK_LIST } from '#/lib/admission-packs'
 import { CopyPage } from '#/components/CopyPage'
 
 export const Route = createFileRoute('/operator')({
@@ -24,10 +25,16 @@ const MONOREPO_STEPS = [
 
 const RC_STEPS = [
   { title: 'Fetch signed Release assets', cmd: OPERATOR_RC_COMMANDS.download },
-  { title: 'Verify SHA-256 checksums', cmd: OPERATOR_RC_COMMANDS.verifyChecksum },
+  {
+    title: 'Verify SHA-256 checksums',
+    cmd: OPERATOR_RC_COMMANDS.verifyChecksum,
+  },
   { title: 'Unpack the signed RC tarball', cmd: OPERATOR_RC_COMMANDS.unpack },
   { title: 'Set a private SECURIST_HOME', cmd: OPERATOR_RC_COMMANDS.home },
-  { title: 'Doctor — expect Runtime verified', cmd: OPERATOR_RC_COMMANDS.doctor },
+  {
+    title: 'Doctor — expect Runtime verified',
+    cmd: OPERATOR_RC_COMMANDS.doctor,
+  },
   { title: 'First local Decision Brief', cmd: OPERATOR_RC_COMMANDS.assess },
 ] as const
 
@@ -90,7 +97,9 @@ function OperatorPage() {
       <section className="space-y-3" aria-labelledby="path-a-heading">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <div className="ops-label">Path A · available to everyone today</div>
+            <div className="ops-label">
+              Path A · available to everyone today
+            </div>
             <h2
               id="path-a-heading"
               className="text-sm font-semibold tracking-[0.1em] text-white uppercase"
@@ -128,7 +137,9 @@ function OperatorPage() {
       <section className="space-y-3" aria-labelledby="path-b-heading">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <div className="ops-label">Path B · about five minutes from signed GitHub Release</div>
+            <div className="ops-label">
+              Path B · about five minutes from signed GitHub Release
+            </div>
             <h2
               id="path-b-heading"
               className="text-sm font-semibold tracking-[0.1em] text-white uppercase"
@@ -142,14 +153,18 @@ function OperatorPage() {
           />
         </div>
         <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
-          Skilled operators can finish Path B in about five minutes.
-          Use signed pre-release tag operator-v0.1.0-rc.1 on the hub.
-          Check SHA256SUMS, unpack the RC tarball, set a private home,
-          run doctor against the Ed25519 trust root (expect Runtime verified),
-          then assess for a first local Decision Brief. No monorepo build.
-          Follow the six steps below for the clean-machine path.
-          Release:{' '}
-          <a className="ops-accent" href={OPERATOR_RELEASE_URL} target="_blank" rel="noreferrer">
+          Skilled operators can finish Path B in about five minutes. Use signed
+          pre-release tag operator-v0.1.0-rc.1 on the hub. Check SHA256SUMS,
+          unpack the RC tarball, set a private home, run doctor against the
+          Ed25519 trust root (expect Runtime verified), then assess for a first
+          local Decision Brief. No monorepo build. Follow the six steps below
+          for the clean-machine path. Release:{' '}
+          <a
+            className="ops-accent"
+            href={OPERATOR_RELEASE_URL}
+            target="_blank"
+            rel="noreferrer"
+          >
             {OPERATOR_RELEASE_URL}
           </a>
           . Still not a public registry install path.
@@ -174,9 +189,9 @@ function OperatorPage() {
             <div className="ops-label">Trust root honesty</div>
             <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
               Doctor verifies an Ed25519 signature over the packaged artifacts
-              using the shipped <code className="text-white">trust-root.pem</code>.
-              We do not claim ML-KEM (or other PQC) signing for Operator
-              releases.
+              using the shipped{' '}
+              <code className="text-white">trust-root.pem</code>. We do not
+              claim ML-KEM (or other PQC) signing for Operator releases.
             </p>
           </div>
           <div className="ops-panel space-y-2 p-4">
@@ -189,9 +204,9 @@ function OperatorPage() {
               </li>
               <li>
                 <span className="text-white">Wrong runtime / platform</span> —
-                this Release is a portable Node CLI (Node.js 20 or newer), not an
-                OS-native binary. Missing Node or Node &lt; 20 fails with a clear
-                engines message before doctor runs.
+                this Release is a portable Node CLI (Node.js 20 or newer), not
+                an OS-native binary. Missing Node or Node &lt; 20 fails with a
+                clear engines message before doctor runs.
               </li>
               <li>
                 <span className="text-white">Checksum mismatch</span> — stop and
@@ -200,6 +215,45 @@ function OperatorPage() {
             </ul>
           </div>
         </div>
+      </section>
+
+      <section className="space-y-3" aria-labelledby="packs-heading">
+        <div className="ops-label">WO-031 · scaffolds</div>
+        <h2
+          id="packs-heading"
+          className="text-sm font-semibold tracking-[0.1em] text-white uppercase"
+        >
+          Admission packs
+        </h2>
+        <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
+          Three versioned packs (coding agent, MCP server, model/weights) fill
+          intended use and unknown/gap defaults. Not a compliance certification.
+          Team Graph is not live. No PQC claim.
+        </p>
+        <div className="grid gap-3 lg:grid-cols-3">
+          {ADMISSION_PACK_LIST.map((pack) => (
+            <div key={pack.id} className="ops-panel space-y-2 p-4">
+              <div className="ops-label">
+                {pack.id}@{pack.version}
+              </div>
+              <h3 className="text-sm font-semibold text-white">{pack.title}</h3>
+              <p className="text-[12px] leading-relaxed text-[var(--securist-muted)]">
+                {pack.summary}
+              </p>
+              <pre className="ops-pre text-[var(--securist-accent)]">
+                {'securist assess . --pack ' + pack.id}
+              </pre>
+              <p className="text-[10px] text-[var(--securist-muted)]">
+                Sample: {pack.sampleSources[0]?.url}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] text-[var(--securist-muted)]">
+          List packs with --list-packs. --intended-use overrides the pack
+          prompt. Unknown and gap defaults still apply. See
+          docs/ADMISSION-PACKS.md.
+        </p>
       </section>
 
       <section className="grid gap-3 lg:grid-cols-2">
@@ -228,7 +282,8 @@ function OperatorPage() {
             <li>What did Securist actually observe?</li>
             <li>What remains unknown?</li>
             <li>
-              What should happen next—and who owns it? (durable after Team Graph)
+              What should happen next—and who owns it? (durable after Team
+              Graph)
             </li>
           </ol>
           <p className="text-[11px] text-[var(--securist-muted)]">
@@ -244,7 +299,8 @@ function OperatorPage() {
           <p className="mt-1 text-[12px] text-[var(--securist-muted)]">
             Monorepo package{' '}
             <code className="text-white">@securist/operator</code> · private ·
-            not published. Path B uses the published signed RC; package remains private.
+            not published. Path B uses the published signed RC; package remains
+            private.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

@@ -1,0 +1,93 @@
+{
+  "id": "model-weights",
+  "version": "1.0.0",
+  "catalogVersion": "1",
+  "class": "model",
+  "title": "Model / weights",
+  "summary": "Admit a model or weight bundle for local or controlled-cloud inference. Weight digest is unknown unless separately evidenced. No PQC claim.",
+  "admitted": "A model or weight-related public repository that can be named, licensed, and scoped for inference. This pack does not verify weight blobs, training data, or eval suites.",
+  "intendedUsePrompt": "Admit these model weights for local or controlled-cloud inference under the stated environment. Not a production approval. Weight digest and training-data provenance remain unknown unless separately evidenced.",
+  "environmentDefault": "research",
+  "deploymentBoundaryDefault": "local_only",
+  "evidenceChecklist": [
+    {
+      "id": "public_repo",
+      "label": "Public GitHub repository or model-card repo URL",
+      "required": true,
+      "publicSourceHint": "GitHub repo API (public). Hugging Face blobs are not fetched."
+    },
+    {
+      "id": "license",
+      "label": "License or use-restriction text observed",
+      "required": true,
+      "publicSourceHint": "GitHub license metadata or LICENSE / model card"
+    },
+    {
+      "id": "architecture_claim",
+      "label": "Architecture or parameter-size claim published",
+      "required": false,
+      "publicSourceHint": "Public README / model card"
+    },
+    {
+      "id": "weight_source",
+      "label": "Weight distribution source named (GitHub Release, HF, other)",
+      "required": true,
+      "publicSourceHint": "Public docs — digest not verified on this path"
+    },
+    {
+      "id": "eval_notes",
+      "label": "Published eval or safety notes if any",
+      "required": false,
+      "publicSourceHint": "Public model card"
+    },
+    {
+      "id": "adapter_lineage",
+      "label": "Fine-tune / adapter lineage stated, or explicitly unknown",
+      "required": false,
+      "publicSourceHint": "Public docs"
+    }
+  ],
+  "unknownDefaults": [
+    "Weight content digest was not verified on this path.",
+    "Training data was not inspected.",
+    "Quantization and adapter lineage remain unknown unless observed.",
+    "No PQC or crypto-agility property is asserted for this model.",
+    "Hugging Face weight blobs are not collected by public GitHub assess.",
+    "No Team Graph admission record exists (Team Graph is not live)."
+  ],
+  "evidenceGapDefaults": [
+    "model_governance",
+    "weight_provenance",
+    "eval_coverage",
+    "license"
+  ],
+  "reReviewTriggers": [
+    "Weight digest, quantization, or adapter change",
+    "License or use-restriction change",
+    "Intended use or deployment boundary change",
+    "New published eval that contradicts prior claims"
+  ],
+  "outOfScope": [
+    "Compliance certification or audit letter",
+    "Team Graph live admission or durable shared record (R1 not live)",
+    "Public registry install of @securist/operator",
+    "Pentest, SCA scan, or invented vulnerability claims",
+    "Post-quantum / PQC hero claims (packs do not assert ML-KEM or PQ signatures)",
+    "Paid policy marketplace"
+  ],
+  "disclaimers": [
+    "Admission pack is a scaffold — not a compliance certification.",
+    "Team Graph is not live; this pack does not create a durable admission record.",
+    "Public registry install of @securist/operator is not available.",
+    "Not a pentest, SCA scan, or production approval.",
+    "No PQC / post-quantum property is asserted by this pack."
+  ],
+  "sampleSources": [
+    {
+      "label": "llama-models (public model-card repo)",
+      "url": "https://github.com/meta-llama/llama-models",
+      "note": "Public GitHub sample. Weight blobs are not fetched; digest remains an unknown. Not an endorsement or approval."
+    }
+  ],
+  "dogfoodNotes": "Public /assess is GitHub-only. Hugging Face cards and GGUF blobs are out of band — listed as unknowns. Local Operator --pack model-weights applies the same defaults to a local tree."
+}

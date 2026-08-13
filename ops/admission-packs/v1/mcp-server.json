@@ -1,0 +1,91 @@
+{
+  "id": "mcp-server",
+  "version": "1.0.0",
+  "catalogVersion": "1",
+  "class": "mcp",
+  "title": "MCP server",
+  "summary": "Admit an MCP server that exposes tools to a local or IDE client. Prefer stdio and read-only tools. Not a production control plane.",
+  "admitted": "An MCP server whose public repository can be named and whose documented tools can be listed as claims. This pack does not enumerate live tools/list output and does not enforce an allowlist.",
+  "intendedUsePrompt": "Admit this MCP server for local IDE context over stdio. Prefer read-only tools. No execute, approve, shell, or external-write tools. Not a production control plane.",
+  "environmentDefault": "development",
+  "deploymentBoundaryDefault": "local_only",
+  "evidenceChecklist": [
+    {
+      "id": "public_repo",
+      "label": "Public GitHub repository URL on default branch",
+      "required": true,
+      "publicSourceHint": "GitHub repo API (public)"
+    },
+    {
+      "id": "license",
+      "label": "License SPDX or license file observed",
+      "required": true,
+      "publicSourceHint": "GitHub license metadata or LICENSE file"
+    },
+    {
+      "id": "tool_list_docs",
+      "label": "Documented tool list (names + what they touch)",
+      "required": true,
+      "publicSourceHint": "Public README / MCP tool docs — not a live tools/list call"
+    },
+    {
+      "id": "transport",
+      "label": "Transport stated (stdio preferred; HTTP/SSE called out if used)",
+      "required": true,
+      "publicSourceHint": "Public docs"
+    },
+    {
+      "id": "auth_secrets",
+      "label": "Auth and secret handling documented (or explicitly unknown)",
+      "required": true,
+      "publicSourceHint": "Public README / security notes"
+    },
+    {
+      "id": "write_execute",
+      "label": "Execute / approve / external-write tools absent or explicitly scoped",
+      "required": true,
+      "publicSourceHint": "Public tool docs"
+    }
+  ],
+  "unknownDefaults": [
+    "Live MCP tools/list schema was not enumerated by this assess path.",
+    "Network egress of tools was not verified.",
+    "No runtime allowlist enforcement (Team Graph is not live).",
+    "Secret material in tool arguments was not inspected."
+  ],
+  "evidenceGapDefaults": [
+    "mcp_tool_surface",
+    "secret_handling",
+    "security",
+    "transport_honesty"
+  ],
+  "reReviewTriggers": [
+    "New tool added to the documented MCP surface",
+    "Transport change (stdio to HTTP/SSE or remote)",
+    "Auth or secret-handling change",
+    "Intended use or deployment boundary change"
+  ],
+  "outOfScope": [
+    "Compliance certification or audit letter",
+    "Team Graph live admission or durable shared record (R1 not live)",
+    "Public registry install of @securist/operator",
+    "Pentest, SCA scan, or invented vulnerability claims",
+    "Post-quantum / PQC hero claims (packs do not assert ML-KEM or PQ signatures)",
+    "Paid policy marketplace"
+  ],
+  "disclaimers": [
+    "Admission pack is a scaffold — not a compliance certification.",
+    "Team Graph is not live; this pack does not create a durable admission record.",
+    "Public registry install of @securist/operator is not available.",
+    "Not a pentest, SCA scan, or production approval.",
+    "No PQC / post-quantum property is asserted by this pack."
+  ],
+  "sampleSources": [
+    {
+      "label": "MCP example servers (public)",
+      "url": "https://github.com/modelcontextprotocol/servers",
+      "note": "Public GitHub sample for /assess dogfood. Not an endorsement or approval."
+    }
+  ],
+  "dogfoodNotes": "Public /assess does not speak MCP. Documented tool claims stay in the checklist; live schema is an explicit unknown. Local Operator --pack mcp-server applies the same defaults."
+}

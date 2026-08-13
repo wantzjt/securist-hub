@@ -7,6 +7,8 @@ import type {
   PublicDecisionBriefV1,
 } from '#/lib/decision-graph/surface-contracts'
 import { CopyPage } from '#/components/CopyPage'
+import { AdmissionPackPicker } from '#/components/AdmissionPackPicker'
+import type { AdmissionPackIdV1, AdmissionPackV1 } from '#/lib/admission-packs'
 
 function repoHintFromUrl(raw: string | undefined): string | null {
   if (!raw?.trim()) return null
@@ -22,7 +24,9 @@ function repoHintFromUrl(raw: string | undefined): string | null {
 }
 
 export const Route = createFileRoute('/assess')({
-  validateSearch: (search: Record<string, unknown>): {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): {
     url?: string
     artifact?: string
   } => ({
@@ -71,6 +75,7 @@ const BOUNDARIES: { id: PublicAssessBoundaryV1; label: string }[] = [
 function AssessPage() {
   const search = Route.useSearch()
   const [repositoryUrl, setRepositoryUrl] = useState(search.url ?? '')
+  const [packId, setPackId] = useState<AdmissionPackIdV1 | ''>('')
   const [intendedUse, setIntendedUse] = useState(
     search.artifact
       ? `Decision for catalog artifact ${search.artifact}`
@@ -101,6 +106,7 @@ function AssessPage() {
           intendedUse,
           environment,
           deploymentBoundary,
+          ...(packId ? { admissionPackId: packId } : {}),
         },
       })
       if (!result.ok) {
@@ -175,6 +181,21 @@ function AssessPage() {
             Use sample public repo
           </button>
         </div>
+
+        <AdmissionPackPicker
+          packId={packId}
+          onSelect={(pack: AdmissionPackV1 | null) => {
+            if (!pack) {
+              setPackId('')
+              return
+            }
+            setPackId(pack.id)
+            setIntendedUse(pack.intendedUsePrompt)
+            setEnvironment(pack.environmentDefault)
+            setDeploymentBoundary(pack.deploymentBoundaryDefault)
+            setRepositoryUrl(pack.sampleSources[0].url)
+          }}
+        />
 
         <div>
           <label className="ops-label" htmlFor="intended-use">
@@ -364,7 +385,9 @@ function BriefResult({
   const [mdExported, setMdExported] = useState(false)
   const rerunUrl = useMemo(() => {
     const origin =
-      typeof window !== 'undefined' ? window.location.origin : 'https://secur.ist'
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : 'https://secur.ist'
     const u = new URL('/assess', origin)
     if (repositoryUrl) u.searchParams.set('url', repositoryUrl)
     return u.toString()
@@ -440,9 +463,9 @@ function BriefResult({
             </button>
           </div>
           <p className="max-w-md text-[10px] leading-relaxed text-[var(--securist-muted)]">
-            Re-run link opens /assess for this public repo. It does not save this
-            brief. Team Graph shared memory is not live. Export markdown is a
-            local snapshot of this screen.
+            Re-run link opens /assess for this public repo. It does not save
+            this brief. Team Graph shared memory is not live. Export markdown is
+            a local snapshot of this screen.
           </p>
         </div>
       </header>
@@ -487,7 +510,10 @@ function BriefResult({
               path today, or a human-signed RC tarball when you have one—not
               public npm, not Electron.
             </p>
-            <Link to="/operator" className="ops-btn mt-3 inline-flex no-underline">
+            <Link
+              to="/operator"
+              className="ops-btn mt-3 inline-flex no-underline"
+            >
               Local Operator guide
             </Link>
           </div>
@@ -638,8 +664,8 @@ function BriefResult({
             Save and monitor (post-R1)
           </button>
           <span className="self-center text-[10px] text-[var(--securist-muted)]">
-            Future paid hinge: persist and watch this decision when durable graph
-            is active.
+            Future paid hinge: persist and watch this decision when durable
+            graph is active.
           </span>
         </div>
       </section>

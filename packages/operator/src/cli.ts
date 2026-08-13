@@ -5,6 +5,11 @@ import { assessLocalRepository, formatBriefSummary } from './assess'
 import { formatDoctorReport, runDoctor } from './doctor'
 import { runMcpStdio } from './mcp-stdio'
 import type { LocalAssessScopeV1 } from '../../contracts/src/local-assess'
+import {
+  ADMISSION_PACK_LIST,
+  getAdmissionPack,
+  isAdmissionPackId,
+} from '../../../src/lib/admission-packs'
 
 function printHelp() {
   console.log(`securist — free private Local Operator (WO-012)
@@ -15,7 +20,9 @@ Usage:
   securist mcp
 
 Options for assess:
-  --intended-use <text>   Required scope statement (no secrets)
+  --intended-use <text>   Scope statement (no secrets). Defaults from --pack when set.
+  --pack <id>             coding-agent | mcp-server | model-weights
+  --list-packs            Print admission packs and exit
   --environment <env>     research|development|staging|production
   --boundary <b>          local_only|controlled_cloud|external_service
   --json                  Print full LocalDecisionBriefV1 JSON
@@ -68,27 +75,47 @@ function main() {
   }
 
   if (cmd === 'assess') {
+    if (flags['list-packs']) {
+      for (const p of ADMISSION_PACK_LIST) {
+        console.log(`${p.id}@${p.version}  ${p.title}  (${p.class})`)
+        console.log(`  ${p.summary}`)
+      }
+      console.log(
+        'Team Graph is not live. Packs are scaffolds, not certificates.',
+      )
+      return
+    }
+    const packFlag = typeof flags.pack === 'string' ? flags.pack : ''
+    if (packFlag && !isAdmissionPackId(packFlag)) {
+      console.error(
+        'unknown --pack (use coding-agent | mcp-server | model-weights)',
+      )
+      process.exit(1)
+    }
+    const pack = packFlag ? getAdmissionPack(packFlag) : undefined
     const target = positionals[0] || '.'
     const intendedUse =
       typeof flags['intended-use'] === 'string'
         ? flags['intended-use']
-        : 'Local engineering / security adoption review'
-    const environment = (
-      typeof flags.environment === 'string' ? flags.environment : 'development'
-    ) as LocalAssessScopeV1['environment']
-    const deploymentBoundary = (
-      typeof flags.boundary === 'string'
-        ? flags.boundary
-        : typeof flags['deployment-boundary'] === 'string'
-          ? flags['deployment-boundary']
-          : 'local_only'
-    ) as LocalAssessScopeV1['deploymentBoundary']
-
+        : pack
+          ? pack.intendedUsePrompt
+          : 'Local engineering / security adoption review'
     const result = assessLocalRepository({
       targetPath: target,
       intendedUse,
-      environment,
-      deploymentBoundary,
+      environment: (typeof flags.environment === 'string'
+        ? flags.environment
+        : pack
+          ? pack.environmentDefault
+          : 'development') as LocalAssessScopeV1['environment'],
+      deploymentBoundary: (typeof flags.boundary === 'string'
+        ? flags.boundary
+        : typeof flags['deployment-boundary'] === 'string'
+          ? flags['deployment-boundary']
+          : pack
+            ? pack.deploymentBoundaryDefault
+            : 'local_only') as LocalAssessScopeV1['deploymentBoundary'],
+      packId: pack?.id,
     })
     if (!result.ok) {
       console.error(`assess failed (${result.code}): ${result.error}`)

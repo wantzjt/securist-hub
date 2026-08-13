@@ -47,10 +47,16 @@ function mockPublicGithubFetch(): {
     if (auth) authHeaderSeen.push(auth)
 
     if (url.includes('/repos/public-owner/public-repo/releases/latest')) {
-      return new Response(JSON.stringify({ tag_name: 'v1.0.0', published_at: '2026-01-01T00:00:00Z' }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      return new Response(
+        JSON.stringify({
+          tag_name: 'v1.0.0',
+          published_at: '2026-01-01T00:00:00Z',
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
     }
     if (url.includes('/repos/public-owner/public-repo/commits')) {
       return new Response(JSON.stringify([{ sha: 'abc123def4567890' }]), {
@@ -67,7 +73,10 @@ function mockPublicGithubFetch(): {
         { status: 200, headers: { 'Content-Type': 'application/json' } },
       )
     }
-    if (url.endsWith('/repos/public-owner/public-repo') || url.includes('/repos/public-owner/public-repo?')) {
+    if (
+      url.endsWith('/repos/public-owner/public-repo') ||
+      url.includes('/repos/public-owner/public-repo?')
+    ) {
       return new Response(
         JSON.stringify({
           full_name: 'public-owner/public-repo',
@@ -178,7 +187,8 @@ async function main() {
   }
   {
     const r = validatePublicRepoAssessInput({
-      repositoryUrl: 'https://github.com/a/b?token=ghp_abcdefghijklmnopqrstuvwxyz012345',
+      repositoryUrl:
+        'https://github.com/a/b?token=ghp_abcdefghijklmnopqrstuvwxyz012345',
       intendedUse: 'ok',
       environment: 'development',
       deploymentBoundary: 'local_only',
@@ -201,7 +211,10 @@ async function main() {
       environment: 'development',
       deploymentBoundary: 'local_only',
     })
-    assert('non-root GitHub URL → invalid_url', !r.ok && r.code === 'invalid_url')
+    assert(
+      'non-root GitHub URL → invalid_url',
+      !r.ok && r.code === 'invalid_url',
+    )
   }
   {
     const r = validatePublicRepoAssessInput({
@@ -287,18 +300,26 @@ async function main() {
         }
       }
       assert('contractVersion 1', brief.contractVersion === '1')
-      assert('kind public_decision_brief', brief.kind === 'public_decision_brief')
+      assert(
+        'kind public_decision_brief',
+        brief.kind === 'public_decision_brief',
+      )
       assert('durable false', brief.durable === false)
       assert(
         'persistence ephemeral_client_only',
         brief.persistence === 'ephemeral_client_only',
       )
       assert('label LIVE', brief.label === 'LIVE')
-      assert('decisionStatus not_reviewed', brief.decisionStatus === 'not_reviewed')
+      assert(
+        'decisionStatus not_reviewed',
+        brief.decisionStatus === 'not_reviewed',
+      )
       assert(
         'observed facts present',
         brief.observed.length > 0 &&
-          brief.observed.every((o) => Boolean(o.source) && Boolean(o.verification)),
+          brief.observed.every(
+            (o) => Boolean(o.source) && Boolean(o.verification),
+          ),
       )
       assert('unknowns present', brief.unknowns.length > 0)
       assert('evidenceGaps present', brief.evidenceGaps.length > 0)
@@ -332,7 +353,12 @@ async function main() {
       null,
       42,
       [],
-      { repositoryUrl: true, intendedUse: 'x', environment: 'development', deploymentBoundary: 'local_only' },
+      {
+        repositoryUrl: true,
+        intendedUse: 'x',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+      },
       {
         repositoryUrl: 'https://github.com/a/b',
         intendedUse: 'ok',
@@ -351,7 +377,9 @@ async function main() {
         const r = await assessPublicGithubRepo(c)
         assert(
           `malformed[${i}] returns error object`,
-          r.ok === false && typeof r.code === 'string' && typeof r.error === 'string',
+          r.ok === false &&
+            typeof r.code === 'string' &&
+            typeof r.error === 'string',
         )
       } catch (e) {
         fail(`malformed[${i}] must not throw`, String(e))
@@ -534,6 +562,43 @@ async function main() {
       )
     }
     assert('cache path still no Authorization', authHeaderSeen.length === 0)
+
+    const packed = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse:
+          'Admit this coding agent to generate and review application code in development.',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+        admissionPackId: 'coding-agent',
+      },
+      { fetchImpl, skipCache: true },
+    )
+    assert('pack assess ok', packed.ok === true, packed.ok ? '' : packed.error)
+    if (packed.ok) {
+      assert(
+        'pack gaps on public brief',
+        packed.brief.evidenceGaps.includes('agent_tool_surface'),
+      )
+      assert(
+        'pack not a cert hint',
+        packed.brief.policyHints.some((h) => /not a compliance/i.test(h)),
+      )
+    }
+    const badPack = await assessPublicGithubRepo(
+      {
+        repositoryUrl: 'https://github.com/public-owner/public-repo',
+        intendedUse: 'Evaluate fixture',
+        environment: 'development',
+        deploymentBoundary: 'local_only',
+        admissionPackId: 'nope',
+      },
+      { fetchImpl, skipCache: true },
+    )
+    assert(
+      'unknown pack schema error',
+      badPack.ok === false && badPack.code === 'schema',
+    )
 
     // Cache does not absorb private/redacted input into GitHub calls
     clearPublicAssessFactCache()

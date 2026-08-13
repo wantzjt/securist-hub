@@ -15,11 +15,7 @@ import {
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { spawnSync } from 'node:child_process'
-import {
-  generateKeyPairSync,
-  createPrivateKey,
-  sign,
-} from 'node:crypto'
+import { generateKeyPairSync, createPrivateKey, sign } from 'node:crypto'
 import { assessLocalRepository } from '../src/assess'
 import { runDoctor } from '../src/doctor'
 import { openSandbox, resolveUnderSandbox } from '../src/path-sandbox'
@@ -161,10 +157,7 @@ function main() {
     deploymentBoundary: 'local_only',
     dryRun: true,
   })
-  assert(
-    'assess blocked without trusted runtime',
-    blocked.ok === false,
-  )
+  assert('assess blocked without trusted runtime', blocked.ok === false)
 
   console.log('\n[sign → mutate dist/cli.js → mismatch]')
   const trust = installEphemeralTrust()
@@ -180,10 +173,7 @@ function main() {
     afterTamper.ok ? 'unexpected ok' : afterTamper.code,
   )
   const docTamper = runDoctor()
-  assert(
-    'doctor fails after dist tamper',
-    docTamper.runtimeOk === false,
-  )
+  assert('doctor fails after dist tamper', docTamper.runtimeOk === false)
   const assessTamper = assessLocalRepository({
     targetPath: process.cwd(),
     intendedUse: 'tamper test',
@@ -234,7 +224,10 @@ function main() {
     /* optional */
   }
   const box = openSandbox(repo)
-  assert('package.json readable', resolveUnderSandbox(box, 'package.json') !== null)
+  assert(
+    'package.json readable',
+    resolveUnderSandbox(box, 'package.json') !== null,
+  )
   assert('absolute rejected', resolveUnderSandbox(box, '/etc/passwd') === null)
   assert('dotdot rejected', resolveUnderSandbox(box, '../secret.txt') === null)
   if (existsSync(join(repo, 'escape-link'))) {
@@ -287,6 +280,34 @@ function main() {
     if (existsSync(latest)) {
       assert('latest run file mode 0600', modeOf(latest) === 0o600)
     }
+  }
+
+  console.log('\n[assess with admission pack]')
+  const packed = assessLocalRepository({
+    targetPath: repo,
+    intendedUse:
+      'Admit this coding agent to generate and review application code in development.',
+    environment: 'development',
+    deploymentBoundary: 'local_only',
+    dryRun: true,
+    packId: 'coding-agent',
+  })
+  assert('pack assess ok', packed.ok === true, packed.ok ? '' : packed.error)
+  if (packed.ok) {
+    assert(
+      'pack gaps include agent_tool_surface',
+      packed.brief.evidenceGaps.includes('agent_tool_surface'),
+    )
+    assert(
+      'pack policy hint',
+      packed.brief.policyHints.some(
+        (h) => /coding-agent@/.test(h) && /scaffold only/i.test(h),
+      ),
+    )
+    assert(
+      'pack Team Graph not live hint',
+      packed.brief.policyHints.some((h) => /Team Graph is not live/i.test(h)),
+    )
   }
 
   console.log('\n[MCP + dist CLI]')
