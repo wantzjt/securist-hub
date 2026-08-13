@@ -31,6 +31,12 @@ import type {
   SignedValidationSummaryV1,
 } from './eve-gateway/types'
 import { assessPublicGithubRepo } from './public-repo-assess'
+import {
+  getTeamGraphOneArtifact,
+  getTeamGraphStubStatus,
+  requestTeamGraphReReview,
+} from './team-graph-stub'
+import type { TeamGraphReReviewRequestV1 } from '../../packages/contracts/src/team-graph'
 
 function serverToken(): string | undefined {
   return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || undefined
@@ -84,9 +90,8 @@ export const getActivity = createServerFn({ method: 'GET' }).handler(
         id: 'operator',
         label: 'Operator',
         status: 'seed' as const,
-        count: allActivity.filter(
-          (a) => a.source === 'operator' && !a.isSeed,
-        ).length,
+        count: allActivity.filter((a) => a.source === 'operator' && !a.isSeed)
+          .length,
         detail: 'Authenticated ingest only · organization visibility',
       },
     ]
@@ -347,3 +352,17 @@ export const runEveVerticalSliceDemo = createServerFn({ method: 'POST' })
 export const runLifecycleFixture = createServerFn({ method: 'GET' }).handler(
   async () => runE2ELifecycleFixture(),
 )
+
+/* —— Team Graph stub (WO-032). Not live. No DATABASE_URL. No durable write. —— */
+
+export const getTeamGraphStatus = createServerFn({ method: 'GET' }).handler(
+  async () => getTeamGraphStubStatus(),
+)
+
+export const getTeamGraphArtifact = createServerFn({ method: 'GET' })
+  .validator((data: { artifactId: string }) => data)
+  .handler(async ({ data }) => getTeamGraphOneArtifact(data.artifactId))
+
+export const postTeamGraphReReview = createServerFn({ method: 'POST' })
+  .validator((data: TeamGraphReReviewRequestV1) => data)
+  .handler(async ({ data }) => requestTeamGraphReReview(data))

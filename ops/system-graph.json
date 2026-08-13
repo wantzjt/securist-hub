@@ -9,7 +9,8 @@
     "docs/CANONICAL-CONTRACTS.md",
     "docs/DECISION-LIFECYCLE.md",
     "docs/OPERATIONS.md",
-    "docs/DECISIONS.md"
+    "docs/DECISIONS.md",
+    "docs/TEAM-GRAPH-CONTRACTS.md"
   ],
   "coverageRoots": [
     {
@@ -78,6 +79,11 @@
       "id": "public-assess",
       "mode": "automated",
       "command": "npm run test:public-assess"
+    },
+    {
+      "id": "team-graph-contracts",
+      "mode": "automated",
+      "command": "npm run test:team-graph-contracts"
     },
     {
       "id": "golden-path",
@@ -185,11 +191,12 @@
         "src/lib/decision-graph/outbox-types.ts",
         "src/lib/decision-graph/store-types.ts",
         "src/lib/decision-graph/types.ts",
-        "src/lib/decision-graph/surface-contracts.ts"
+        "src/lib/decision-graph/surface-contracts.ts",
+        "packages/contracts/src/team-graph.ts"
       ],
       "dependsOn": [],
       "invariants": ["INV-001", "INV-003", "INV-006", "INV-009"],
-      "verifiedBy": ["typecheck", "system-graph"]
+      "verifiedBy": ["typecheck", "system-graph", "team-graph-contracts"]
     },
     {
       "id": "decision-graph",
@@ -386,7 +393,9 @@
       "status": "blocked",
       "paths": [
         "ops/work-orders/WO-008-r1-postgres-activation-prep.md",
-        "docs/RM-003-PROVISION-CHECKLIST.md"
+        "docs/RM-003-PROVISION-CHECKLIST.md",
+        "docs/R1-READINESS-PACK.md",
+        "docs/TEAM-GRAPH-CONTRACTS.md"
       ],
       "dependsOn": ["postgres-store", "human-authority"],
       "invariants": ["INV-004", "INV-006", "INV-009"],

@@ -51,6 +51,28 @@ export {
   PUBLIC_ASSESS_LIMITS_V1,
 } from '../../../packages/contracts/src/public-assess'
 
+export type {
+  TeamGraphDecisionV1,
+  TeamGraphHonestyV1,
+  TeamGraphOwnerV1,
+  TeamGraphPolicyBindingV1,
+  TeamGraphEvidenceRefV1,
+  TeamGraphReReviewRequestV1,
+  TeamGraphStatusV1,
+  TeamGraphStubErrorV1,
+} from '../../../packages/contracts/src/team-graph'
+
+export {
+  TEAM_GRAPH_HONESTY_V1,
+  TEAM_GRAPH_ILLUSTRATION_V1,
+  TEAM_GRAPH_LIVE,
+  TEAM_GRAPH_DURABLE,
+  TEAM_GRAPH_PERSISTENCE,
+  TEAM_GRAPH_ERROR_NOT_LIVE,
+  teamGraphNotLive,
+  teamGraphStatus,
+} from '../../../packages/contracts/src/team-graph'
+
 export {
   LOCAL_MCP_TOOLS_V1,
   LOCAL_MCP_FORBIDDEN_V1,

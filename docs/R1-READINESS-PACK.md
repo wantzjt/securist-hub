@@ -4,6 +4,7 @@
 **Date:** 2026-08-10  
 **Owner:** **human only** for credentials / env / migration / deploy  
 **Work orders:** [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) · [`WO-005`](../ops/work-orders/WO-005-rm003-postgres-provision.md)  
+**Contract freeze:** [`WO-032`](../ops/work-orders/WO-032-team-graph-contract-freeze.md) · [`TEAM-GRAPH-CONTRACTS.md`](./TEAM-GRAPH-CONTRACTS.md) — frozen, **not live**, does **not** activate R1  
 **Checklists:** [`RM-003-PROVISION-CHECKLIST.md`](./RM-003-PROVISION-CHECKLIST.md) · [`RELEASE-PLAN.md`](./RELEASE-PLAN.md) · [`VERCEL-SCOPE.md`](./VERCEL-SCOPE.md)
 
 Agents must **not** provision, set secrets, or declare R1 live from this document.
@@ -34,6 +35,16 @@ Until R1 exit is human-signed, **do not** claim multi-user durability or paid Te
 | Tests | `npm run test:graph` · `test:lifecycle` |
 
 ---
+
+
+## WO-032 contract freeze (does not activate R1)
+
+Team Graph Decision / owner / policy / evidence / re-review **contracts are frozen** on `main` (WO-032).  
+`/team` and stub API remain **coming next / not live**.
+
+WO-032 does **not** grant provision authority. Do not set connection-string env, do not run migrations, do not flip `SECURIST_GRAPH_STORE=postgres` from this freeze.
+
+Handoff mapping onto `migrations/001_decision_graph.sql` lives in [`TEAM-GRAPH-CONTRACTS.md`](./TEAM-GRAPH-CONTRACTS.md). Optional `re_review_requests` table is John-only after authority — not required to exit R1.
 
 ## Human authority gate (required first)
 

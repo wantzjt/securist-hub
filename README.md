@@ -112,6 +112,7 @@ Roadmap: [`docs/ROADMAP.md`](docs/ROADMAP.md) · Strategy: [`docs/STRATEGY.md`](
 | Code of conduct | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) |
 | Changelog | [`CHANGELOG.md`](CHANGELOG.md) |
 | Admission packs | [`docs/ADMISSION-PACKS.md`](docs/ADMISSION-PACKS.md) |
+| Team Graph contracts (pre-R1) | [`docs/TEAM-GRAPH-CONTRACTS.md`](docs/TEAM-GRAPH-CONTRACTS.md) |
 | Operator release lane | [`docs/OPERATOR-RELEASE-LANE.md`](docs/OPERATOR-RELEASE-LANE.md) |
 
 **Operating law:** one work order · one branch · one PR · clean worktree · human holds credentials, deploy, and release keys.

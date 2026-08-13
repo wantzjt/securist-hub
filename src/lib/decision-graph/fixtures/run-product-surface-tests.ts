@@ -296,6 +296,38 @@ function main() {
     /No PQC/i.test(packsTs) || /pqcHero: false/.test(packsTs),
   )
 
+  console.log('\n[team graph contracts WO-032]')
+  const tgPack = read('docs/TEAM-GRAPH-CONTRACTS.md')
+  const tgTs = read('packages/contracts/src/team-graph.ts')
+  const tgStub = read('src/lib/team-graph-stub.ts')
+  assert(
+    'team graph pack exists',
+    existsSync(join(ROOT, 'docs/TEAM-GRAPH-CONTRACTS.md')) &&
+      existsSync(join(ROOT, 'packages/contracts/src/team-graph.ts')),
+  )
+  assert(
+    'team graph pack John-only WO-008 not live until R1',
+    /John-only/i.test(tgPack) &&
+      /WO-008/.test(tgPack) &&
+      /not live until R1/i.test(tgPack),
+  )
+  assert(
+    'team graph contracts live false',
+    /TEAM_GRAPH_LIVE = false/.test(tgTs) &&
+      /TEAM_GRAPH_DURABLE = false/.test(tgTs),
+  )
+  assert(
+    'team page still coming next not live',
+    /Coming next/i.test(team) &&
+      /not live/i.test(team) &&
+      !/Team Graph is live/i.test(team),
+  )
+  assert(
+    'stub ignores durability env and store',
+    /TEAM_GRAPH_STUB_IGNORES_ENV/.test(tgStub) &&
+      !/getDecisionGraphStore/.test(tgStub),
+  )
+
   console.log(`\n${passed}/${passed + failed} passed`)
   if (failed > 0) process.exit(1)
 }

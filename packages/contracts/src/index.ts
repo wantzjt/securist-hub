@@ -14,5 +14,6 @@ export * from './graph'
 export * from './decision-brief'
 export * from './public-assess'
 export * from './local-assess'
+export * from './team-graph'
 
-export const CONTRACTS_VERSION = '0.1.5' as const
+export const CONTRACTS_VERSION = '0.1.6' as const

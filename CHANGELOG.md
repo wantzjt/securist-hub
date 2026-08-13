@@ -11,6 +11,7 @@ See [`docs/BUILDING-IN-PUBLIC.md`](docs/BUILDING-IN-PUBLIC.md).
 ## [Unreleased]
 
 ### Added
+- Team Graph contract freeze (WO-032): Decision / owner / policy / evidence / re-review schemas and stub API. Coming next / not live. R1/Postgres remains John-only (WO-008). No package registry publish.
 - Admission packs (WO-031): coding-agent, MCP server, model/weights scaffolds with intended-use prompts and evidence checklists on /assess and Local Operator. Not a compliance certification. Team Graph not live. No PQC hero.
 - Public Decision Brief GitHub Action (WO-030): one ephemeral PR comment, GITHUB_TOKEN only, not production approval, Team Graph not live.
 - Open-build front door (WO-013): README rewrite, community docs, building-in-public policy.

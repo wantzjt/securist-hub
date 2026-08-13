@@ -10,6 +10,8 @@ artifact → evidence → policy → local validation → approval → upstream/
 
 GitHub remains system of record for code/PRs. Securist is system of record for **why** an organization trusted an artifact and whether that decision is still valid.
 
+Team Graph paid loop (owner + policy + evidence + re-review on one artifact) is **contract-frozen** in [`TEAM-GRAPH-CONTRACTS.md`](./TEAM-GRAPH-CONTRACTS.md) (WO-032) and **not live** until human-signed R1 (WO-008).
+
 ## Entities
 
 See `migrations/001_decision_graph.sql` and `src/lib/decision-graph/types.ts`:

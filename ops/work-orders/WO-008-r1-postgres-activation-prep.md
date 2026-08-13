@@ -101,6 +101,7 @@ psql "$DATABASE_URL" -f migrations/001_decision_graph.sql
 - 2026-08-06: Filed `blocked` pending human provision authority. No credentials created.
 - 2026-08-06: Confirmed as **one of two active tracks** under D-009 freeze (with WO-004). No product expansion on this track—activation only.
 - 2026-08-10: Docs pack [`R1-READINESS-PACK.md`](../../docs/R1-READINESS-PACK.md) consolidates steps for cold resume. **Still blocked** — no provision, no env, no migration. Code seam + fail-closed tests remain green on `main`.
+- 2026-08-12: WO-032 froze Team Graph contracts (Decision / owner / policy / evidence / re-review) and stub API. **Still blocked** — freeze does not grant provision authority, does not set env, does not run migrations.
 
 ## Blockers
 

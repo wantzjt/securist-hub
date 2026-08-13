@@ -169,6 +169,15 @@ Any `intendedUse` / config text included in `LocalDecisionBriefV1` or MCP output
 
 Helpers: `assertLocalProvenanceHonesty`, `toLocalMcpRunMetadata`, `toLocalMcpBriefResponse`, `wrapLocalMcpResponse`, `componentUsedVerified`, `validateLocalBriefTextInput`.
 
+
+### TeamGraph*V1 (paid shared memory — PRE-R1 freeze)
+
+Package: `packages/contracts/src/team-graph.ts`. Pack: [`TEAM-GRAPH-CONTRACTS.md`](./TEAM-GRAPH-CONTRACTS.md) (WO-032).
+
+Frozen one-artifact loop: **Decision · owner · policy · evidence · re-review request**.
+`live: false`, `durable: false`, `persistence: stub_not_live`. **Not live until R1.**
+R1/Postgres is **John-only (WO-008)**. Stub API never writes and never reads connection-string env.
+
 ## API / event semantics (versioned)
 
 | Operation | Semantics |
@@ -181,6 +190,7 @@ Helpers: `assertLocalProvenanceHonesty`, `toLocalMcpRunMetadata`, `toLocalMcpBri
 | `POST` public assess | Anonymous public GitHub facts → `PublicDecisionBriefV1` (ephemeral; unauthenticated GH API) |
 | Local `securist assess .` | Local manifests → `LocalDecisionBriefV1` (`local_only`; no hub persist; no absolute paths in default output) |
 | Local MCP | Read-only `get_brief` / `list_gaps` / `get_run_metadata` on minimized local brief |
+| Team Graph stub GET/POST | Always `team_graph_not_live` / `coming_next` illustration — **not** a durable Decision Graph write (WO-032) |
 
 ### Requirements at every write boundary
 

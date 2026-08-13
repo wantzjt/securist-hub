@@ -17,6 +17,7 @@
     "test:decision-brief-contracts": "tsx src/lib/decision-graph/fixtures/run-decision-brief-contract-tests.ts",
     "test:product-surface": "tsx src/lib/decision-graph/fixtures/run-product-surface-tests.ts",
     "test:admission-packs": "tsx src/lib/decision-graph/fixtures/run-admission-pack-tests.ts",
+    "test:team-graph-contracts": "tsx src/lib/decision-graph/fixtures/run-team-graph-contract-tests.ts",
     "test:operator": "tsx packages/operator/fixtures/run-operator-tests.ts",
     "operator:build": "node scripts/build-operator.mjs",
     "operator:sign-identity": "node scripts/sign-operator-identity.mjs",
