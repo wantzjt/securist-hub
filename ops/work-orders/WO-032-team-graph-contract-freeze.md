@@ -1,7 +1,7 @@
 ---
 id: WO-032
 title: 'Team Graph contract freeze (pre-R1)'
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-032-team-graph-contracts
 depends_on:
@@ -51,6 +51,7 @@ Freeze Team Graph types, API stubs, and honesty labels before R1 so Build and CO
 ## Progress
 
 - 2026-08-12 — Implementation on branch feat/wo-032-team-graph-contracts; PR open.
+- 2026-08-12 — PR #74 merged; complete.
 
 ## Blockers
 
