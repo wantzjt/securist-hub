@@ -11,7 +11,6 @@ See [`docs/BUILDING-IN-PUBLIC.md`](docs/BUILDING-IN-PUBLIC.md).
 ## [Unreleased]
 
 ### Added
-
 - Team Graph contract freeze (WO-032): Decision / owner / policy / evidence / re-review schemas and stub API. Coming next / not live. R1/Postgres remains John-only (WO-008). No package registry publish.
 - Admission packs (WO-031): coding-agent, MCP server, model/weights scaffolds with intended-use prompts and evidence checklists on /assess and Local Operator. Not a compliance certification. Team Graph not live. No PQC hero.
 - Public Decision Brief GitHub Action (WO-030): one ephemeral PR comment, GITHUB_TOKEN only, not production approval, Team Graph not live.
@@ -22,26 +21,22 @@ See [`docs/BUILDING-IN-PUBLIC.md`](docs/BUILDING-IN-PUBLIC.md).
 ## 2026-08-07 — Securist V1 (R0) open checkpoint
 
 ### Added
-
-- **Public assess** → ephemeral share-safe Decision Brief (WO-010 · PR #14).
-- **Local Operator** monorepo path: `doctor`, `assess`, stdio MCP, honest provenance (WO-012 · PR #19).
-- System graph + clean-worktree gates (WO-011 · PR #16).
-- Buyer messaging + Operator release lane docs (PR #20).
-- Dependabot, CodeQL, secret scanning posture (PR #21).
+- **Public assess** → ephemeral share-safe Decision Brief (WO-010 · PR #14).  
+- **Local Operator** monorepo path: `doctor`, `assess`, stdio MCP, honest provenance (WO-012 · PR #19).  
+- System graph + clean-worktree gates (WO-011 · PR #16).  
+- Buyer messaging + Operator release lane docs (PR #20).  
+- Dependabot, CodeQL, secret scanning posture (PR #21).  
 
 ### Security
-
-- Anonymous `/assess` does not use privileged GitHub tokens.
-- Operator: no private signing key in product path; unsigned runtime blocks assess; signature covers `dist/cli.js`.
+- Anonymous `/assess` does not use privileged GitHub tokens.  
+- Operator: no private signing key in product path; unsigned runtime blocks assess; signature covers `dist/cli.js`.  
 
 ### Known limits (not shipped)
-
-- No public `npx @securist/operator`.
-- No shared Team Graph / multi-user durable decisions (R1).
-- No autonomous remediation or private cloud assess.
+- No public `npx @securist/operator`.  
+- No shared Team Graph / multi-user durable decisions (R1).  
+- No autonomous remediation or private cloud assess.  
 
 ### Verification
-
 ```bash
 npm run lint && npm run typecheck && npm run test:lifecycle && npm run test:graph \
   && npm run test:public-assess && npm run test:decision-brief-contracts \
@@ -51,7 +46,6 @@ npm run lint && npm run typecheck && npm run test:lifecycle && npm run test:grap
 ```
 
 ### Rollback
-
 Deploy previous Vercel production for hub UI; Operator is monorepo-local (no published package to unpublish).
 
 ---

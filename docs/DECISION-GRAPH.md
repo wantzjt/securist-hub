@@ -25,20 +25,20 @@ See `migrations/001_decision_graph.sql` and `src/lib/decision-graph/types.ts`:
 
 ## LIVE / HYBRID / SEED
 
-| Mode   | Meaning                                                 |
-| ------ | ------------------------------------------------------- |
-| SEED   | Explicit seed/demo data (`isSeed`, verification `seed`) |
-| HYBRID | Mix of seed + observed public signals                   |
-| LIVE   | Observed/public or operator-authenticated signals only  |
+| Mode | Meaning |
+|------|---------|
+| SEED | Explicit seed/demo data (`isSeed`, verification `seed`) |
+| HYBRID | Mix of seed + observed public signals |
+| LIVE | Observed/public or operator-authenticated signals only |
 
 Seed rows **must never** render as LIVE org telemetry.
 
 ## Persistence
 
-| Env               | Adapter                                     |
-| ----------------- | ------------------------------------------- |
-| Local (now)       | Process memory + seed snapshot (`store.ts`) |
-| Production target | Postgres-compatible via `migrations/`       |
+| Env | Adapter |
+|-----|---------|
+| Local (now) | Process memory + seed snapshot (`store.ts`) |
+| Production target | Postgres-compatible via `migrations/` |
 
 ## Policy
 
