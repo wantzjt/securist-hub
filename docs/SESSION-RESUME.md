@@ -10,6 +10,7 @@
 
 ```text
 Public Assess (/assess)                 LIVE
+Public PR Decision Brief Action         LIVE on this public repo (ephemeral comment, not approval)
 Local Operator monorepo path            LIVE on /operator Path A
 Local Operator signed RC path           Path B on /operator from GitHub Release · Gate 1
 Team Graph / R1                         NOT LIVE (human Postgres only)
@@ -34,6 +35,7 @@ Broad announcement                      HOLD
 | Publish gate plan | [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
 | R1 readiness | [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
 | Operator UX | `/operator` · WO-022 |
+| **Public PR Brief Action** | [`PUBLIC-DECISION-BRIEF-ACTION.md`](./PUBLIC-DECISION-BRIEF-ACTION.md) · WO-030 |
 | **Intel meeting pack** | [`meeting/`](./meeting/) · WO-024 |
 | **Grok Bot OS + standup prompt** | [`GROK-BOT-OPERATING-SYSTEM.md`](./GROK-BOT-OPERATING-SYSTEM.md) · [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) |
 
@@ -85,6 +87,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **WO-027** | PLG shareable /assess re-run link · PR #58 merged |
 | **WO-028** | Share-grade Brief (OG + md export + print) · PR #66 merged |
 | **WO-029** | Operator 5-min Path B signed Release · PR #68 merged |
+| **WO-030** | Public Decision Brief GitHub Action (read-only) · in review |
 
 ### 2026-08-12 Operator RC (local, gitignored)
 

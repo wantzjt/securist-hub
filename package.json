@@ -13,6 +13,7 @@
     "test:lifecycle": "tsx src/lib/decision-graph/fixtures/run-e2e-lifecycle.ts",
     "test:graph": "tsx src/lib/decision-graph/fixtures/run-store-tests.ts",
     "test:public-assess": "tsx src/lib/decision-graph/fixtures/run-public-assess-tests.ts",
+    "test:public-brief-action": "node scripts/public-decision-brief-lib.mjs",
     "test:decision-brief-contracts": "tsx src/lib/decision-graph/fixtures/run-decision-brief-contract-tests.ts",
     "test:product-surface": "tsx src/lib/decision-graph/fixtures/run-product-surface-tests.ts",
     "test:operator": "tsx packages/operator/fixtures/run-operator-tests.ts",

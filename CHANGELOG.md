@@ -11,6 +11,7 @@ See [`docs/BUILDING-IN-PUBLIC.md`](docs/BUILDING-IN-PUBLIC.md).
 ## [Unreleased]
 
 ### Added
+- Public Decision Brief GitHub Action (WO-030): one ephemeral PR comment, GITHUB_TOKEN only, not production approval, Team Graph not live.
 - Open-build front door (WO-013): README rewrite, community docs, building-in-public policy.
 
 ---

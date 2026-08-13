@@ -44,6 +44,9 @@ Public /assess dogfood log (ephemeral briefs; share via re-run link after WO-027
 
 **Not supported on the public path:** private repos, secrets, local paths, non-GitHub hosts.
 
+**CI dogfood (this repo):** a GitHub Action posts or updates **one** ephemeral Decision Brief comment on public PRs. Not production approval. Team Graph not live. Not a scanner. See [`docs/PUBLIC-DECISION-BRIEF-ACTION.md`](docs/PUBLIC-DECISION-BRIEF-ACTION.md).
+
+
 ### 2. Local Operator (monorepo — honest)
 
 **Not a public `npx @securist/operator` release.** That comes after a human-signed distribution ([release lane](docs/OPERATOR-RELEASE-LANE.md)).
