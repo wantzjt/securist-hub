@@ -1,7 +1,7 @@
 ---
 id: WO-031
 title: "Admission packs (coding agents / MCP / models)"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-031-admission-packs
 depends_on:
@@ -30,6 +30,7 @@ Admission packs (coding agents / MCP / models).
 ## Progress
 
 - 2026-08-12 — Implementation on branch feat/wo-031-admission-packs; PR open.
+- 2026-08-12 — PR #72 merged; complete.
 
 
 ## Blockers
