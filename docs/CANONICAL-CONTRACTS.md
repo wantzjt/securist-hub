@@ -236,3 +236,10 @@ Public assess resilience bounds (timeout, fact-cache TTL/size) live in
 
 Structured proposals and extracted **candidate** facts only.  
 Never an authoritative decision write.
+
+
+### North-star re-review loop (WO-033)
+
+Package: `packages/contracts/src/re-review-loop.ts`.
+
+Material change reopens permission (`review_required`) against a **postgres** Decision Graph only. Fail-closed (`graph_store_not_postgres`) on memory/seed. Audit trail: what changed, policy id/version, named human who must re-approve. Team Graph product surface remains **not live**.

@@ -5,11 +5,12 @@
   "purpose": "Machine-checkable map from product authority to implementation, verification, and human gates. This is not customer Decision Graph data.",
   "canonicalProductAuthority": "decision-graph",
   "sourceDocuments": [
-    "docs/SYSTEM-MODEL.md",
     "docs/CANONICAL-CONTRACTS.md",
     "docs/DECISION-LIFECYCLE.md",
-    "docs/OPERATIONS.md",
     "docs/DECISIONS.md",
+    "docs/OPERATIONS.md",
+    "docs/RE-REVIEW-LOOP.md",
+    "docs/SYSTEM-MODEL.md",
     "docs/TEAM-GRAPH-CONTRACTS.md"
   ],
   "coverageRoots": [
@@ -84,6 +85,11 @@
       "id": "team-graph-contracts",
       "mode": "automated",
       "command": "npm run test:team-graph-contracts"
+    },
+    {
+      "id": "re-review-loop",
+      "mode": "automated",
+      "command": "npm run test:re-review-loop"
     },
     {
       "id": "golden-path",
@@ -192,11 +198,17 @@
         "src/lib/decision-graph/store-types.ts",
         "src/lib/decision-graph/types.ts",
         "src/lib/decision-graph/surface-contracts.ts",
-        "packages/contracts/src/team-graph.ts"
+        "packages/contracts/src/team-graph.ts",
+        "packages/contracts/src/re-review-loop.ts"
       ],
       "dependsOn": [],
       "invariants": ["INV-001", "INV-003", "INV-006", "INV-009"],
-      "verifiedBy": ["typecheck", "system-graph", "team-graph-contracts"]
+      "verifiedBy": [
+        "typecheck",
+        "system-graph",
+        "team-graph-contracts",
+        "re-review-loop"
+      ]
     },
     {
       "id": "decision-graph",
@@ -209,11 +221,12 @@
         "src/lib/decision-graph/ingest.ts",
         "src/lib/decision-graph/mappers.ts",
         "src/lib/decision-graph/sql.ts",
-        "src/lib/decision-graph/state-machine.ts"
+        "src/lib/decision-graph/state-machine.ts",
+        "src/lib/decision-graph/re-review-loop.ts"
       ],
       "dependsOn": ["contracts"],
       "invariants": ["INV-001", "INV-002", "INV-004", "INV-006"],
-      "verifiedBy": ["lifecycle", "graph-store", "typecheck"]
+      "verifiedBy": ["lifecycle", "graph-store", "typecheck", "re-review-loop"]
     },
     {
       "id": "policy-engine",

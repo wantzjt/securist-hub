@@ -1,6 +1,6 @@
 # R1 readiness pack — Team Graph Postgres (docs only)
 
-**Status:** Authority granted in writing · provision **not done** · **R1 not active**  
+**Status:** Authority granted · store may be provisioned (infra) · **R1 exit unsigned** · **R1 not active** · Team Graph **not live**  
 **Date:** 2026-08-13  
 **Owner:** **human only** for credentials / env / migration / deploy  
 **Work orders:** [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) · [`WO-005`](../ops/work-orders/WO-005-rm003-postgres-provision.md)  
@@ -19,7 +19,7 @@ Paid:  shared Team Graph — owner, policy, evidence, re-review under change
 ```
 
 R1 flips production Decision Graph from **memory/seed** to **Postgres durable**.  
-Until R1 exit is human-signed, **do not** claim multi-user durability or paid Team Graph live.
+Until R1 exit is human-signed, **do not** claim multi-user durability or paid Team Graph live. A provisioned Postgres store is infra, not Team Graph GA.
 
 ---
 
@@ -150,5 +150,5 @@ App returns to seed/demo; DB may remain unused.
 ## Agent resume line
 
 ```text
-Resume R1 from docs/R1-READINESS-PACK.md — authority granted on WO-008 (provision not done; R1 not active)
+Resume R1 from docs/R1-READINESS-PACK.md — WO-008 exit unsigned; R1 not active; Team Graph not live
 ```
