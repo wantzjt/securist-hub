@@ -1,7 +1,7 @@
 # R1 readiness pack — Team Graph Postgres (docs only)
 
-**Status:** Ready for human decision · **not provisioned**  
-**Date:** 2026-08-10  
+**Status:** Authority granted in writing · provision **not done** · **R1 not active**  
+**Date:** 2026-08-13  
 **Owner:** **human only** for credentials / env / migration / deploy  
 **Work orders:** [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) · [`WO-005`](../ops/work-orders/WO-005-rm003-postgres-provision.md)  
 **Contract freeze:** [`WO-032`](../ops/work-orders/WO-032-team-graph-contract-freeze.md) · [`TEAM-GRAPH-CONTRACTS.md`](./TEAM-GRAPH-CONTRACTS.md) — frozen, **not live**, does **not** activate R1  
@@ -48,14 +48,18 @@ Handoff mapping onto `migrations/001_decision_graph.sql` lives in [`TEAM-GRAPH-C
 
 ## Human authority gate (required first)
 
-R1 stays **blocked** until you write **explicit provision authority**, e.g. on WO-008 Progress:
+**Authority granted in writing (provision not done).**
+
+Founder (John Wantz) authorized R1 Postgres provision for tarx / securist-hub in Securist COS chat ("Yes do so", 2026-08-12 22:44 America/Chicago / 2026-08-13 ~03:44Z). Recorded on [`WO-008`](../ops/work-orders/WO-008-r1-postgres-activation-prep.md) Progress.
+
+This is **intent to provision**, not completion. Remaining steps (Vercel env, migration, smoke, R1 exit sign-off) stay **human-only**. **R1 is not active.** Team Graph is **not live.** Agents must still **not** provision, mutate env, or declare R1 live.
+
+Historical template (already satisfied by the COS chat line):
 
 ```text
 I authorize R1 Postgres provision for tarx / securist-hub on <UTC date>.
 Go/no-go owner: <name>
 ```
-
-Without that line, agents stop at this pack.
 
 ---
 
@@ -63,7 +67,7 @@ Without that line, agents stop at this pack.
 
 ### 0. Preconditions
 
-- [ ] Authority line recorded on WO-008  
+- [x] Authority line recorded on WO-008  
 - [ ] Access to Vercel team **tarx** · project **securist-hub** only ([`VERCEL-SCOPE.md`](./VERCEL-SCOPE.md))  
 - [ ] Human operator available (not an agent session alone)  
 
@@ -146,5 +150,5 @@ App returns to seed/demo; DB may remain unused.
 ## Agent resume line
 
 ```text
-Resume R1 from docs/R1-READINESS-PACK.md — authority [not granted | granted on WO-008]
+Resume R1 from docs/R1-READINESS-PACK.md — authority granted on WO-008 (provision not done; R1 not active)
 ```

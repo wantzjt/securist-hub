@@ -40,7 +40,7 @@ verification:
 **R1** = durable Decision Graph activation in production (not seed/memory default).  
 Code seam is on `main` (WO-002 / PR #4). **R1 is not active** until a human completes provision under **tarx** scope.
 
-This work order is **blocked** until explicit human provision authority. It does **not** authorize agents to create credentials, set env vars, run migrations, or deploy.
+Founder authorized R1 Postgres provision in writing (Securist COS chat 2026-08-12 22:44 CT / 2026-08-13 ~03:44Z). This work order remains **blocked** on credentials, Vercel env, and migration — **human only**. It does **not** authorize agents to create credentials, set env vars, run migrations, or deploy. **R1 is not active.** Team Graph is **not live**.
 
 Related: [WO-005](./WO-005-rm003-postgres-provision.md) · [`RM-003-PROVISION-CHECKLIST.md`](../../docs/RM-003-PROVISION-CHECKLIST.md) · [`RELEASE-PLAN.md`](../../docs/RELEASE-PLAN.md)
 
@@ -90,7 +90,7 @@ psql "$DATABASE_URL" -f migrations/001_decision_graph.sql
 
 ## Plan (when unblocked)
 
-1. Human grants provision authority in writing (PR comment or WO note).  
+1. Human grants provision authority in writing (PR comment or WO note). **Done 2026-08-13** (COS chat; see Progress).  
 2. Set status `in_progress`, owner human, branch if any ops docs update.  
 3. Execute [`RM-003-PROVISION-CHECKLIST.md`](../../docs/RM-003-PROVISION-CHECKLIST.md).  
 4. Complete R1 exit criteria in [`RELEASE-PLAN.md`](../../docs/RELEASE-PLAN.md).  
@@ -102,8 +102,10 @@ psql "$DATABASE_URL" -f migrations/001_decision_graph.sql
 - 2026-08-06: Confirmed as **one of two active tracks** under D-009 freeze (with WO-004). No product expansion on this track—activation only.
 - 2026-08-10: Docs pack [`R1-READINESS-PACK.md`](../../docs/R1-READINESS-PACK.md) consolidates steps for cold resume. **Still blocked** — no provision, no env, no migration. Code seam + fail-closed tests remain green on `main`.
 - 2026-08-12: WO-032 froze Team Graph contracts (Decision / owner / policy / evidence / re-review) and stub API. **Still blocked** — freeze does not grant provision authority, does not set env, does not run migrations.
+- 2026-08-13 — Founder (John Wantz) authorized R1 Postgres provision for tarx / securist-hub in COS chat ("Yes do so", 2026-08-12 22:44 CT). Credentials, Vercel env, and migration remain human-only. R1 not active. Team Graph not live.
 
 ## Blockers
 
-- **Explicit human provision authority** not yet granted.  
+- Credentials, Vercel env, and migration remain **human-only**. Authority is recorded; provision is **not done**.
 - Vercel tarx access and Marketplace DB remain human-only.
+- **R1 not active.** Team Graph not live.
