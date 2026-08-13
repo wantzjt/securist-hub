@@ -91,6 +91,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **WO-029** | Operator 5-min Path B signed Release · PR #68 merged |
 | **WO-030** | Public Decision Brief GitHub Action (read-only) · PR #70 merged |
 | **WO-031** | Admission packs (coding-agent / MCP / model-weights) · PR #72 merged |
+| **WO-032** | Team Graph contract freeze (pre-R1) · PR #74 merged · not live |
 
 ### 2026-08-12 Operator RC (local, gitignored)
 
@@ -115,6 +116,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **M** | Run meeting dry-run ([`meeting/DEMO-SCRIPT.md`](./meeting/DEMO-SCRIPT.md)) | you |
 | **G** | Stand up Grok Bot **Securist COS** with [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) | you + Bot |
 | **C** | R1: grant provision authority then [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) | **you only** for credentials |
+| **E** | WO-033 re-review loop | **blocked** on WO-008 / human-signed R1 |
 | **D** | Stay HOLD — no announce | default |
 
 ### Tell Grok
