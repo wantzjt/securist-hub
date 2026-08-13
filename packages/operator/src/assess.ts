@@ -15,6 +15,11 @@ import { collectManifests } from './collect-manifests'
 import { runDoctor } from './doctor'
 import { assertStateOutsideTarget, saveLocalBrief } from './local-state'
 import { verifyOperatorRuntime } from './runtime-identity'
+import {
+  applyAdmissionPack,
+  getAdmissionPack,
+} from '../../../src/lib/admission-packs'
+import type { AdmissionPackIdV1 } from '../../../src/lib/admission-packs'
 
 export type AssessOptions = {
   targetPath: string
@@ -22,6 +27,7 @@ export type AssessOptions = {
   environment: LocalAssessScopeV1['environment']
   deploymentBoundary: LocalAssessScopeV1['deploymentBoundary']
   dryRun?: boolean
+  packId?: AdmissionPackIdV1
 }
 
 export function assessLocalRepository(
@@ -40,9 +46,7 @@ export function assessLocalRepository(
         doctor.capability === 'signature_invalid'
           ? 'signature_invalid'
           : 'runtime_unavailable',
-      error: doctor.runtime.ok
-        ? 'Runtime not verified'
-        : doctor.runtime.error,
+      error: doctor.runtime.ok ? 'Runtime not verified' : doctor.runtime.error,
     }
   }
 
@@ -108,6 +112,39 @@ export function assessLocalRepository(
   }
 
   const assessedAt = new Date().toISOString()
+  let unknowns = collected.unknowns
+  let evidenceGaps = collected.evidenceGaps
+  let reReviewTriggers = collected.reReviewTriggers
+  let policyHints = [
+    `Intended use (stated): ${scope.intendedUse}`,
+    `Environment: ${scope.environment}`,
+    `Deployment boundary: ${scope.deploymentBoundary}`,
+    'Policy hints are non-authoritative — not an approval or Decision Graph write.',
+    'Human decision required before treating this as production permission.',
+  ]
+  let disclaimers = [
+    'Local private assessment only. Never automatically shareable.',
+    'No customer data uploaded. No hub persistence in free Operator path.',
+    'Not a pentest, SCA certification, or vulnerability claim from model narrative.',
+    'Model synthesis was not used (synthesis_unavailable).',
+  ]
+  if (opts.packId) {
+    const pack = getAdmissionPack(opts.packId)
+    if (pack) {
+      const applied = applyAdmissionPack(pack, {
+        unknowns,
+        evidenceGaps,
+        reReviewTriggers,
+        policyHints,
+        disclaimers,
+      })
+      unknowns = applied.unknowns
+      evidenceGaps = applied.evidenceGaps
+      reReviewTriggers = applied.reReviewTriggers
+      policyHints = applied.policyHints
+      disclaimers = applied.disclaimers
+    }
+  }
   const briefCore = {
     contractVersion: '1' as const,
     kind: 'local_decision_brief' as const,
@@ -128,22 +165,11 @@ export function assessLocalRepository(
     },
     scope,
     observed: collected.observed,
-    unknowns: collected.unknowns,
-    evidenceGaps: collected.evidenceGaps,
-    reReviewTriggers: collected.reReviewTriggers,
-    policyHints: [
-      `Intended use (stated): ${scope.intendedUse}`,
-      `Environment: ${scope.environment}`,
-      `Deployment boundary: ${scope.deploymentBoundary}`,
-      'Policy hints are non-authoritative — not an approval or Decision Graph write.',
-      'Human decision required before treating this as production permission.',
-    ],
-    disclaimers: [
-      'Local private assessment only. Never automatically shareable.',
-      'No customer data uploaded. No hub persistence in free Operator path.',
-      'Not a pentest, SCA certification, or vulnerability claim from model narrative.',
-      'Model synthesis was not used (synthesis_unavailable).',
-    ],
+    unknowns,
+    evidenceGaps,
+    reReviewTriggers,
+    policyHints,
+    disclaimers,
     provenance,
     capability: 'synthesis_unavailable' as const,
     synthesis,
@@ -173,5 +199,13 @@ export function formatBriefSummary(brief: LocalDecisionBriefV1): string {
     `  Model synthesis: not used (${brief.capability})`,
     `  Persistence: ${brief.persistence} · durable: ${brief.durable}`,
     `  Next: inspect gaps or connect local MCP (stdio)`,
-  ].join('\n')
+    (() => {
+      const hint = brief.policyHints.find((h) =>
+        h.startsWith('Admission pack '),
+      )
+      return hint ? `  ${hint}` : ''
+    })(),
+  ]
+    .filter(Boolean)
+    .join('\n')
 }

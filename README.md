@@ -32,7 +32,7 @@ secur.ist/assess          monorepo today              R1 (next)           after 
 
 1. Open [https://secur.ist/assess](https://secur.ist/assess)  
 2. Paste a **public** `github.com/owner/repo` URL  
-3. State intended use, environment, and deployment boundary  
+3. State intended use, environment, and deployment boundary (optional admission pack: coding-agent, MCP, or model/weights)  
 4. Get a share-safe brief: observed facts, unknowns, evidence gaps — not a pentest  
 
 Also: [sample Decision Brief (SEED · illustrative)](https://secur.ist/artifacts/art-scout-daemon)
@@ -111,6 +111,7 @@ Roadmap: [`docs/ROADMAP.md`](docs/ROADMAP.md) · Strategy: [`docs/STRATEGY.md`](
 | Support boundaries | [`SUPPORT.md`](SUPPORT.md) |
 | Code of conduct | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) |
 | Changelog | [`CHANGELOG.md`](CHANGELOG.md) |
+| Admission packs | [`docs/ADMISSION-PACKS.md`](docs/ADMISSION-PACKS.md) |
 | Operator release lane | [`docs/OPERATOR-RELEASE-LANE.md`](docs/OPERATOR-RELEASE-LANE.md) |
 
 **Operating law:** one work order · one branch · one PR · clean worktree · human holds credentials, deploy, and release keys.

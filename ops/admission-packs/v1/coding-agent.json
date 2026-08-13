@@ -1,0 +1,91 @@
+{
+  "id": "coding-agent",
+  "version": "1.0.0",
+  "catalogVersion": "1",
+  "class": "coding-agent",
+  "title": "Coding agent",
+  "summary": "Admit a coding agent (IDE assistant, CLI agent, or PR bot) to write or review code under a stated use — not a production deploy authority.",
+  "admitted": "A coding agent whose public repository can be named, licensed, and scoped. Human review of diffs remains required. No production merge or deploy authority is granted by this pack.",
+  "intendedUsePrompt": "Admit this coding agent to generate and review application code in development. No production deploy authority. No secret exfiltration. A human reviews all diffs before merge.",
+  "environmentDefault": "development",
+  "deploymentBoundaryDefault": "local_only",
+  "evidenceChecklist": [
+    {
+      "id": "public_repo",
+      "label": "Public GitHub repository URL on default branch",
+      "required": true,
+      "publicSourceHint": "GitHub repo API (public)"
+    },
+    {
+      "id": "license",
+      "label": "License SPDX or license file observed",
+      "required": true,
+      "publicSourceHint": "GitHub license metadata or LICENSE file"
+    },
+    {
+      "id": "capability_claims",
+      "label": "README or docs state what the agent may do (edit, shell, network)",
+      "required": true,
+      "publicSourceHint": "Public README / docs"
+    },
+    {
+      "id": "tool_surface",
+      "label": "Tool or permission surface documented (filesystem, network, shell)",
+      "required": true,
+      "publicSourceHint": "Public docs — not a live tool enumeration"
+    },
+    {
+      "id": "model_backend",
+      "label": "Model or backend disclosed, or explicitly unknown",
+      "required": false,
+      "publicSourceHint": "README / model card if published"
+    },
+    {
+      "id": "security_policy",
+      "label": "SECURITY.md or disclosure path if present",
+      "required": false,
+      "publicSourceHint": "Public SECURITY.md"
+    }
+  ],
+  "unknownDefaults": [
+    "Runtime tool allowlist was not observed from public metadata.",
+    "Prompt-injection and secret-exfiltration controls were not evaluated.",
+    "Model or backend provenance was not verified on this path.",
+    "No Team Graph admission record exists (Team Graph is not live)."
+  ],
+  "evidenceGapDefaults": [
+    "agent_tool_surface",
+    "model_governance",
+    "secret_handling",
+    "security"
+  ],
+  "reReviewTriggers": [
+    "Agent release tag or default-branch digest change",
+    "Documented tool surface gain (shell, network, or write)",
+    "Intended use or deployment boundary change",
+    "Model or backend swap without a new brief"
+  ],
+  "outOfScope": [
+    "Compliance certification or audit letter",
+    "Team Graph live admission or durable shared record (R1 not live)",
+    "Public registry install of @securist/operator",
+    "Pentest, SCA scan, or invented vulnerability claims",
+    "Post-quantum / PQC hero claims (packs do not assert ML-KEM or PQ signatures)",
+    "Paid policy marketplace"
+  ],
+  "disclaimers": [
+    "Admission pack is a scaffold — not a compliance certification.",
+    "Team Graph is not live; this pack does not create a durable admission record.",
+    "Public registry install of @securist/operator is not available.",
+    "Not a pentest, SCA scan, or production approval.",
+    "No PQC / post-quantum property is asserted by this pack."
+  ],
+  "sampleSources": [
+    {
+      "label": "Aider (public coding agent)",
+      "url": "https://github.com/Aider-AI/aider",
+      "note": "Public GitHub sample for /assess dogfood. Not an endorsement or approval."
+    }
+  ],
+  "dogfoodNotes": "Public /assess collects GitHub metadata only. Use the sample URL to exercise the pack; Local Operator --pack coding-agent applies the same unknowns/gaps to a private tree without upload."
+}

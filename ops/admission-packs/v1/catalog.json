@@ -1,0 +1,11 @@
+{
+  "catalogVersion": "1",
+  "packVersion": "1.0.0",
+  "ids": ["coding-agent", "mcp-server", "model-weights"],
+  "honesty": {
+    "notComplianceCert": true,
+    "teamGraphLive": false,
+    "publicNpx": false,
+    "pqcHero": false
+  }
+}

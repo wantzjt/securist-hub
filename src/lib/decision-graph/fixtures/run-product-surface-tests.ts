@@ -109,7 +109,8 @@ function main() {
   )
   assert(
     'ladder private step mentions monorepo or signed RC',
-    /monorepo/i.test(LADDER[1].body) && /signed|RC|release/i.test(LADDER[1].body),
+    /monorepo/i.test(LADDER[1].body) &&
+      /signed|RC|release/i.test(LADDER[1].body),
   )
   assert(
     'buyer outcome outliving approvals',
@@ -130,8 +131,14 @@ function main() {
   const securityMd = read('SECURITY.md')
   const supportMd = read('SUPPORT.md')
 
-  assert('operator route file exists', existsSync(join(ROOT, 'src/routes/operator.tsx')))
-  assert('team route file exists', existsSync(join(ROOT, 'src/routes/team.tsx')))
+  assert(
+    'operator route file exists',
+    existsSync(join(ROOT, 'src/routes/operator.tsx')),
+  )
+  assert(
+    'team route file exists',
+    existsSync(join(ROOT, 'src/routes/team.tsx')),
+  )
   assert(
     'home imports product-surface constants',
     home.includes('product-surface') && home.includes('DecisionBriefPreview'),
@@ -176,8 +183,7 @@ function main() {
   )
   assert(
     'operator page forbids public npx availability claim',
-    /Not available|not available/i.test(operator) &&
-      operator.includes('npx'),
+    /Not available|not available/i.test(operator) && operator.includes('npx'),
   )
   assert(
     'operator page does not instruct live npx install',
@@ -256,6 +262,38 @@ function main() {
   assert(
     'no Datadog product mention in operator/team/home',
     !/datadog/i.test(operator + team + home + chrome),
+  )
+
+  console.log('\n[admission packs WO-031]')
+  const packsTs = read('src/lib/admission-packs.ts')
+  const packsDoc = read('docs/ADMISSION-PACKS.md')
+  assert(
+    'three pack json files',
+    existsSync(join(ROOT, 'ops/admission-packs/v1/coding-agent.json')) &&
+      existsSync(join(ROOT, 'ops/admission-packs/v1/mcp-server.json')) &&
+      existsSync(join(ROOT, 'ops/admission-packs/v1/model-weights.json')),
+  )
+  assert('assess wires pack picker', assess.includes('AdmissionPackPicker'))
+  assert(
+    'operator lists packs',
+    operator.includes('ADMISSION_PACK_LIST') && operator.includes('--pack'),
+  )
+  assert(
+    'packs say Team Graph is not live',
+    /Team Graph is not live/i.test(packsTs) &&
+      /Team Graph is not live/i.test(packsDoc),
+  )
+  assert(
+    'packs do not say Team Graph is live',
+    !/Team Graph is live/i.test(packsTs + packsDoc),
+  )
+  assert(
+    'packs not a compliance certification',
+    /not a compliance/i.test(packsTs),
+  )
+  assert(
+    'packs deny PQC hero',
+    /No PQC/i.test(packsTs) || /pqcHero: false/.test(packsTs),
   )
 
   console.log(`\n${passed}/${passed + failed} passed`)

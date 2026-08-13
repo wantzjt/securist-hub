@@ -16,6 +16,8 @@ import type {
   PublicRepoAssessResultV1,
   PublicRepositoryFactsV1,
 } from '../../packages/contracts/src/public-assess'
+import { applyAdmissionPack, getAdmissionPack } from './admission-packs'
+import type { AdmissionPackIdV1 } from './admission-packs'
 import {
   PUBLIC_ASSESS_BOUNDARIES_V1,
   PUBLIC_ASSESS_ENVIRONMENTS_V1,
@@ -53,7 +55,11 @@ function rejectPrivateMaterial(s: string): string | null {
   ) {
     return 'Input appears to contain private material; use a public GitHub URL only'
   }
-  if (/github\.com\/[^/]+\/[^/]+\/(settings|security|network|pull|issues|tree|blob|commit)/i.test(s)) {
+  if (
+    /github\.com\/[^/]+\/[^/]+\/(settings|security|network|pull|issues|tree|blob|commit)/i.test(
+      s,
+    )
+  ) {
     return 'Use the repository root URL only'
   }
   return null
@@ -79,7 +85,11 @@ export function validatePublicRepoAssessInput(
     }
   }
   if (!isPlainObject(raw)) {
-    return { ok: false, code: 'schema', error: 'Request body must be a plain object' }
+    return {
+      ok: false,
+      code: 'schema',
+      error: 'Request body must be a plain object',
+    }
   }
 
   const { repositoryUrl, intendedUse, environment, deploymentBoundary } = raw
@@ -223,10 +233,7 @@ export function parsePublicGithubUrl(
 }
 
 type GhFetchFailureKind =
-  | 'http'
-  | 'timeout'
-  | 'network'
-  | 'upstream_unavailable'
+  'http' | 'timeout' | 'network' | 'upstream_unavailable'
 
 type GhFetchResult<T> =
   | { ok: true; data: T; status: number; rateLimitRemaining: number | null }
@@ -557,10 +564,44 @@ async function collectPublicRepositoryFacts(
   return { ok: true, repository }
 }
 
+function isPlainObjectPack(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
+function readAdmissionPackId(
+  raw: unknown,
+):
+  | { ok: true; id: AdmissionPackIdV1 | undefined }
+  | { ok: false; code: string; error: string } {
+  if (!isPlainObjectPack(raw)) return { ok: true, id: undefined }
+  const v = raw.admissionPackId
+  if (v === undefined || v === null || v === '') {
+    return { ok: true, id: undefined }
+  }
+  if (typeof v !== 'string') {
+    return {
+      ok: false,
+      code: 'schema',
+      error: 'admissionPackId must be a string',
+    }
+  }
+  const pack = getAdmissionPack(v)
+  if (!pack) {
+    return {
+      ok: false,
+      code: 'schema',
+      error:
+        'admissionPackId must be one of: coding-agent, mcp-server, model-weights',
+    }
+  }
+  return { ok: true, id: pack.id }
+}
+
 function buildBriefFromPublicFacts(
   input: PublicRepoAssessInputV1,
   repository: PublicRepositoryFactsV1,
   fetchedAt: string,
+  packId?: AdmissionPackIdV1,
 ): PublicDecisionBriefV1 {
   const observed: PublicObservedFactV1[] = [
     {
@@ -607,7 +648,7 @@ function buildBriefFromPublicFacts(
     })
   }
 
-  const unknowns: string[] = [
+  let unknowns: string[] = [
     'No security advisory scan was performed in this assess path.',
     'Dependency tree and transitive risk were not evaluated.',
     'No local validation or pentest was run.',
@@ -623,7 +664,7 @@ function buildBriefFromPublicFacts(
     evidenceGaps.unshift('license')
   }
 
-  const reReviewTriggers = [
+  let reReviewTriggers = [
     'New default-branch commit or release tag with different digest/version',
     'License SPDX change or removal',
     'Repository archived, transferred, or visibility change',
@@ -631,7 +672,7 @@ function buildBriefFromPublicFacts(
     'Policy version change affecting this intended use or boundary',
   ]
 
-  const policyHints: string[] = [
+  let policyHints: string[] = [
     `Intended use (stated): ${input.intendedUse}`,
     `Environment: ${input.environment}`,
     `Deployment boundary: ${input.deploymentBoundary}`,
@@ -648,13 +689,31 @@ function buildBriefFromPublicFacts(
     )
   }
 
-  const disclaimers = [
+  let disclaimers = [
     'Public-source observation only. LIVE facts are those returned by GitHub on this fetch (or a short-lived public-fact cache of the same API fields).',
     'No vulnerability is asserted from model narrative or inference.',
     'Not a penetration test, SCA scan, or compliance certification.',
     'No customer-private data is stored by this assess path (pre-R1). Public fact cache keys are owner/repo only.',
     'Save and monitor is not available until durable workspace (R1).',
   ]
+
+  if (packId) {
+    const pack = getAdmissionPack(packId)
+    if (pack) {
+      const applied = applyAdmissionPack(pack, {
+        unknowns,
+        evidenceGaps,
+        reReviewTriggers,
+        policyHints,
+        disclaimers,
+      })
+      unknowns = applied.unknowns
+      evidenceGaps.splice(0, evidenceGaps.length, ...applied.evidenceGaps)
+      reReviewTriggers = applied.reReviewTriggers
+      policyHints = applied.policyHints
+      disclaimers = applied.disclaimers
+    }
+  }
 
   const briefCore = {
     contractVersion: '1' as const,
@@ -697,6 +756,10 @@ export async function assessPublicGithubRepo(
   if (!validated.ok) {
     return { ok: false, code: validated.code, error: validated.error }
   }
+  const packRead = readAdmissionPackId(rawInput)
+  if (!packRead.ok) {
+    return { ok: false, code: packRead.code, error: packRead.error }
+  }
   const input = validated.data
   const fetchImpl = options?.fetchImpl ?? globalThis.fetch.bind(globalThis)
   const timeoutMs =
@@ -724,6 +787,7 @@ export async function assessPublicGithubRepo(
         input,
         hit.repository,
         new Date(hit.collectedAtMs).toISOString(),
+        packRead.id,
       )
       return { ok: true, brief }
     }
@@ -744,8 +808,7 @@ export async function assessPublicGithubRepo(
       fullName: collected.repository.fullName,
       repository: collected.repository,
       collectedAtMs,
-      expiresAtMs:
-        collectedAtMs + PUBLIC_ASSESS_RESILIENCE_V1.factCacheTtlMs,
+      expiresAtMs: collectedAtMs + PUBLIC_ASSESS_RESILIENCE_V1.factCacheTtlMs,
     })
     pruneFactCache(collectedAtMs)
   }
@@ -754,6 +817,7 @@ export async function assessPublicGithubRepo(
     input,
     collected.repository,
     new Date(collectedAtMs).toISOString(),
+    packRead.id,
   )
   return { ok: true, brief }
 }

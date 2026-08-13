@@ -36,6 +36,7 @@ Broad announcement                      HOLD
 | R1 readiness | [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
 | Operator UX | `/operator` · WO-022 |
 | **Public PR Brief Action** | [`PUBLIC-DECISION-BRIEF-ACTION.md`](./PUBLIC-DECISION-BRIEF-ACTION.md) · WO-030 |
+| **Admission packs** | [`ADMISSION-PACKS.md`](./ADMISSION-PACKS.md) · [`ops/admission-packs/v1/`](../ops/admission-packs/v1/) · WO-031 |
 | **Intel meeting pack** | [`meeting/`](./meeting/) · WO-024 |
 | **Grok Bot OS + standup prompt** | [`GROK-BOT-OPERATING-SYSTEM.md`](./GROK-BOT-OPERATING-SYSTEM.md) · [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) |
 
