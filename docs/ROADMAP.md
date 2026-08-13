@@ -94,10 +94,10 @@ Public repository
 | | |
 | -- | -- |
 | **Owner** | grok (tooling · UX honesty) · **human** (private key custody, backup, publish) |
-| **Status** | **WO-012–021 complete** · **WO-022** dual-path `/operator` · **not** public npm/npx |
+| **Status** | **WO-012–021 complete** · **WO-022/029** dual-path `/operator` · **not** public npm/npx |
 | **Work order** | [`WO-022`](../ops/work-orders/WO-022-operator-signed-rc-ux.md) · [`WO-021`](../ops/work-orders/WO-021-automated-dogfood-battery.md) · [`OPERATOR-RELEASE-LANE.md`](./OPERATOR-RELEASE-LANE.md) |
 | **Gate 1** | Production Ed25519 trust-root on `main`; offline private key; signed RC + clean verify; CI golden-path battery |
-| **UX truth** | Path A monorepo · Path B signed RC tarball when the developer already holds one · no public download store |
+| **UX truth** | Path A monorepo · Path B signed GitHub Release (operator-v0.1.0-rc.1) · no public download store |
 | **Human next** | (1) Keep private-key backup · (2) optional second-machine verify · (3) publish gate E–F when ready |
 | **Live product** | Public `/assess` + `/operator` dual path · monorepo Operator · offline signed RC |
 | **Not claimed publicly** | `npx @securist/operator` until release lane exit |

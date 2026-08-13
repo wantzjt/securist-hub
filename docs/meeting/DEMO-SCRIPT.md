@@ -76,9 +76,11 @@ npm run securist -- doctor
 # unsigned monorepo: runtime_unavailable is correct honesty
 ```
 
-**Path B — signed RC (preferred if you have the tarball):**
+**Path B — signed GitHub Release (preferred clean-machine path):**
 
 ```bash
+curl -fsSL -O https://github.com/wantzjt/securist-hub/releases/download/operator-v0.1.0-rc.1/securist-operator-0.1.0-rc.tgz && curl -fsSL -O https://github.com/wantzjt/securist-hub/releases/download/operator-v0.1.0-rc.1/SHA256SUMS.txt
+shasum -a 256 -c SHA256SUMS.txt
 tar -xzf securist-operator-0.1.0-rc.tgz
 cd securist-operator-0.1.0-rc
 export SECURIST_HOME="$(pwd)/.securist-home" && mkdir -p "$SECURIST_HOME"

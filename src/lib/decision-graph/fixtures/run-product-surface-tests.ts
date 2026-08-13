@@ -13,6 +13,7 @@ import {
   OPERATOR_COMMANDS,
   OPERATOR_DISTRIBUTION_STATUS,
   OPERATOR_RC_COMMANDS,
+  OPERATOR_RELEASE_URL,
   PRODUCT_NAV,
   PRODUCT_SENTENCE,
   RESEARCH_LINKS,
@@ -94,10 +95,13 @@ function main() {
       !/^npx @securist/m.test(OPERATOR_COMMANDS.note),
   )
   assert(
-    'operator RC commands unpack tarball not npx',
-    OPERATOR_RC_COMMANDS.unpack.includes('tar -xzf') &&
+    'operator RC Path B fetches Release then unpacks not npx',
+    OPERATOR_RC_COMMANDS.download.includes('releases/download/') &&
+      OPERATOR_RC_COMMANDS.verifyChecksum.includes('SHA256SUMS') &&
+      OPERATOR_RC_COMMANDS.unpack.includes('tar -xzf') &&
       OPERATOR_RC_COMMANDS.doctor.includes('bin/securist.mjs') &&
-      /not available|Not Electron/i.test(OPERATOR_RC_COMMANDS.note),
+      /Ed25519|Not Electron/i.test(OPERATOR_RC_COMMANDS.note) &&
+      OPERATOR_RELEASE_URL.includes('releases/tag/operator-v0.1.0-rc.1'),
   )
   assert(
     'distribution status forbids public npx claim',
@@ -157,16 +161,18 @@ function main() {
       /not an Electron|not.*Electron/i.test(operator),
   )
   assert(
-    'operator page has Path A monorepo and Path B signed RC',
+    'operator page has Path A monorepo and Path B signed Release',
     /Path A/i.test(operator) &&
       /Path B/i.test(operator) &&
-      /signed RC|release-candidate tarball/i.test(operator),
+      /signed GitHub Release|GitHub Release candidate/i.test(operator),
   )
   assert(
-    'operator page documents tarball unpack not public download store',
-    operator.includes('tar -xzf') &&
-      operator.includes('public download') &&
-      /not.*offer|does.*not/i.test(operator),
+    'operator Path B links Release and forbids website asset store',
+    operator.includes('OPERATOR_RELEASE_URL') &&
+      operator.includes('verifyChecksum') &&
+      /Ed25519/i.test(operator) &&
+      /public registry install/i.test(operator) &&
+      /signature_invalid/i.test(operator),
   )
   assert(
     'operator page forbids public npx availability claim',
