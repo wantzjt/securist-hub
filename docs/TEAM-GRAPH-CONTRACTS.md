@@ -5,7 +5,7 @@
 **Owner (contracts):** Grok Build  
 **Durability / R1 / Postgres:** **John-only (WO-008)** — Grok Build does not stand up production durability in this WO.
 
-Team Graph remains **not live until R1** is human-signed. This pack freezes types, API stubs, and honesty labels so Build and COS stop drifting. It does **not** activate R1.
+Team Graph product remains **not live**. R1 Postgres store may be provisioned (infra); that is not paid Team Graph GA. Human WO-008 exit remains open. This pack freezes types, API stubs, and honesty labels so Build and COS stop drifting. It does **not** activate R1.
 
 ```text
 Public Assess (/assess)                 LIVE
@@ -76,7 +76,7 @@ Rollback remains: `SECURIST_GRAPH_STORE=memory` then redeploy. See [`R1-READINES
 - R1 / Postgres is **John-only (WO-008)**.
 - No package registry publish. No announce. No silent live endpoints.
 - Illustration Decision status is `not_reviewed` and evidence verification is `seed`.
-- WO-033 (re-review loop) stays blocked on human-signed R1 / WO-008 — do not fake durability.
+- WO-033 north-star loop runs fail-closed against postgres (infra). Team Graph product stays **not live**. `/team` remains Coming next. Do not fake an in-memory live loop.
 
 ---
 

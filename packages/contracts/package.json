@@ -12,7 +12,10 @@
     "./public-assess": "./src/public-assess.ts",
     "./decision-brief": "./src/decision-brief.ts",
     "./local-assess": "./src/local-assess.ts",
-    "./team-graph": "./src/team-graph.ts"
+    "./team-graph": "./src/team-graph.ts",
+    "./re-review-loop": "./src/re-review-loop.ts"
   },
-  "files": ["src"]
+  "files": [
+    "src"
+  ]
 }

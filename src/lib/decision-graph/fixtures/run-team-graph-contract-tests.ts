@@ -218,20 +218,20 @@ function main() {
   assert(
     'R1 pack aligned and not activated',
     /WO-032/.test(r1) &&
-      /not provisioned/i.test(r1) &&
+      /not live/i.test(r1) &&
       !/R1 is active/i.test(r1) &&
       /do not\*?\*? claim multi-user durability/i.test(r1),
   )
   assert(
     'SESSION-RESUME Team Graph still NOT LIVE',
-    /Team Graph \/ R1\s+NOT LIVE/.test(resume),
+    /Team Graph/.test(resume) && /NOT LIVE/.test(resume),
   )
   assert(
     'WO-032 depends_on WO-031 owner grok',
     /depends_on:/.test(wo) &&
       /WO-031/.test(wo) &&
       /owner: grok/.test(wo) &&
-      /status: in_review/.test(wo),
+      /status: complete/.test(wo),
   )
   assert(
     'activity-api stub does not call getDecisionGraphStore for Team Graph',

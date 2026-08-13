@@ -99,9 +99,7 @@ export function createFakeSql(): FakeSql {
       }
 
       // SELECT id FROM artifacts WHERE id AND tenant
-      if (
-        lower.includes('from artifacts where id = $1 and tenant_id = $2')
-      ) {
+      if (lower.includes('from artifacts where id = $1 and tenant_id = $2')) {
         return asT(
           tables.artifacts.filter(
             (r) => r.id === params[0] && r.tenant_id === params[1],
@@ -175,15 +173,14 @@ export function createFakeSql(): FakeSql {
           created_at: params[6],
           projected: false,
           dead_letter: lower.includes('true,$8') || params[7] === true,
-          error_code: params[7] && typeof params[7] === 'string' ? params[7] : null,
+          error_code:
+            params[7] && typeof params[7] === 'string' ? params[7] : null,
         })
         return asT([{ id }])
       }
 
       // UPDATE outbox projected
-      if (
-        lower.startsWith('update outbox_events set projected = true')
-      ) {
+      if (lower.startsWith('update outbox_events set projected = true')) {
         const id = String(params[0])
         const row = tables.outbox_events.find((r) => r.id === id)
         if (row) row.projected = true
@@ -191,7 +188,10 @@ export function createFakeSql(): FakeSql {
       }
 
       // UPDATE outbox dead letter
-      if (lower.startsWith('update outbox_events') && lower.includes('dead_letter')) {
+      if (
+        lower.startsWith('update outbox_events') &&
+        lower.includes('dead_letter')
+      ) {
         const id = String(params[0])
         const row = tables.outbox_events.find((r) => r.id === id)
         if (row) {
@@ -297,9 +297,7 @@ export function createFakeSql(): FakeSql {
         return asT(tables.artifacts.filter((r) => r.tenant_id === params[0]))
       }
 
-      if (
-        lower.includes('from artifacts where id = $1 and tenant_id = $2')
-      ) {
+      if (lower.includes('from artifacts where id = $1 and tenant_id = $2')) {
         return asT(
           tables.artifacts.filter(
             (r) => r.id === params[0] && r.tenant_id === params[1],
@@ -389,7 +387,10 @@ export function createFakeSql(): FakeSql {
         return asT(tables.policy_evaluations)
       }
 
-      if (lower.includes('from decisions') && lower.includes('tenant_id = $1')) {
+      if (
+        lower.includes('from decisions') &&
+        lower.includes('tenant_id = $1')
+      ) {
         return asT(tables.decisions.filter((r) => r.tenant_id === params[0]))
       }
       if (lower.includes('from decisions')) return asT(tables.decisions)
@@ -440,6 +441,80 @@ export function createFakeSql(): FakeSql {
       }
       if (lower.includes('from operator_agents')) {
         return asT(tables.operator_agents)
+      }
+
+      if (lower.startsWith('update artifacts set status')) {
+        const row = tables.artifacts.find(
+          (r) => r.id === params[2] && r.tenant_id === params[3],
+        )
+        if (row) {
+          row.status = params[0]
+          row.updated_at = params[1]
+          return asT([row])
+        }
+        return asT([])
+      }
+
+      if (lower.startsWith('update decisions set status')) {
+        const row = tables.decisions.find(
+          (r) =>
+            r.id === params[1] &&
+            r.tenant_id === params[2] &&
+            r.artifact_id === params[3],
+        )
+        if (row) {
+          row.status = params[0]
+          return asT([row])
+        }
+        return asT([])
+      }
+
+      if (lower.startsWith('insert into change_events')) {
+        const id = String(params[0])
+        if (tables.change_events.some((r) => r.id === id)) return asT([])
+        tables.change_events.push({
+          id: params[0],
+          tenant_id: params[1],
+          artifact_id: params[2],
+          change_type: params[3],
+          what_happened: params[4],
+          why_it_matters: params[5],
+          securist_action: params[6],
+          verification: params[7],
+          visibility: params[8],
+          before_fingerprint: params[9],
+          after_fingerprint: params[10],
+          materiality: params[11],
+          re_review_trigger: true,
+          occurred_at: params[12],
+          is_seed: false,
+        })
+        return asT([{ id }])
+      }
+
+      if (lower.startsWith('insert into decisions')) {
+        const id = String(params[0])
+        if (tables.decisions.some((r) => r.id === id)) return asT([])
+        tables.decisions.push({
+          id: params[0],
+          tenant_id: params[1],
+          artifact_id: params[2],
+          artifact_version_id: params[3],
+          status: params[4],
+          summary: params[5],
+          risk_plain: params[6],
+          action_plain: params[7],
+          evaluation_id: null,
+          evidence_ids: [],
+          policy_id: params[8],
+          policy_version: params[9],
+          scope: null,
+          decided_at: params[10],
+          decided_by: params[11],
+          expires_at: null,
+          is_seed: false,
+        })
+        return asT([{ id }])
       }
 
       throw new Error(`fake-sql: unhandled query: ${sql.slice(0, 120)}`)

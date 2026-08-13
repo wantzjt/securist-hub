@@ -13,7 +13,8 @@ Public Assess (/assess)                 LIVE
 Public PR Decision Brief Action         LIVE on this public repo (ephemeral comment, not approval)
 Local Operator monorepo path            LIVE on /operator Path A
 Local Operator signed RC path           Path B on /operator from GitHub Release · Gate 1
-Team Graph / R1                         NOT LIVE (human Postgres only)
+Team Graph product surface              NOT LIVE (UI: Coming next)
+R1 durable Postgres store               PROVISIONED (infra; WO-008 human exit open)
 Public npx @securist/operator           NOT available
 Broad announcement                      HOLD
 ```
@@ -38,6 +39,7 @@ Broad announcement                      HOLD
 | **Public PR Brief Action** | [`PUBLIC-DECISION-BRIEF-ACTION.md`](./PUBLIC-DECISION-BRIEF-ACTION.md) · WO-030 |
 | **Admission packs** | [`ADMISSION-PACKS.md`](./ADMISSION-PACKS.md) · [`ops/admission-packs/v1/`](../ops/admission-packs/v1/) · WO-031 |
 | **Team Graph contracts (pre-R1)** | [`TEAM-GRAPH-CONTRACTS.md`](./TEAM-GRAPH-CONTRACTS.md) · WO-032 · **not live** |
+| **Re-review loop (WO-033)** | [`RE-REVIEW-LOOP.md`](./RE-REVIEW-LOOP.md) · postgres fail-closed · product **not live** |
 | **Intel meeting pack** | [`meeting/`](./meeting/) · WO-024 |
 | **Grok Bot OS + standup prompt** | [`GROK-BOT-OPERATING-SYSTEM.md`](./GROK-BOT-OPERATING-SYSTEM.md) · [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) |
 
@@ -116,7 +118,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **M** | Run meeting dry-run ([`meeting/DEMO-SCRIPT.md`](./meeting/DEMO-SCRIPT.md)) | you |
 | **G** | Stand up Grok Bot **Securist COS** with [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) | you + Bot |
 | **C** | R1: grant provision authority then [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) | **you only** for credentials |
-| **E** | WO-033 re-review loop | **blocked** on WO-008 / human-signed R1 |
+| **E** | WO-033 re-review loop | **in_review** — postgres fail-closed loop; /team not live |
 | **D** | Stay HOLD — no announce | default |
 
 ### Tell Grok

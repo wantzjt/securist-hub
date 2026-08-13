@@ -57,9 +57,9 @@ function TeamGraphPage() {
           Team Graph is the paid control plane: durable shared decisions with a
           named owner, policy binding, evidence set, and forced re-review when
           reality changes. It is{' '}
-          <strong className="text-white">not live</strong> until R1 human
-          provision completes. Contracts are frozen (WO-032). Postgres remains
-          John-only (WO-008).
+          <strong className="text-white">not live</strong>. Contracts are frozen
+          (WO-032). A postgres re-review loop exists (WO-033) and does not flip
+          this page live. WO-008 human exit remains open.
         </p>
       </header>
 

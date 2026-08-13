@@ -35,8 +35,8 @@ Authority: [`SYSTEM-MODEL.md`](./SYSTEM-MODEL.md) · [`DECISIONS.md`](./DECISION
 Public repository
   → honest Decision Brief              LIVE (/assess)
   → private Local Operator             monorepo + signed RC path on /operator · Gate 1 PASS · not npm-public
-  → shared decision + owner + policy   NOT LIVE (R1 / WO-008)
-  → material change reopens review     NOT LIVE
+  → shared decision + owner + policy   NOT LIVE (Team Graph UI Coming next)
+  → material change reopens review     LOOP ON POSTGRES (product not live)
 ```
 
 **Announcement is held** until this loop works brilliantly end-to-end—not when the website looks polished.
@@ -133,7 +133,7 @@ CI dogfood (WO-030): one ephemeral Decision Brief comment on public PRs in this 
 | **WO-030** | Public Decision Brief GitHub Action (read-only) | **complete** · PR #70 · ephemeral PR comment, not approval |
 | **WO-031** | Admission packs (coding agents / MCP / models) | **complete** · PR #72 · scaffolds, not certs; Team Graph not live |
 | **WO-032** | Team Graph contract freeze (pre-R1) | **complete** · PR #74 · schemas + stubs; Team Graph not live; R1 is John-only |
-| **WO-033** | Re-review on material change | **blocked** on human-signed R1 / WO-008 — no fake durability |
+| **WO-033** | Re-review on material change | **in_review** · postgres fail-closed loop · /team not live |
 | Human backup | Offline copy of release private key | Founder ★ still required |
 | Operator publish | GitHub Release tarball first (not npm) | Artifacts ready locally · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human authority · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |
