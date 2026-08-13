@@ -11,7 +11,10 @@
     "./agents": "./src/agents.ts",
     "./public-assess": "./src/public-assess.ts",
     "./decision-brief": "./src/decision-brief.ts",
-    "./local-assess": "./src/local-assess.ts"
+    "./local-assess": "./src/local-assess.ts",
+    "./team-graph": "./src/team-graph.ts"
   },
-  "files": ["src"]
+  "files": [
+    "src"
+  ]
 }
