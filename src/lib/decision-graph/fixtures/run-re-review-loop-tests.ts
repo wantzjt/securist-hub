@@ -264,7 +264,7 @@ async function main() {
     /Team Graph/.test(resume) && /NOT LIVE/.test(resume),
   )
   assert('WO-033 file exists', /id: WO-033/.test(wo))
-  assert('WO-033 in_review', /status: in_review/.test(wo))
+  assert('WO-033 complete', /status: complete/.test(wo))
   assert('loop doc exists', loopDoc.includes('WO-033'))
   assert(
     'loop doc fail-closed postgres',

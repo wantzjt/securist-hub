@@ -1,7 +1,7 @@
 ---
 id: WO-033
 title: "Re-review on material change (north-star loop)"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-033-re-review-loop
 depends_on:
@@ -49,6 +49,7 @@ North-star loop: material change reopens permission and requires accountable re-
 
 - 2026-08-12 — Filed `blocked` after WO-032 merge (PR #74). Not started. No fake durability.
 - 2026-08-13 — Unstuck to `in_review` on feat/wo-033-re-review-loop. Postgres store provisioned (infra). Team Graph UI not live.
+- 2026-08-13 — PR #77 merged (`b7cca11`). Complete. /team remains Coming next. WO-008 exit still unsigned.
 
 ## Blockers
 
