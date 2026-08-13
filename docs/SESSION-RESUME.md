@@ -87,7 +87,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **WO-027** | PLG shareable /assess re-run link · PR #58 merged |
 | **WO-028** | Share-grade Brief (OG + md export + print) · PR #66 merged |
 | **WO-029** | Operator 5-min Path B signed Release · PR #68 merged |
-| **WO-030** | Public Decision Brief GitHub Action (read-only) · in review |
+| **WO-030** | Public Decision Brief GitHub Action (read-only) · PR #70 merged |
 
 ### 2026-08-12 Operator RC (local, gitignored)
 

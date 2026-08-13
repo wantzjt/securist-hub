@@ -1,7 +1,7 @@
 ---
 id: WO-030
 title: "Public Decision Brief GitHub Action (read-only)"
-status: in_review
+status: complete
 owner: grok
 branch: feat/wo-030-public-brief-action
 depends_on:
@@ -45,6 +45,7 @@ Public PRs need a lightweight, read-only Decision Brief posted or updated as a s
 ## Progress
 
 - 2026-08-12 — Implementation on branch feat/wo-030-public-brief-action; PR open.
+- 2026-08-12 — PR #70 merged; complete.
 
 ## Blockers
 
