@@ -1,0 +1,32 @@
+name: Public Decision Brief
+description: >-
+  Post or update one ephemeral Decision Brief comment on a public PR.
+  GITHUB_TOKEN only. Not production approval. Team Graph not live.
+  Not a scanner and not private-code cloud assess.
+author: Securist
+inputs:
+  github-token:
+    description: >-
+      Must be GITHUB_TOKEN. Used only to list/create/update PR issue comments.
+      Never contents write. Never a PAT or extra secret.
+    required: true
+  pr-number:
+    description: Pull request number to post or update the Brief on
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Post or update one Brief comment
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_API_URL: ${{ github.api_url }}
+        GITHUB_SHA: ${{ github.sha }}
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
+        GITHUB_EVENT_PATH: ${{ github.event_path }}
+        GITHUB_RUN_ID: ${{ github.run_id }}
+        GITHUB_SERVER_URL: ${{ github.server_url }}
+      run: node scripts/public-decision-brief-comment.mjs
