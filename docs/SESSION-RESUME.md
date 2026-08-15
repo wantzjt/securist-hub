@@ -1,6 +1,6 @@
 # Session resume — Securist (pick up here)
 
-**Last packed:** 2026-08-12  
+**Last packed:** 2026-08-15 (NSPM permission-program motion added; product ladder unchanged)  
 **Repo:** [wantzjt/securist-hub](https://github.com/wantzjt/securist-hub) · local `ftw-lab/vantage-hub`  
 **Purpose:** One page so a cold machine / new Grok session can continue without archaeology.
 
@@ -42,6 +42,9 @@ Broad announcement                      HOLD
 | **Re-review loop (WO-033)** | [`RE-REVIEW-LOOP.md`](./RE-REVIEW-LOOP.md) · postgres fail-closed · product **not live** |
 | **Intel meeting pack** | [`meeting/`](./meeting/) · WO-024 |
 | **Grok Bot OS + standup prompt** | [`GROK-BOT-OPERATING-SYSTEM.md`](./GROK-BOT-OPERATING-SYSTEM.md) · [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) |
+| **Build↔Bot coordination** | `/Users/master/ftw-lab/securist-agent-dogfood/docs/BUILD-BOT-COORDINATION.md` · Bot paste: `…/GROK-BOT-COORD-PROMPT.md` |
+| **War free compute (→2026-08-27)** | `/Users/master/ftw-lab/securist-agent-dogfood` · `npm run war:status` · model `zai/glm-5.2` (not Fast) · Vercel `tarx/securist-dogfood` |
+| **NSPM Aug 12 2026 motion** | [`NSPM-2026-PERMISSION-PROGRAM.md`](./NSPM-2026-PERMISSION-PROGRAM.md) · leave-behind [`meeting/NSPM-READINESS-BRIEF.md`](./meeting/NSPM-READINESS-BRIEF.md) · Bot drafts `securist-agent-dogfood/pulse/nspm-growth-drafts.md` · **not** offense-as-product · **not** a live site page yet |
 
 ### Private key reminder
 
@@ -95,6 +98,7 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **WO-031** | Admission packs (coding-agent / MCP / model-weights) · PR #72 merged |
 | **WO-032** | Team Graph contract freeze (pre-R1) · PR #74 merged · not live |
 | **WO-033** | Re-review on material change · PR #77 merged · postgres fail-closed loop · /team not live |
+| **WO-034** | NSPM permission-program briefing (docs) · founder-approved 2026-08-15 · in this PR |
 
 ### 2026-08-12 Operator RC (local, gitignored)
 
@@ -120,12 +124,13 @@ npm run operator:rc:publish-prep   # drafts notes under .operator-rc/ — does N
 | **G** | Stand up Grok Bot **Securist COS** with [`GROK-BOT-STANDUP-PROMPT.md`](./GROK-BOT-STANDUP-PROMPT.md) | you + Bot |
 | **C** | R1: grant provision authority then [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) | **you only** for credentials |
 | **E** | WO-033 re-review loop | **complete** · PR #77 · /team not live · HOLD |
+| **N** | NSPM motion **founder-approved 2026-08-15** · WO-034 docs PR · Bot posts A+B · no site page until separate WO | Bot + this PR |
 | **D** | Stay HOLD — no announce | default |
 
 ### Tell Grok
 
 ```text
-Resume Securist from docs/SESSION-RESUME.md — continue with [A backup | B publish | M meeting dry-run | C R1 | D hold]
+Resume Securist from docs/SESSION-RESUME.md — continue with [A backup | B publish | M meeting dry-run | C R1 | N NSPM drafts | D hold]
 ```
 
 ---

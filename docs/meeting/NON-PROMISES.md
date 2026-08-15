@@ -22,6 +22,10 @@ Print or keep open during intel firm meetings.
 | “Unlimited public assess / never rate limited” | Anonymous GitHub API; honest `rate_limited` / `timeout` |
 | “SOC2 / SSO / air-gap ready this week” | Enterprise path after shared graph; not pilot day-one |
 | “Seed profiles are LIVE org decisions” | Seed/demo labeled — never customer telemetry |
+| “Hack-back is legal now / we help you attack foreign systems” | NSPM is a **USG-directed permission program**, not private hack-back. See [`NSPM-READINESS-BRIEF.md`](./NSPM-READINESS-BRIEF.md) |
+| “Securist gets you into the White House / NCC Program” | We do not apply, broker, or operate. We own the decision object |
+| “This Decision Brief is written Executive Director approval” | Only Program Executive Directors approve packages. Briefs are not authority |
+| “We write exploits / operations packages / targeting” | Forbidden. AUP + this card. Refer them to counsel and the memo |
 
 ---
 
@@ -43,7 +47,9 @@ Print or keep open during intel firm meetings.
 - *“Private code stays local; that’s the free ethical line.”*  
 - *“We’re not a scanner; we own permission under drift.”*  
 - *“Public install ships after deliberate signed distribution — not today.”*  
-- *“I’ll take that as a design-partner requirement, not a commit.”*
+- *“I’ll take that as a design-partner requirement, not a commit.”*  
+- *“The August 12 memo is not hack-back. It’s a permission program under USG control.”*  
+- *“We will not help anyone operate outside written government approval.”*
 
 ---
 
@@ -55,3 +61,4 @@ Print or keep open during intel firm meetings.
 | “Just npm install securist” | “Clone the hub or use a signed RC tarball.” |
 | “We’ll auto-block in CI tomorrow” | “CI enforcement after the re-review loop is trusted.” |
 | “TARX is the product” | “TARX is local substrate; Securist is the authority.” |
+| “We can help you hit foreign CE-TCOs” | “We help you prove what is still allowed. Operations are USG or they are unlawful.” |
