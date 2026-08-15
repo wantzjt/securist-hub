@@ -51,6 +51,7 @@ SCA and Dependabot fire on *vulnerabilities*. Wikis and tickets record *approval
 | Agents and automations that pull public GitHub/HF assets | Same decision language for humans and agents |
 | Share-safe vs local-only evidence | Public Brief is ephemeral and share-safe; Operator stays `local_only` |
 | Cross-functional buyers (security + legal + eng) | One decision record, not a single “AI GRC seat” fantasy |
+| Aug 12 2026 NSPM (Participating Companies / threat-info sellers) | Permission + written-approval + cease-and-notify — not hack-back. See [`NSPM-READINESS-BRIEF.md`](./NSPM-READINESS-BRIEF.md) |
 
 **North-star metric:** time from material change → accountable re-review.
 

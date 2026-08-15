@@ -95,6 +95,12 @@ Public Decision Brief (format proof)
 
 **North-star metric:** time from material change to an accountable re-review—not chat volume, scans, or feed traffic.
 
+### August 2026 NSPM (do not change the category)
+
+The August 12, 2026 White House memorandum is a **government-directed permission program**, not private hack-back. Use it as a *cost-of-stale-permission* story for intel/IR/cyber GC+CISO coalitions. Full framing: [`NSPM-2026-PERMISSION-PROGRAM.md`](./NSPM-2026-PERMISSION-PROGRAM.md). Leave-behind: [`meeting/NSPM-READINESS-BRIEF.md`](./meeting/NSPM-READINESS-BRIEF.md).
+
+Never: “we help you attack,” “hack-back is legal,” “we get you into the Program,” “this Brief is written approval.”
+
 **Pivotal moment (not chat):**
 
 ```text

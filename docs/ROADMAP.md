@@ -85,9 +85,10 @@ Public repository
 | -- | -- |
 | **Owner** | **human** (interviews) · grok (meeting kit) |
 | **Status** | `now` · kit shipped WO-024 · interviews still human |
-| **Work order** | [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) · [`WO-024`](../ops/work-orders/WO-024-intel-meeting-readiness.md) |
+| **Work order** | [`WO-004`](../ops/work-orders/WO-004-design-partner-interviews.md) · [`WO-024`](../ops/work-orders/WO-024-intel-meeting-readiness.md) · [`WO-034`](../ops/work-orders/WO-034-nspm-permission-program.md) |
 | **Buyer language** | [`BUYER-MESSAGING.md`](./BUYER-MESSAGING.md) |
-| **Meeting pack** | [`meeting/`](./meeting/) — one-pager · demo script · non-promises · checklist |
+| **Meeting pack** | [`meeting/`](./meeting/) — one-pager · NSPM readiness brief · demo script · non-promises · checklist |
+| **NSPM Aug 12 2026** | Permission program, not hack-back. Founder-approved 2026-08-15. Docs only — no site page, no announce. |
 
 ### Track C — Free Operator → distribution RC
 
@@ -134,6 +135,7 @@ CI dogfood (WO-030): one ephemeral Decision Brief comment on public PRs in this 
 | **WO-031** | Admission packs (coding agents / MCP / models) | **complete** · PR #72 · scaffolds, not certs; Team Graph not live |
 | **WO-032** | Team Graph contract freeze (pre-R1) | **complete** · PR #74 · schemas + stubs; Team Graph not live; R1 is John-only |
 | **WO-033** | Re-review on material change | **complete** · PR #77 · postgres fail-closed loop · /team not live |
+| **WO-034** | NSPM permission-program briefing (docs) | Founder-approved 2026-08-15 · not offense-as-product · no site page |
 | Human backup | Offline copy of release private key | Founder ★ still required |
 | Operator publish | GitHub Release tarball first (not npm) | Artifacts ready locally · [`OPERATOR-PUBLISH-GATE.md`](./OPERATOR-PUBLISH-GATE.md) |
 | WO-008 / R1 | Paid Team Graph (durable shared memory) | Human authority · [`R1-READINESS-PACK.md`](./R1-READINESS-PACK.md) |

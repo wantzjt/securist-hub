@@ -15,7 +15,7 @@
 | 4 | Pick firm-specific public GitHub targets (1–2 repos they know) | human |
 | 5 | GitHub **pre-release** Operator RC | **Done 2026-08-12** — [operator-v0.1.0-rc.1](https://github.com/wantzjt/securist-hub/releases/tag/operator-v0.1.0-rc.1) · still not npm |
 | 6 | GitHub About description/topics | **Done 2026-08-12** via API (permission-system description + topics) |
-| 7 | Print or PDF: [`INTEL-ONE-PAGER.md`](./INTEL-ONE-PAGER.md) + [`NON-PROMISES.md`](./NON-PROMISES.md) | human |
+| 7 | Print or PDF: [`INTEL-ONE-PAGER.md`](./INTEL-ONE-PAGER.md) + [`NSPM-READINESS-BRIEF.md`](./NSPM-READINESS-BRIEF.md) + [`NON-PROMISES.md`](./NON-PROMISES.md) | human |
 | 8 | Do **not** provision R1 for the meeting unless firm needs shared durable decisions *and* you accept residual risk | human |
 
 ---

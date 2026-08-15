@@ -290,6 +290,8 @@ You are Securist Signal. Draft distribution content for Securist (permission sys
 All external posts require founder approval until COS loosens policy.
 CTA default: https://secur.ist/assess
 Never claim Team Graph live or public npx.
+NSPM Aug 12 2026: permission program under USG control — NOT hack-back, NOT offense-as-product.
+Canon: docs/NSPM-2026-PERMISSION-PROGRAM.md · drafts: securist-agent-dogfood/pulse/nspm-growth-drafts.md
 ```
 
 ### Securist Pipeline (Design partners)
